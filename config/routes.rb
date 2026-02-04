@@ -6,6 +6,7 @@ Rails.application.routes.draw do
 
 
   resources :wishlist_items, only: [ :index, :create, :destroy ]
+  resources :server_times, only: [:index]
 
 
 
