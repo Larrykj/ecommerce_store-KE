@@ -1,0 +1,15 @@
+<%= render "pages/shared_styles" %>
+<div class="container py-5" style="max-width: 600px;">
+  <div class="text-center">
+    <% if @subscriber %>
+      <i class="bi bi-check-circle text-success" style="font-size: 4rem;"></i>
+      <h2 class="fw-bold mt-3">Unsubscribed Successfully</h2>
+      <p class="text-muted">You've been removed from our newsletter. We're sorry to see you go!</p>
+    <% else %>
+      <i class="bi bi-exclamation-circle text-warning" style="font-size: 4rem;"></i>
+      <h2 class="fw-bold mt-3">Invalid Link</h2>
+      <p class="text-muted">This unsubscribe link is invalid or has already been used.</p>
+    <% end %>
+    <%= link_to "Back to Store", root_path, class: "btn btn-primary mt-3" %>
+  </div>
+</div>

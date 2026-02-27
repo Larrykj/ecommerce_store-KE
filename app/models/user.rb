@@ -1,8 +1,11 @@
 class User < ApplicationRecord
+  include Discard::Model
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
+         :recoverable, :rememberable, :validatable,
+         :omniauthable, omniauth_providers: [:google_oauth2, :github]
 
   # Encrypt sensitive user data (skip in test environment to avoid fixture issues)
   encrypts :name unless Rails.env.test?
@@ -13,9 +16,29 @@ class User < ApplicationRecord
   has_many :viewed_products, through: :product_views, source: :product
   has_many :wishlist_items, dependent: :destroy
   has_many :wishlist_products, through: :wishlist_items, source: :product
+  has_many :addresses, dependent: :destroy
+  has_many :contact_messages, dependent: :nullify
+  has_many :return_requests, dependent: :destroy
+  has_many :stock_notifications, dependent: :destroy
+  has_many :product_comparisons, dependent: :destroy
 
   validates :name, presence: true
   validates :password, length: { minimum: 12 }, if: -> { new_record? || password.present? }
+
+  # Override Devise destroy to soft delete
+  def destroy
+    discard
+  end
+
+  # Prevent discarded users from logging in
+  def active_for_authentication?
+    super && !discarded?
+  end
+
+  # Provide a message for discarded users
+  def inactive_message
+    !discarded? ? super : :deleted_account
+  end
 
   def recommended_products(limit = 4)
     recent_views = product_views.order(created_at: :desc).limit(10).includes(:product)

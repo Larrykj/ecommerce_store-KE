@@ -1,73 +1,167 @@
-<div class="container">
-  <h1><%= t('checkout_page') %></h1>
+<div class="checkout-page">
+  <div class="container py-5">
+    <div class="checkout-header text-center mb-5">
+      <h1 class="checkout-title"><i class="bi bi-credit-card me-2"></i><%= t('checkout_page', default: 'Checkout') %></h1>
+      <p class="text-muted">Complete your order securely with Stripe</p>
+    </div>
 
-  <div class="row">
-    <div class="col-md-8">
-      <div class="card mb-4">
-        <div class="card-header">
-          <h5><%= t('shipping_info') %></h5>
+    <div class="row g-4">
+      <!-- Shipping Form -->
+      <div class="col-lg-7">
+        <div class="checkout-card">
+          <div class="checkout-card-header">
+            <h5><i class="bi bi-truck me-2"></i><%= t('shipping_info', default: 'Shipping Information') %></h5>
+          </div>
+          <div class="checkout-card-body">
+            <%= form_with url: checkout_path, method: :post, local: true, id: "checkout-form", data: { turbo: false }, scope: :order do |form| %>
+                <% if @order.errors.any? %>
+                  <div class="alert alert-danger">
+                    <h6><%= t('error_prohibited_save', count: @order.errors.count, resource: 'order') %>:</h6>
+                    <ul class="mb-0">
+                      <% @order.errors.full_messages.each do |message| %>
+                        <li><%= message %></li>
+                      <% end %>
+                    </ul>
+                  </div>
+                <% end %>
+
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="checkout-label"><%= t('full_name', default: 'Full Name') %></label>
+                    <%= form.text_field :name, value: @order.name, class: "checkout-input", required: true %>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="checkout-label"><%= t('email', default: 'Email') %></label>
+                    <%= form.email_field :email, value: @order.email, class: "checkout-input", required: true %>
+                  </div>
+                  <div class="col-12">
+                    <label class="checkout-label"><%= t('phone_number_mpesa', default: 'Phone Number') %></label>
+                    <%= form.text_field :phone, class: "checkout-input", placeholder: "0712345678", required: true %>
+                  </div>
+                  <div class="col-12">
+                    <label class="checkout-label"><%= t('delivery_address', default: 'Delivery Address') %></label>
+                    <%= form.text_area :address, class: "checkout-input", rows: 3, required: true %>
+                  </div>
+                </div>
+
+
+              <!-- Payment Section -->
+              <div class="payment-section mt-4">
+                <h5 class="mb-3"><i class="bi bi-shield-lock me-2"></i>Payment</h5>
+                <div class="stripe-info">
+                  <div class="d-flex align-items-center gap-3 mb-2">
+                    <i class="bi bi-credit-card-2-front" style="font-size: 1.5rem; color: #635bff;"></i>
+                    <div>
+                      <strong>Secure payment via Stripe</strong>
+                      <p class="text-muted mb-0" style="font-size: 0.85rem;">You'll be redirected to Stripe's secure checkout page</p>
+                    </div>
+                  </div>
+                  <div class="accepted-cards">
+                    <span class="card-badge"><i class="bi bi-credit-card me-1"></i>Visa</span>
+                    <span class="card-badge"><i class="bi bi-credit-card me-1"></i>Mastercard</span>
+                    <span class="card-badge"><i class="bi bi-credit-card me-1"></i>Amex</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="checkout-actions mt-4">
+                <%= form.submit "#{t('place_order', default: 'Pay')} #{format_price(@cart.total_price)}", class: "btn-checkout", id: "checkout-submit" %>
+                <%= link_to t('back_to_cart', default: 'Back to Cart'), cart_path, class: "btn-back" %>
+              </div>
+            <% end %>
+          </div>
         </div>
-        <div class="card-body">
-          <%= form_with(model: @order, local: true) do |form| %>
-            <% if @order.errors.any? %>
-              <div class="alert alert-danger">
-                <h4><%= t('error_prohibited_save', count: @order.errors.count, resource: t('order_resource')) %>:</h4>
-                <ul>
-                  <% @order.errors.full_messages.each do |message| %>
-                    <li><%= message %></li>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="col-lg-5">
+        <div class="checkout-card summary-card">
+          <div class="checkout-card-header">
+            <h5><i class="bi bi-bag-check me-2"></i><%= t('order_summary', default: 'Order Summary') %></h5>
+            <span class="item-count"><%= @cart.cart_items.count %> items</span>
+          </div>
+          <div class="checkout-card-body">
+            <% @cart.cart_items.includes(variant: :product).each do |item| %>
+              <div class="summary-item">
+                <div class="d-flex align-items-center gap-3">
+                  <% if item.variant.product.image.attached? %>
+                    <%= image_tag item.variant.product.image, class: "summary-img" %>
+                  <% else %>
+                    <div class="summary-img-placeholder"><i class="bi bi-box-seam"></i></div>
                   <% end %>
-                </ul>
+                  <div class="flex-grow-1">
+                    <strong class="d-block"><%= item.variant.product.name %></strong>
+                    <small class="text-muted"><%= item.variant.name %> × <%= item.quantity %></small>
+                  </div>
+                  <strong><%= format_price(item.subtotal) %></strong>
+                </div>
               </div>
             <% end %>
 
-            <div class="mb-3">
-              <%= form.label :name, t('full_name'), class: 'form-label' %>
-              <%= form.text_field :name, class: 'form-control', required: true %>
-            </div>
+            <div class="summary-divider"></div>
 
-            <div class="mb-3">
-              <%= form.label :email, t('email'), class: 'form-label' %>
-              <%= form.email_field :email, class: 'form-control', required: true %>
+            <div class="summary-row">
+              <span>Subtotal</span>
+              <span><%= format_price(@cart.subtotal) %></span>
             </div>
-
-            <div class="mb-3">
-              <%= form.label :phone, t('phone_number_mpesa'), class: 'form-label' %>
-              <%= form.text_field :phone, class: 'form-control', placeholder: '0712345678', required: true %>
+            <% if @cart.discount_amount > 0 %>
+              <div class="summary-row text-success">
+                <span>Discount (<%= @cart.promo_code&.code %>)</span>
+                <span>-<%= format_price(@cart.discount_amount) %></span>
+              </div>
+            <% end %>
+            <div class="summary-row">
+              <span>Shipping (<%= @cart.shipping_method&.name || 'Pending' %>)</span>
+              <span><%= @cart.shipping_cost > 0 ? format_price(@cart.shipping_cost) : '<span class="text-success">Free</span>'.html_safe %></span>
             </div>
-
-            <div class="mb-3">
-              <%= form.label :address, t('delivery_address'), class: 'form-label' %>
-              <%= form.text_area :address, class: 'form-control', rows: 3, required: true %>
+            <div class="summary-row">
+              <span>Tax (16% VAT)</span>
+              <span><%= format_price(@cart.tax_amount) %></span>
             </div>
-
-            <div class="d-grid gap-2">
-              <%= form.submit t('place_order'), class: 'btn btn-success btn-lg' %>
-              <%= link_to t('back_to_cart'), cart_path, class: 'btn btn-secondary' %>
+            <div class="summary-divider"></div>
+            <div class="summary-row total-row">
+              <strong><%= t('total', default: 'Total') %></strong>
+              <strong class="total-amount"><%= format_price(@cart.total_price) %></strong>
             </div>
-          <% end %>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-4">
-      <div class="card">
-        <div class="card-header">
-          <h5><%= t('order_summary') %></h5>
-        </div>
-        <div class="card-body">
-          <% @cart.cart_items.each do |item| %>
-            <div class="d-flex justify-content-between mb-2">
-              <span><%= item.product.name %> x <%= item.quantity %></span>
-              <span><%= format_price(item.subtotal) %></span>
-            </div>
-          <% end %>
-          <hr>
-          <div class="d-flex justify-content-between">
-            <strong><%= t('total') %></strong>
-            <strong><%= format_price(@cart.total_price) %></strong>
           </div>
+        </div>
+
+        <div class="secure-badge mt-3">
+          <i class="bi bi-lock-fill me-2"></i>
+          SSL encrypted & secure checkout
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<style>
+.checkout-page { background: #f8fafc; min-height: 100vh; }
+.checkout-title { font-size: 2rem; font-weight: 800; color: #1e293b; }
+.checkout-card { background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); overflow: hidden; }
+.checkout-card-header { padding: 20px 24px; border-bottom: 2px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; }
+.checkout-card-header h5 { margin: 0; font-weight: 700; color: #1e293b; }
+.item-count { background: #ede9fe; color: #7c3aed; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+.checkout-card-body { padding: 24px; }
+.checkout-label { display: block; font-size: 0.9rem; font-weight: 600; color: #475569; margin-bottom: 8px; }
+.checkout-input { width: 100%; padding: 12px 16px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 0.95rem; transition: border-color 0.2s; }
+.checkout-input:focus { outline: none; border-color: #635bff; box-shadow: 0 0 0 3px rgba(99,91,255,0.1); }
+.payment-section { padding: 20px; background: #f8fafc; border-radius: 12px; border: 2px solid #e2e8f0; }
+.stripe-info { padding: 16px; background: white; border-radius: 10px; border: 1px solid #e2e8f0; }
+.accepted-cards { display: flex; gap: 8px; margin-top: 10px; }
+.card-badge { padding: 4px 10px; background: #f1f5f9; border-radius: 6px; font-size: 0.75rem; color: #64748b; }
+.btn-checkout { display: block; width: 100%; padding: 16px; background: linear-gradient(135deg, #635bff 0%, #7c3aed 100%); color: white; border: none; border-radius: 12px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: all 0.3s; }
+.btn-checkout:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(99,91,255,0.4); }
+.btn-back { display: block; width: 100%; text-align: center; padding: 14px; color: #64748b; text-decoration: none; margin-top: 12px; border: 2px solid #e2e8f0; border-radius: 12px; font-weight: 600; transition: all 0.2s; }
+.btn-back:hover { border-color: #635bff; color: #635bff; }
+.summary-item { padding: 14px 0; border-bottom: 1px solid #f1f5f9; }
+.summary-item:last-of-type { border-bottom: none; }
+.summary-img { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; }
+.summary-img-placeholder { width: 50px; height: 50px; border-radius: 8px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #cbd5e1; }
+.summary-divider { height: 2px; background: #f1f5f9; margin: 16px 0; }
+.summary-row { display: flex; justify-content: space-between; padding: 8px 0; color: #64748b; }
+.total-row { font-size: 1.2rem; color: #1e293b; padding-top: 12px; }
+.total-amount { color: #635bff; }
+.secure-badge { text-align: center; padding: 12px; color: #64748b; font-size: 0.85rem; background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.04); }
+.summary-card { position: sticky; top: 20px; }
+</style>

@@ -1,0 +1,59 @@
+<div class="admin-topbar">
+  <div>
+    <h1><i class="bi bi-envelope me-2"></i>Contact Messages</h1>
+    <p class="text-muted mb-0"><%= @unread_count %> unread message(s)</p>
+  </div>
+</div>
+
+<div class="admin-card">
+  <div class="admin-card-body">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Status</th>
+          <th>From</th>
+          <th>Subject</th>
+          <th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @messages.each do |message| %>
+          <tr style="<%= 'font-weight: 600;' if message.unread? %>">
+            <td>
+              <% if message.unread? %>
+                <span class="badge-status badge-pending"><i class="bi bi-circle-fill" style="font-size: 0.5rem;"></i> New</span>
+              <% else %>
+                <span class="badge-status badge-delivered">Read</span>
+              <% end %>
+            </td>
+            <td>
+              <strong><%= message.name %></strong><br>
+              <small class="text-muted"><%= message.email %></small>
+            </td>
+            <td><%= message.subject %></td>
+            <td class="text-muted"><%= message.created_at.strftime("%b %d, %Y %H:%M") %></td>
+            <td>
+              <div class="d-flex gap-2">
+                <%= link_to admin_contact_message_path(message), class: "btn-admin btn-admin-primary btn-sm" do %>
+                  <i class="bi bi-eye"></i> View
+                <% end %>
+                <% if message.unread? %>
+                  <%= button_to mark_read_admin_contact_message_path(message), method: :patch, class: "btn-admin btn-admin-outline btn-sm" do %>
+                    <i class="bi bi-check"></i>
+                  <% end %>
+                <% end %>
+                <%= button_to admin_contact_message_path(message), method: :delete, data: { turbo_confirm: "Delete this message?" }, class: "btn-admin btn-admin-danger btn-sm" do %>
+                  <i class="bi bi-trash"></i>
+                <% end %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+        <% if @messages.empty? %>
+          <tr><td colspan="5" class="text-center text-muted py-4">No messages yet</td></tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

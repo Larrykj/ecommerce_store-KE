@@ -1,0 +1,74 @@
+<div class="admin-topbar">
+  <h1><i class="bi bi-tags me-2"></i>Promo Codes</h1>
+  <%= link_to new_admin_promo_code_path, class: "btn-admin btn-admin-primary" do %>
+    <i class="bi bi-plus-lg me-1"></i> New Promo Code
+  <% end %>
+</div>
+
+<div class="admin-card">
+  <div class="admin-card-body">
+    <div class="table-responsive">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>Type</th>
+            <th>Value</th>
+            <th>Min Order</th>
+            <th>Uses</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if @promo_codes.any? %>
+            <% @promo_codes.each do |promo| %>
+              <tr>
+                <td><strong><%= promo.code %></strong></td>
+                <td><span class="badge bg-secondary text-capitalize"><%= promo.discount_type %></span></td>
+                <td>
+                  <% if promo.discount_type == 'percentage' %>
+                    <%= number_with_precision(promo.discount_value, precision: 1, strip_insignificant_zeros: true) %>%
+                  <% else %>
+                    <%= format_price(promo.discount_value) %>
+                  <% end %>
+                </td>
+                <td><%= promo.min_order_amount ? format_price(promo.min_order_amount) : 'None' %></td>
+                <td>
+                  <%= promo.current_uses %> / <%= promo.max_uses || '∞' %>
+                </td>
+                <td>
+                  <% if promo.active && (promo.expires_at.nil? || promo.expires_at > Time.current) %>
+                    <span class="badge bg-success">Active</span>
+                  <% else %>
+                    <span class="badge bg-danger">Inactive/Expired</span>
+                  <% end %>
+                </td>
+                <td>
+                  <div class="d-flex gap-2">
+                    <%= link_to edit_admin_promo_code_path(promo), class: "btn btn-sm btn-outline-primary", title: "Edit" do %>
+                      <i class="bi bi-pencil"></i>
+                    <% end %>
+                    <%= button_to admin_promo_code_path(promo), method: :delete, data: { turbo_confirm: "Are you sure you want to delete this promo code?" }, class: "btn btn-sm btn-outline-danger", title: "Delete" do %>
+                      <i class="bi bi-trash"></i>
+                    <% end %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          <% else %>
+            <tr>
+              <td colspan="7" class="text-center text-muted">No promo codes found. Create one above!</td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    
+    <% if @pagy.pages > 1 %>
+      <div class="d-flex justify-content-center mt-4">
+        <%== @pagy.series_nav(:bootstrap) %>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,51 @@
+<div class="admin-topbar">
+  <h1><i class="bi bi-person me-2"></i><%= @user.name %></h1>
+  <%= link_to admin_users_path, class: "btn-admin btn-admin-outline" do %>
+    <i class="bi bi-arrow-left me-1"></i> Back to Users
+  <% end %>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-4">
+    <div class="admin-card" style="padding: 30px; text-align: center;">
+      <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 2rem; color: white;">
+        <%= @user.name[0].upcase %>
+      </div>
+      <h4><%= @user.name %></h4>
+      <p class="text-muted"><%= @user.email %></p>
+      <% if @user.admin? %>
+        <span class="badge-status badge-admin"><i class="bi bi-shield-check me-1"></i>Admin</span>
+      <% else %>
+        <span class="badge-status badge-user">Customer</span>
+      <% end %>
+      <hr>
+      <div class="text-muted" style="font-size: 0.85rem;">
+        <p class="mb-1">Joined: <%= @user.created_at.strftime("%B %d, %Y") %></p>
+        <p class="mb-0">Total Orders: <%= @orders.count %></p>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <div class="admin-card">
+      <div class="admin-card-header"><h5>Order History</h5></div>
+      <div class="admin-card-body">
+        <table class="admin-table">
+          <thead><tr><th>Order #</th><th>Total</th><th>Status</th><th>Date</th></tr></thead>
+          <tbody>
+            <% @orders.each do |order| %>
+              <tr>
+                <td><%= link_to "##{order.id}", admin_order_path(order), style: "color:#4f46e5; font-weight:600;" %></td>
+                <td><strong><%= format_price(order.total_price) %></strong></td>
+                <td><span class="badge-status badge-<%= order.status || 'pending' %>"><%= (order.status || 'pending').capitalize %></span></td>
+                <td class="text-muted"><%= order.created_at.strftime("%b %d, %Y") %></td>
+              </tr>
+            <% end %>
+            <% if @orders.empty? %>
+              <tr><td colspan="4" class="text-center text-muted py-4">No orders yet</td></tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,272 @@
+<div class="profile-page">
+  <div class="container">
+    <!-- Profile Header -->
+    <div class="profile-header">
+      <div class="profile-avatar">
+        <%= current_user.name.first.upcase %>
+      </div>
+      <div class="profile-info">
+        <h1><%= current_user.name %></h1>
+        <p class="text-muted"><%= current_user.email %></p>
+        <p class="text-muted"><i class="bi bi-calendar3 me-1"></i>Member since <%= current_user.created_at.strftime("%B %Y") %></p>
+      </div>
+      <div class="profile-actions">
+        <%= link_to edit_user_registration_path, class: "btn-profile-edit" do %>
+          <i class="bi bi-pencil me-1"></i>Edit Profile
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="profile-stats">
+      <div class="stat-card-profile">
+        <i class="bi bi-bag-check"></i>
+        <div class="stat-number"><%= @total_orders %></div>
+        <div class="stat-text">Orders</div>
+      </div>
+      <div class="stat-card-profile">
+        <i class="bi bi-currency-dollar"></i>
+        <div class="stat-number"><%= format_price(@total_spent) %></div>
+        <div class="stat-text">Total Spent</div>
+      </div>
+      <div class="stat-card-profile">
+        <i class="bi bi-heart"></i>
+        <div class="stat-number"><%= @wishlist_count %></div>
+        <div class="stat-text">Wishlist</div>
+      </div>
+      <div class="stat-card-profile">
+        <i class="bi bi-star"></i>
+        <div class="stat-number"><%= @reviews_count %></div>
+        <div class="stat-text">Reviews</div>
+      </div>
+    </div>
+
+    <div class="profile-content">
+      <!-- Recent Orders -->
+      <div class="profile-section">
+        <div class="section-header">
+          <h3><i class="bi bi-receipt me-2"></i>Recent Orders</h3>
+          <%= link_to "View All", orders_path, class: "section-link" %>
+        </div>
+        <% if @recent_orders.any? %>
+          <div class="orders-list">
+            <% @recent_orders.each do |order| %>
+              <div class="order-row">
+                <div class="order-info">
+                  <span class="order-id">#<%= order.id %></span>
+                  <span class="order-date"><%= order.created_at.strftime("%b %d, %Y") %></span>
+                </div>
+                <div class="order-meta">
+                  <span class="badge-status badge-<%= order.status || 'pending' %>"><%= (order.status || 'pending').capitalize %></span>
+                  <span class="order-total"><%= format_price(order.total_price) %></span>
+                </div>
+                <%= link_to "View", order_path(order), class: "btn-view-order" %>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="empty-state-sm">
+            <i class="bi bi-bag"></i>
+            <p>No orders yet. <%= link_to "Start shopping", products_path %></p>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Saved Addresses -->
+      <div class="profile-section">
+        <div class="section-header">
+          <h3><i class="bi bi-geo-alt me-2"></i>Saved Addresses</h3>
+          <%= link_to new_address_path, class: "section-link" do %>
+            <i class="bi bi-plus-circle me-1"></i>Add New
+          <% end %>
+        </div>
+        <% if @addresses.any? %>
+          <div class="addresses-grid">
+            <% @addresses.each do |address| %>
+              <div class="address-card<%= ' default' if address.default? %>">
+                <% if address.default? %>
+                  <span class="default-badge"><i class="bi bi-check-circle-fill me-1"></i>Default</span>
+                <% end %>
+                <h5><%= address.label %></h5>
+                <p class="address-name"><%= address.name %></p>
+                <p><%= address.address_line_1 %></p>
+                <% if address.address_line_2.present? %>
+                  <p><%= address.address_line_2 %></p>
+                <% end %>
+                <p><%= address.city %><%= ", #{address.state}" if address.state.present? %> <%= address.postal_code %></p>
+                <p><%= address.country %></p>
+                <p class="address-phone"><i class="bi bi-telephone me-1"></i><%= address.phone %></p>
+                <div class="address-actions">
+                  <%= link_to edit_address_path(address), class: "addr-action-btn" do %>
+                    <i class="bi bi-pencil"></i>
+                  <% end %>
+                  <% unless address.default? %>
+                    <%= button_to set_default_address_path(address), method: :patch, class: "addr-action-btn", title: "Set as default" do %>
+                      <i class="bi bi-check-circle"></i>
+                    <% end %>
+                  <% end %>
+                  <%= button_to address_path(address), method: :delete, data: { turbo_confirm: "Remove this address?" }, class: "addr-action-btn delete" do %>
+                    <i class="bi bi-trash"></i>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="empty-state-sm">
+            <i class="bi bi-geo-alt"></i>
+            <p>No saved addresses. <%= link_to "Add one", new_address_path %></p>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="profile-section">
+        <div class="section-header">
+          <h3><i class="bi bi-grid me-2"></i>Quick Links</h3>
+        </div>
+        <div class="quick-links-grid">
+          <%= link_to wishlist_items_path, class: "quick-link-card" do %>
+            <i class="bi bi-heart"></i>
+            <span>My Wishlist</span>
+          <% end %>
+          <%= link_to orders_path, class: "quick-link-card" do %>
+            <i class="bi bi-receipt"></i>
+            <span>Order History</span>
+          <% end %>
+          <%= link_to edit_user_registration_path, class: "quick-link-card" do %>
+            <i class="bi bi-shield-lock"></i>
+            <span>Security</span>
+          <% end %>
+          <%= link_to new_contact_message_path, class: "quick-link-card" do %>
+            <i class="bi bi-headset"></i>
+            <span>Contact Support</span>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.profile-page { padding: 30px 0; min-height: 100vh; }
+
+.profile-header {
+  display: flex; align-items: center; gap: 24px; background: white;
+  border-radius: 20px; padding: 32px; margin-bottom: 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+.profile-avatar {
+  width: 80px; height: 80px; border-radius: 50%;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white; display: flex; align-items: center; justify-content: center;
+  font-size: 2rem; font-weight: 800; flex-shrink: 0;
+}
+.profile-info h1 { margin: 0; font-size: 1.5rem; font-weight: 800; color: #1e293b; }
+.profile-info p { margin: 4px 0 0; font-size: 0.9rem; }
+.profile-actions { margin-left: auto; }
+.btn-profile-edit {
+  display: inline-flex; align-items: center; padding: 10px 20px;
+  background: linear-gradient(135deg, #667eea, #764ba2); color: white;
+  border-radius: 10px; text-decoration: none; font-weight: 600; transition: all 0.2s;
+}
+.btn-profile-edit:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(102,126,234,0.4); color: white; }
+
+.profile-stats {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;
+}
+.stat-card-profile {
+  background: white; border-radius: 16px; padding: 24px; text-align: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08); transition: transform 0.2s;
+}
+.stat-card-profile:hover { transform: translateY(-4px); }
+.stat-card-profile i { font-size: 1.5rem; color: #667eea; display: block; margin-bottom: 8px; }
+.stat-number { font-size: 1.5rem; font-weight: 800; color: #1e293b; }
+.stat-text { font-size: 0.85rem; color: #64748b; margin-top: 4px; }
+
+.profile-section {
+  background: white; border-radius: 20px; padding: 28px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 24px;
+}
+.section-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 20px; padding-bottom: 16px; border-bottom: 2px solid #f1f5f9;
+}
+.section-header h3 { margin: 0; font-size: 1.1rem; font-weight: 700; color: #1e293b; }
+.section-link { color: #667eea; text-decoration: none; font-weight: 600; font-size: 0.9rem; }
+.section-link:hover { text-decoration: underline; }
+
+/* Orders List */
+.order-row {
+  display: flex; align-items: center; gap: 16px; padding: 14px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+.order-row:last-child { border-bottom: none; }
+.order-id { font-weight: 700; color: #1e293b; }
+.order-date { font-size: 0.85rem; color: #94a3b8; margin-left: 8px; }
+.order-meta { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+.order-total { font-weight: 700; color: #1e293b; }
+.btn-view-order {
+  padding: 6px 16px; background: rgba(102,126,234,0.1); color: #667eea;
+  border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.85rem;
+}
+.btn-view-order:hover { background: #667eea; color: white; }
+
+/* Badge statuses */
+.badge-status { padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+.badge-pending { background: #fef3c7; color: #d97706; }
+.badge-processing { background: #dbeafe; color: #2563eb; }
+.badge-shipped { background: #e0e7ff; color: #4f46e5; }
+.badge-delivered { background: #d1fae5; color: #059669; }
+.badge-cancelled { background: #fee2e2; color: #dc2626; }
+
+/* Addresses */
+.addresses-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+.address-card {
+  border: 2px solid #f1f5f9; border-radius: 14px; padding: 20px; position: relative;
+  transition: all 0.2s;
+}
+.address-card:hover { border-color: #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+.address-card.default { border-color: #667eea; background: rgba(102,126,234,0.03); }
+.default-badge {
+  position: absolute; top: 12px; right: 12px; background: #667eea; color: white;
+  padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;
+}
+.address-card h5 { margin: 0 0 8px; font-weight: 700; color: #1e293b; font-size: 1rem; }
+.address-card p { margin: 2px 0; font-size: 0.9rem; color: #475569; }
+.address-name { font-weight: 600; color: #1e293b !important; }
+.address-phone { margin-top: 8px !important; color: #64748b !important; }
+.address-actions { display: flex; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid #f1f5f9; }
+.addr-action-btn {
+  width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+  border-radius: 8px; border: none; cursor: pointer; font-size: 0.9rem; transition: all 0.2s;
+  background: #f1f5f9; color: #475569; text-decoration: none;
+}
+.addr-action-btn:hover { background: #667eea; color: white; }
+.addr-action-btn.delete:hover { background: #ef4444; color: white; }
+
+/* Quick Links */
+.quick-links-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.quick-link-card {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 24px 16px; border: 2px solid #f1f5f9; border-radius: 14px;
+  text-decoration: none; transition: all 0.2s;
+}
+.quick-link-card i { font-size: 1.5rem; color: #667eea; }
+.quick-link-card span { font-weight: 600; color: #1e293b; font-size: 0.9rem; }
+.quick-link-card:hover { border-color: #667eea; background: rgba(102,126,234,0.05); transform: translateY(-2px); }
+
+/* Empty States */
+.empty-state-sm { text-align: center; padding: 30px; }
+.empty-state-sm i { font-size: 2rem; color: #cbd5e1; display: block; margin-bottom: 8px; }
+.empty-state-sm p { color: #64748b; margin: 0; }
+.empty-state-sm a { color: #667eea; font-weight: 600; }
+
+@media (max-width: 768px) {
+  .profile-header { flex-direction: column; text-align: center; }
+  .profile-actions { margin-left: 0; }
+  .profile-stats { grid-template-columns: repeat(2, 1fr); }
+  .quick-links-grid { grid-template-columns: repeat(2, 1fr); }
+  .order-row { flex-wrap: wrap; }
+}
+</style>

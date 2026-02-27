@@ -28,7 +28,7 @@
             <tbody>
               <% @order.order_items.each do |item| %>
                 <tr>
-                  <td><%= item.product.name %></td>
+                  <td><%= item.variant.name_with_sku %></td>
                   <td><%= format_price(item.price) %></td>
                   <td><%= item.quantity %></td>
                   <td><%= format_price(item.price * item.quantity) %></td>
@@ -36,6 +36,26 @@
               <% end %>
             </tbody>
             <tfoot>
+              <tr>
+                <td colspan="3" class="text-end"><strong>Subtotal</strong></td>
+                <td><strong><%= format_price(@order.order_items.sum { |i| i.price * i.quantity }) %></strong></td>
+              </tr>
+              <% if @order.discount_amount.to_d > 0 %>
+                <tr>
+                  <td colspan="3" class="text-end text-success">
+                    <strong>Discount (<%= @order.promo_code&.code %>)</strong>
+                  </td>
+                  <td class="text-success"><strong>-<%= format_price(@order.discount_amount) %></strong></td>
+                </tr>
+              <% end %>
+              <tr>
+                <td colspan="3" class="text-end"><strong>Shipping (<%= @order.shipping_method&.name || 'Standard' %>)</strong></td>
+                <td><strong><%= @order.shipping_cost.to_d > 0 ? format_price(@order.shipping_cost) : '<span class="text-success">Free</span>'.html_safe %></strong></td>
+              </tr>
+              <tr>
+                <td colspan="3" class="text-end"><strong>Tax (<%= (@order.tax_rate.to_f * 100).to_i %>% VAT)</strong></td>
+                <td><strong><%= format_price(@order.tax_amount) %></strong></td>
+              </tr>
               <tr>
                 <td colspan="3" class="text-end"><strong><%= t('total') %></strong></td>
                 <td><strong><%= format_price(@order.total_price) %></strong></td>
@@ -55,8 +75,16 @@
           <p><%= t('email_confirmation_message') %></p>
           <p><%= t('updates_message') %></p>
           <div class="d-grid gap-2">
+            <%= link_to order_invoice_path(@order, format: :pdf), class: 'btn btn-outline-primary', target: "_blank" do %>
+              <i class="bi bi-file-earmark-pdf me-1"></i>Download Invoice
+            <% end %>
             <%= link_to t('view_all_orders'), orders_path, class: 'btn btn-primary' %>
             <%= link_to t('continue_shopping'), products_path, class: 'btn btn-secondary' %>
+            <% if @order.status == "delivered" && !@order.return_request %>
+              <%= link_to new_order_return_request_path(@order), class: 'btn btn-outline-warning' do %>
+                <i class="bi bi-arrow-return-left me-1"></i>Request Return
+              <% end %>
+            <% end %>
           </div>
         </div>
       </div>

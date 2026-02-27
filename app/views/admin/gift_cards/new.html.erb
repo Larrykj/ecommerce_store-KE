@@ -1,0 +1,23 @@
+<div class="admin-topbar">
+  <h1><i class="bi bi-gift me-2"></i>Create Gift Card</h1>
+</div>
+<div class="admin-card" style="max-width: 500px;">
+  <div class="admin-card-body" style="padding: 24px;">
+    <%= form_with(model: [:admin, @gift_card], local: true) do |f| %>
+      <div class="mb-3">
+        <%= f.label :initial_value, "Value (KSh)", class: "form-label fw-bold" %>
+        <%= f.number_field :initial_value, class: "form-control", min: 100, step: 100 %>
+      </div>
+      <div class="mb-3">
+        <%= f.label :recipient_email, "Recipient Email (optional)", class: "form-label fw-bold" %>
+        <%= f.email_field :recipient_email, class: "form-control" %>
+      </div>
+      <div class="mb-3">
+        <%= f.label :expires_at, "Expiration Date (optional)", class: "form-label fw-bold" %>
+        <%= f.date_field :expires_at, class: "form-control" %>
+      </div>
+      <%= f.submit "Create Gift Card", class: "btn-admin btn-admin-primary" %>
+      <%= link_to "Cancel", admin_gift_cards_path, class: "btn-admin btn-admin-outline ms-2" %>
+    <% end %>
+  </div>
+</div>

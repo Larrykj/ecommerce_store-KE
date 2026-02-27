@@ -7,7 +7,7 @@ class ProductsController < ApplicationController
   def index
     @categories = Category.all
     @price_stats = Product.price_stats
-    @products = Product.advanced_search(search_params)
+    @pagy, @products = pagy(Product.advanced_search(search_params), items: 12)
     @active_filters_count = count_active_filters
     @search_params = search_params
 
@@ -27,6 +27,7 @@ class ProductsController < ApplicationController
   # GET /products/new
   def new
     @product = Product.new
+    @product.variants.build
   end
 
   # POST /products
@@ -42,6 +43,7 @@ class ProductsController < ApplicationController
 
   # GET /products/:id/edit
   def edit
+    @product.variants.build if @product.variants.empty?
   end
 
   # PATCH/PUT /products/:id
@@ -55,7 +57,7 @@ class ProductsController < ApplicationController
 
   # DELETE /products/:id
   def destroy
-    @product.destroy
+    @product.discard
     redirect_to products_url, notice: t("product_deleted_success")
   end
 
@@ -74,7 +76,7 @@ class ProductsController < ApplicationController
   end
 
   def product_params
-    params.require(:product).permit(:name, :description, :price, :quantity, :image, :category_id)
+    params.require(:product).permit(:name, :description, :price, :image, :category_id, gallery_images: [], variants_attributes: [:id, :sku, :name, :price, :quantity, :variant_image, :_destroy])
   end
 
   def search_params

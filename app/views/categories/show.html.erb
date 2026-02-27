@@ -126,8 +126,9 @@
                     <span class="stock-badge badge-<%= product.stock_status_class %>"><%= product.stock_status_label %></span>
                     <div class="product-overlay">
                       <%= link_to product_path(product), class: "overlay-btn" do %><i class="bi bi-eye"></i><% end %>
-                      <% if product.in_stock? %>
-                        <%= button_to cart_items_path(product_id: product.id), method: :post, class: "overlay-btn cart" do %><i class="bi bi-cart-plus"></i><% end %>
+                      <% overlay_variant = product.variants.where("quantity > 0").first %>
+                      <% if overlay_variant %>
+                        <%= button_to cart_items_path(variant_id: overlay_variant.id), method: :post, class: "overlay-btn cart" do %><i class="bi bi-cart-plus"></i><% end %>
                       <% end %>
                     </div>
                   </div>
@@ -151,8 +152,9 @@
                       <div class="product-price">
                         <span class="amount"><%= format_price(product.price) %></span>
                       </div>
-                      <% if product.in_stock? %>
-                        <%= button_to cart_items_path(product_id: product.id), method: :post, class: "add-btn" do %><i class="bi bi-cart-plus"></i><% end %>
+                      <% footer_variant = product.variants.where("quantity > 0").first %>
+                      <% if footer_variant %>
+                        <%= button_to cart_items_path(variant_id: footer_variant.id), method: :post, class: "add-btn" do %><i class="bi bi-cart-plus"></i><% end %>
                       <% end %>
                     </div>
                   </div>

@@ -69,3 +69,22 @@ group :test do
   gem "selenium-webdriver"
   gem "fiddle"
 end
+
+gem "discard", "~> 1.4"
+
+gem "pagy", "~> 43.3"
+gem "pg_search", "~> 2.3"
+
+gem "stripe", "~> 18.4"
+
+gem "letter_opener", "~> 1.10", group: :development
+
+# PDF invoice generation
+gem "prawn", "~> 2.5"
+gem "prawn-table", "~> 0.2"
+
+# Social Login (OAuth)
+gem "omniauth", "~> 2.1"
+gem "omniauth-google-oauth2", "~> 1.2"
+gem "omniauth-github", "~> 2.0"
+gem "omniauth-rails_csrf_protection", "~> 1.0"

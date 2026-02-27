@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class OrdersController < ApplicationController
   before_action :authenticate_user!
 
@@ -16,7 +18,6 @@ class OrdersController < ApplicationController
     end
 
     @order = Order.new
-    # Pre-fill with user information
     @order.name = current_user.name
     @order.email = current_user.email
   end
@@ -25,7 +26,6 @@ class OrdersController < ApplicationController
     @order = current_user.orders.new(order_params)
     @order.status = "pending"
     @order.estimated_delivery_date = 5.days.from_now
-
 
     # Calculate total from cart
     total = 0

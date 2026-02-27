@@ -1,25 +1,38 @@
 class Product < ApplicationRecord
+  include Discard::Model
+
+  include PgSearch::Model
+
   belongs_to :category, optional: true
   has_many :cart_items, dependent: :destroy
   has_many :reviews, dependent: :destroy
   has_many :product_views, dependent: :destroy
   has_many :wishlist_items, dependent: :destroy
   has_many :variants, dependent: :destroy
+  accepts_nested_attributes_for :variants, allow_destroy: true, reject_if: :all_blank
   has_one_attached :image
+  has_many_attached :gallery_images
+  has_many :stock_notifications, dependent: :destroy
+  has_many :product_comparisons, dependent: :destroy
 
   # Validations
   validates :name, presence: true, length: { minimum: 3, maximum: 100 }
   validates :description, presence: true, length: { minimum: 10 }
   validates :price, presence: true, numericality: { greater_than: 0 }
+  validate :acceptable_image
 
   # ============ SEARCH SCOPES ============
 
-  # Text search - searches in name and description (case-insensitive)
-  scope :search_by_text, ->(query) {
-    return all if query.blank?
-
-    where("LOWER(name) LIKE :query OR LOWER(description) LIKE :query", query: "%#{query.downcase}%")
-  }
+  # Full-text search using pg_search
+  pg_search_scope :search_by_text,
+                  against: [:name, :description],
+                  associated_against: {
+                    category: [:name],
+                    variants: [:sku, :name]
+                  },
+                  using: {
+                    tsearch: { prefix: true }
+                  }
 
   # Filter by category
   scope :by_category, ->(category_id) {
@@ -43,7 +56,7 @@ class Product < ApplicationRecord
 
   # Filter by stock status
   scope :in_stock_only, -> { joins(:variants).where("variants.quantity > 0").distinct }
-  scope :out_of_stock_only, -> { where.not(id: in_stock_only) }
+  scope :out_of_stock_only, -> { left_outer_joins(:variants).group("products.id").having("SUM(COALESCE(variants.quantity, 0)) = 0") }
 
   scope :by_stock_status, ->(status) {
     case status
@@ -78,8 +91,8 @@ class Product < ApplicationRecord
 
   # Combined search method - chains all filters together
   def self.advanced_search(params)
-    results = all
-    results = results.search_by_text(params[:search])
+    results = kept
+    results = results.search_by_text(params[:search]) if params[:search].present?
     results = results.by_category(params[:category_id])
     results = results.by_min_price(params[:min_price])
     results = results.by_max_price(params[:max_price])
@@ -97,6 +110,25 @@ class Product < ApplicationRecord
   end
 
   # ============ INSTANCE METHODS ============
+
+  # Validate image size and type
+  def acceptable_image
+    return unless image.attached?
+
+    unless image.blob.byte_size <= 5.megabytes
+      errors.add(:image, "is too big (max 5MB)")
+    end
+
+    acceptable_types = ["image/jpeg", "image/png", "image/webp"]
+    unless acceptable_types.include?(image.content_type)
+      errors.add(:image, "must be a JPEG, PNG or WebP")
+    end
+  end
+
+  # Total stock across all variants
+  def quantity
+    variants.sum(:quantity)
+  end
 
   # Check if product is in stock
   def in_stock?

@@ -37,4 +37,23 @@
 /.kamal/secrets
 # Ignore key files for decrypting credentials and more.
 /config/credentials/*.key
+
+# Ignore IDEs and OS files
+/.vscode/
+/.idea/
+.DS_Store
+
+# Ignore yarn and node
+/node_modules
+yarn-error.log
+yarn-debug.log*
+.yarn-integrity
+
+# Ignore sqlite databases
+*.sqlite3
+*.sqlite3-*
+
+# Ignore coverage
+/coverage/
+
 # EOF

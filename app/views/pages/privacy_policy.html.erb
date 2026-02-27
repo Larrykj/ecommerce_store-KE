@@ -1,0 +1,47 @@
+<div class="static-page">
+  <div class="container" style="max-width: 800px;">
+    <div class="page-hero">
+      <h1><i class="bi bi-shield-lock me-2"></i>Privacy Policy</h1>
+      <p class="lead">Last updated: <%= Date.today.strftime("%B %d, %Y") %></p>
+    </div>
+
+    <div class="page-content">
+      <div class="content-card">
+        <h3>1. Information We Collect</h3>
+        <p>We collect information you provide directly to us, such as when you create an account, make a purchase, or contact us. This includes your name, email address, phone number, shipping address, and payment information.</p>
+      </div>
+
+      <div class="content-card">
+        <h3>2. How We Use Your Information</h3>
+        <p>We use the information we collect to process your orders, communicate with you about your purchases, improve our services, and send you promotional materials (with your consent). We also use your data to prevent fraud and maintain security.</p>
+      </div>
+
+      <div class="content-card">
+        <h3>3. Data Security</h3>
+        <p>We take the security of your personal data seriously. All sensitive information is encrypted both in transit (via SSL/TLS) and at rest. Payment information is processed by Stripe and never stored on our servers. We use field-level encryption for sensitive personal data.</p>
+      </div>
+
+      <div class="content-card">
+        <h3>4. Data Sharing</h3>
+        <p>We do not sell or rent your personal information to third parties. We may share your data with service providers who assist us in operating our platform, such as payment processors (Stripe) and shipping carriers, solely for the purpose of fulfilling your orders.</p>
+      </div>
+
+      <div class="content-card">
+        <h3>5. Cookies</h3>
+        <p>We use cookies and similar technologies to maintain your session, remember your preferences, and improve your experience. You can control cookie settings through your browser preferences.</p>
+      </div>
+
+      <div class="content-card">
+        <h3>6. Your Rights</h3>
+        <p>You have the right to access, correct, or delete your personal data. You can update your profile information at any time through your account settings. To request data deletion, please contact our support team.</p>
+      </div>
+
+      <div class="content-card">
+        <h3>7. Contact Us</h3>
+        <p>If you have any questions about this Privacy Policy, please <%= link_to "contact us", new_contact_message_path, style: "color: #667eea; font-weight: 600;" %>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= render "pages/shared_styles" %>

@@ -1,0 +1,217 @@
+<div class="admin-topbar">
+  <div>
+    <h1><i class="bi bi-speedometer2 me-2"></i>Dashboard</h1>
+    <p class="text-muted mb-0">Welcome back, <%= current_user.name %>! Here's your store overview.</p>
+  </div>
+  <div class="topbar-actions">
+    <% if @unread_messages > 0 %>
+      <%= link_to admin_contact_messages_path, class: "btn-admin btn-admin-outline", style: "position: relative;" do %>
+        <i class="bi bi-envelope me-1"></i> Messages
+        <span class="badge bg-danger rounded-pill" style="position: absolute; top: -6px; right: -6px; font-size: 0.65rem;"><%= @unread_messages %></span>
+      <% end %>
+    <% end %>
+    <%= link_to admin_products_path, class: "btn-admin btn-admin-outline" do %>
+      <i class="bi bi-box-seam me-1"></i> Manage Products
+    <% end %>
+  </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="row g-4 mb-4">
+  <div class="col-lg-3 col-md-6">
+    <div class="stat-card">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <div class="stat-label">Total Revenue</div>
+          <div class="stat-value"><%= format_price(@total_revenue || 0) %></div>
+          <small class="text-muted">Paid: <%= format_price(@paid_revenue || 0) %></small>
+        </div>
+        <div class="stat-icon" style="background: #ede9fe; color: #7c3aed;"><i class="bi bi-currency-dollar"></i></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-3 col-md-6">
+    <div class="stat-card">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <div class="stat-label">Total Orders</div>
+          <div class="stat-value"><%= @total_orders %></div>
+        </div>
+        <div class="stat-icon" style="background: #dbeafe; color: #2563eb;"><i class="bi bi-receipt"></i></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-3 col-md-6">
+    <div class="stat-card">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <div class="stat-label">Active Users</div>
+          <div class="stat-value"><%= @total_users %></div>
+        </div>
+        <div class="stat-icon" style="background: #d1fae5; color: #059669;"><i class="bi bi-people"></i></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-3 col-md-6">
+    <div class="stat-card">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <div class="stat-label">Products</div>
+          <div class="stat-value"><%= @total_products %></div>
+        </div>
+        <div class="stat-icon" style="background: #fef3c7; color: #d97706;"><i class="bi bi-box-seam"></i></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Order Status Breakdown -->
+<div class="row g-4 mb-4">
+  <div class="col-lg-8">
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <h5><i class="bi bi-pie-chart me-2"></i>Order Status Breakdown</h5>
+      </div>
+      <div class="admin-card-body" style="padding: 24px;">
+        <div class="d-flex flex-wrap gap-3">
+          <% status_colors = { "pending" => "#f59e0b", "processing" => "#3b82f6", "shipped" => "#8b5cf6", "delivered" => "#10b981", "cancelled" => "#ef4444" } %>
+          <% @order_status_counts.each do |status, count| %>
+            <div style="flex: 1; min-width: 120px; text-align: center; padding: 16px; background: #f8fafc; border-radius: 12px;">
+              <div style="width: 40px; height: 40px; border-radius: 50%; background: <%= status_colors[status] || '#94a3b8' %>20; color: <%= status_colors[status] || '#94a3b8' %>; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; font-weight: 700;">
+                <%= count %>
+              </div>
+              <span style="font-size: 0.85rem; font-weight: 600; color: #475569;"><%= (status || 'unknown').capitalize %></span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <h5><i class="bi bi-trophy me-2"></i>Top Categories</h5>
+      </div>
+      <div class="admin-card-body">
+        <table class="admin-table">
+          <thead><tr><th>Category</th><th>Revenue</th></tr></thead>
+          <tbody>
+            <% @top_categories.each do |cat| %>
+              <tr>
+                <td><strong><%= cat.name %></strong></td>
+                <td><%= format_price(cat.total_revenue) %></td>
+              </tr>
+            <% end %>
+            <% if @top_categories.empty? %>
+              <tr><td colspan="2" class="text-center text-muted py-3">No sales data yet</td></tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <!-- Recent Orders -->
+  <div class="col-lg-8">
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <h5><i class="bi bi-receipt me-2"></i>Recent Orders</h5>
+        <%= link_to "View All", admin_orders_path, class: "btn-admin btn-admin-primary btn-sm" %>
+      </div>
+      <div class="admin-card-body">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Order #</th>
+              <th>Customer</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @recent_orders.each do |order| %>
+              <tr>
+                <td><%= link_to "##{order.id}", admin_order_path(order), style: "color: #4f46e5; font-weight: 600;" %></td>
+                <td><%= order.user&.name || order.name || "Guest" %></td>
+                <td><strong><%= format_price(order.total_price) %></strong></td>
+                <td><span class="badge-status badge-<%= order.status || 'pending' %>"><%= (order.status || 'pending').capitalize %></span></td>
+                <td class="text-muted"><%= order.created_at.strftime("%b %d, %Y") %></td>
+              </tr>
+            <% end %>
+            <% if @recent_orders.empty? %>
+              <tr><td colspan="5" class="text-center text-muted py-4">No orders yet</td></tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Low Stock Alerts -->
+  <div class="col-lg-4">
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <h5><i class="bi bi-exclamation-triangle text-warning me-2"></i>Low Stock</h5>
+      </div>
+      <div class="admin-card-body">
+        <table class="admin-table">
+          <thead>
+            <tr><th>Product</th><th>Qty</th></tr>
+          </thead>
+          <tbody>
+            <% @low_stock_variants.each do |variant| %>
+              <tr>
+                <td>
+                  <strong><%= variant.product&.name %></strong>
+                  <br><small class="text-muted"><%= variant.name_with_sku %></small>
+                </td>
+                <td>
+                  <span class="badge-status <%= variant.quantity.zero? ? 'badge-cancelled' : 'badge-pending' %>">
+                    <%= variant.quantity %>
+                  </span>
+                </td>
+              </tr>
+            <% end %>
+            <% if @low_stock_variants.empty? %>
+              <tr><td colspan="2" class="text-center text-muted py-4">All stock levels healthy!</td></tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Top Selling Products -->
+<% if @top_products.any? %>
+<div class="row g-4 mt-2">
+  <div class="col-12">
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <h5><i class="bi bi-graph-up me-2"></i>Top Selling Products</h5>
+      </div>
+      <div class="admin-card-body">
+        <table class="admin-table">
+          <thead>
+            <tr><th>#</th><th>Product</th><th>Units Sold</th><th>Price</th></tr>
+          </thead>
+          <tbody>
+            <% @top_products.each_with_index do |product, i| %>
+              <tr>
+                <td><span style="color: #667eea; font-weight: 700;"><%= i + 1 %></span></td>
+                <td><strong><%= product.name %></strong></td>
+                <td><span class="badge-status badge-completed"><%= product.total_sold %> sold</span></td>
+                <td><%= format_price(product.price) %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<% end %>
+

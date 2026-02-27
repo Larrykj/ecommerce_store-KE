@@ -2,6 +2,18 @@ class Order < ApplicationRecord
   belongs_to :user
   has_many :order_items, dependent: :destroy
   has_many :products, through: :order_items
+  has_many :transactions, dependent: :destroy
+  has_one :return_request, dependent: :destroy
+  belongs_to :promo_code, optional: true
+  belongs_to :shipping_method, optional: true
+
+  def paid?
+    payment_status == "paid"
+  end
+
+  def payment_pending?
+    payment_status.nil? || payment_status == "unpaid"
+  end
 
   # Encrypt sensitive order data (skip in test environment to avoid fixture issues)
   encrypts :name unless Rails.env.test?

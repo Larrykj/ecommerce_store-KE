@@ -1,0 +1,139 @@
+<div class="contact-page">
+  <div class="container" style="max-width: 900px;">
+    <div class="contact-header">
+      <h1><i class="bi bi-headset me-2"></i>Contact Us</h1>
+      <p>We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>
+    </div>
+
+    <div class="contact-grid">
+      <!-- Contact Form -->
+      <div class="contact-form-card">
+        <h3><i class="bi bi-envelope me-2"></i>Send a Message</h3>
+
+        <%= form_with model: @contact_message, url: contact_messages_path, local: true do |f| %>
+          <% if @contact_message.errors.any? %>
+            <div class="alert alert-danger" style="border-radius: 12px;">
+              <strong><%= pluralize(@contact_message.errors.count, "error") %>:</strong>
+              <ul class="mb-0 mt-2">
+                <% @contact_message.errors.full_messages.each do |msg| %>
+                  <li><%= msg %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <%= f.label :name, "Your Name", class: "form-label fw-bold" %>
+              <%= f.text_field :name, class: "form-control contact-input", placeholder: "John Doe" %>
+            </div>
+            <div class="col-md-6 mb-3">
+              <%= f.label :email, "Email Address", class: "form-label fw-bold" %>
+              <%= f.email_field :email, class: "form-control contact-input", placeholder: "john@example.com" %>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <%= f.label :subject, "Subject", class: "form-label fw-bold" %>
+            <%= f.select :subject,
+                ["General Inquiry", "Order Issue", "Product Question", "Return/Refund", "Shipping Question", "Technical Support", "Feedback", "Other"],
+                { prompt: "Select a subject..." },
+                class: "form-select contact-input" %>
+          </div>
+
+          <div class="mb-4">
+            <%= f.label :message, "Your Message", class: "form-label fw-bold" %>
+            <%= f.text_area :message, class: "form-control contact-input", rows: 6, placeholder: "Tell us how we can help..." %>
+          </div>
+
+          <%= f.submit "Send Message", class: "btn-send-message" %>
+        <% end %>
+      </div>
+
+      <!-- Contact Info Sidebar -->
+      <div class="contact-sidebar">
+        <div class="info-card">
+          <div class="info-icon"><i class="bi bi-geo-alt-fill"></i></div>
+          <h5>Visit Us</h5>
+          <p>Kenyatta Avenue<br>Nairobi, Kenya</p>
+        </div>
+
+        <div class="info-card">
+          <div class="info-icon"><i class="bi bi-telephone-fill"></i></div>
+          <h5>Call Us</h5>
+          <p>+254 700 000 000<br>Mon-Fri, 8am-6pm EAT</p>
+        </div>
+
+        <div class="info-card">
+          <div class="info-icon"><i class="bi bi-envelope-fill"></i></div>
+          <h5>Email Us</h5>
+          <p>support@ecomstore.co.ke<br>We reply within 24 hours</p>
+        </div>
+
+        <div class="info-card">
+          <div class="info-icon"><i class="bi bi-chat-dots-fill"></i></div>
+          <h5>Social Media</h5>
+          <div class="social-links">
+            <a href="#" class="social-link"><i class="bi bi-twitter-x"></i></a>
+            <a href="#" class="social-link"><i class="bi bi-facebook"></i></a>
+            <a href="#" class="social-link"><i class="bi bi-instagram"></i></a>
+            <a href="#" class="social-link"><i class="bi bi-whatsapp"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.contact-page { padding: 30px 0; min-height: 100vh; }
+.contact-header { text-align: center; margin-bottom: 40px; }
+.contact-header h1 { font-size: 2rem; font-weight: 800; color: #1e293b; margin-bottom: 8px; }
+.contact-header p { color: #64748b; font-size: 1.1rem; }
+
+.contact-grid { display: grid; grid-template-columns: 1fr 320px; gap: 30px; }
+
+.contact-form-card {
+  background: white; border-radius: 20px; padding: 32px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+.contact-form-card h3 { font-size: 1.2rem; font-weight: 700; color: #1e293b; margin-bottom: 24px; }
+.contact-input { border-radius: 10px !important; padding: 12px 16px !important; border: 2px solid #e2e8f0 !important; }
+.contact-input:focus { border-color: #667eea !important; box-shadow: 0 0 0 3px rgba(102,126,234,0.1) !important; }
+
+.btn-send-message {
+  display: inline-flex; align-items: center; padding: 14px 32px;
+  background: linear-gradient(135deg, #667eea, #764ba2); color: white;
+  border: none; border-radius: 12px; font-size: 1.05rem; font-weight: 700;
+  cursor: pointer; transition: all 0.2s; width: 100%;
+  justify-content: center;
+}
+.btn-send-message:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(102,126,234,0.4); }
+
+.contact-sidebar { display: flex; flex-direction: column; gap: 16px; }
+.info-card {
+  background: white; border-radius: 16px; padding: 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08); text-align: center;
+}
+.info-icon {
+  width: 50px; height: 50px; border-radius: 50%;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white; display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; margin: 0 auto 12px;
+}
+.info-card h5 { font-weight: 700; color: #1e293b; margin-bottom: 8px; }
+.info-card p { color: #64748b; margin: 0; font-size: 0.9rem; line-height: 1.5; }
+
+.social-links { display: flex; gap: 10px; justify-content: center; margin-top: 8px; }
+.social-link {
+  width: 40px; height: 40px; border-radius: 50%; background: #f1f5f9;
+  display: flex; align-items: center; justify-content: center;
+  color: #475569; font-size: 1.1rem; text-decoration: none; transition: all 0.2s;
+}
+.social-link:hover { background: #667eea; color: white; transform: translateY(-2px); }
+
+@media (max-width: 768px) {
+  .contact-grid { grid-template-columns: 1fr; }
+  .contact-sidebar { order: -1; }
+}
+</style>

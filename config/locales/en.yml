@@ -253,3 +253,6 @@ en:
     failure:
       invalid: "Invalid Email or password."
       unauthenticated: "You need to sign in or sign up before continuing."
+  related_products: "You May Also Like"
+  my_wishlist: "My Wishlist"
+  categories: "Categories"

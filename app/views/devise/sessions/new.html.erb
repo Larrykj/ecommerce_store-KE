@@ -34,6 +34,23 @@
             </div>
           <% end %>
 
+          <!-- Social Login -->
+          <% if devise_mapping.omniauthable? %>
+            <div class="mt-4 text-center">
+              <div class="d-flex align-items-center gap-2 mb-3">
+                <hr class="flex-grow-1"><span class="text-muted small">or sign in with</span><hr class="flex-grow-1">
+              </div>
+              <div class="d-grid gap-2">
+                <%= button_to user_google_oauth2_omniauth_authorize_path, method: :post, class: "btn btn-outline-dark", data: { turbo: false } do %>
+                  <i class="bi bi-google me-2"></i>Continue with Google
+                <% end %>
+                <%= button_to user_github_omniauth_authorize_path, method: :post, class: "btn btn-outline-dark", data: { turbo: false } do %>
+                  <i class="bi bi-github me-2"></i>Continue with GitHub
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+
           <div class="mt-3">
             <%= render "devise/shared/links" %>
           </div>

@@ -1,0 +1,104 @@
+<%= render "pages/shared_styles" %>
+<div class="container py-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold mb-0"><i class="bi bi-columns-gap me-2 text-primary"></i>Compare Products</h2>
+    <% if @products.any? %>
+      <%= button_to "Clear All", clear_comparison_path, method: :delete, class: "btn btn-outline-danger btn-sm" %>
+    <% end %>
+  </div>
+
+  <% if @products.any? %>
+    <div class="table-responsive">
+      <table class="table table-bordered align-middle" style="border-radius: 12px; overflow: hidden;">
+        <thead class="table-light">
+          <tr>
+            <th style="width: 160px;">Feature</th>
+            <% @products.each do |product| %>
+              <th class="text-center" style="min-width: 200px;">
+                <% if product.image.attached? %>
+                  <%= image_tag product.image, width: 120, height: 120, style: "object-fit: cover; border-radius: 12px;" %>
+                <% end %>
+                <div class="mt-2">
+                  <%= link_to product.name, product_path(product), class: "fw-bold text-decoration-none", style: "color: #1e293b;" %>
+                </div>
+                <%= button_to remove_comparison_path(product_id: product.id), method: :delete, class: "btn btn-sm btn-outline-danger mt-1" do %>
+                  <i class="bi bi-x-lg"></i> Remove
+                <% end %>
+              </th>
+            <% end %>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="fw-bold">Price</td>
+            <% @products.each do |p| %>
+              <td class="text-center"><strong style="color: #667eea;"><%= format_price(p.price) %></strong></td>
+            <% end %>
+          </tr>
+          <tr>
+            <td class="fw-bold">Category</td>
+            <% @products.each do |p| %>
+              <td class="text-center"><%= p.category&.name || "—" %></td>
+            <% end %>
+          </tr>
+          <tr>
+            <td class="fw-bold">Rating</td>
+            <% @products.each do |p| %>
+              <td class="text-center">
+                <% p.average_rating.to_i.times do %><i class="bi bi-star-fill text-warning"></i><% end %>
+                <% (5 - p.average_rating.to_i).times do %><i class="bi bi-star text-warning"></i><% end %>
+                <br><small class="text-muted"><%= p.reviews.count %> reviews</small>
+              </td>
+            <% end %>
+          </tr>
+          <tr>
+            <td class="fw-bold">Availability</td>
+            <% @products.each do |p| %>
+              <td class="text-center">
+                <% if p.in_stock? %>
+                  <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>In Stock</span>
+                <% else %>
+                  <span class="badge bg-danger"><i class="bi bi-x-circle me-1"></i>Out of Stock</span>
+                <% end %>
+              </td>
+            <% end %>
+          </tr>
+          <tr>
+            <td class="fw-bold">Variants</td>
+            <% @products.each do |p| %>
+              <td class="text-center">
+                <% p.variants.each do |v| %>
+                  <span class="badge bg-light text-dark border mb-1"><%= v.name %> — <%= format_price(v.price || p.price) %></span><br>
+                <% end %>
+                <% if p.variants.empty? %><span class="text-muted">—</span><% end %>
+              </td>
+            <% end %>
+          </tr>
+          <tr>
+            <td class="fw-bold">Description</td>
+            <% @products.each do |p| %>
+              <td class="small"><%= p.description.truncate(200) %></td>
+            <% end %>
+          </tr>
+          <tr>
+            <td></td>
+            <% @products.each do |p| %>
+              <td class="text-center">
+                <%= link_to product_path(p), class: "btn btn-primary btn-sm" do %>
+                  <i class="bi bi-eye me-1"></i>View Product
+                <% end %>
+              </td>
+            <% end %>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="text-center py-5" style="background: #f8fafc; border-radius: 16px;">
+      <i class="bi bi-columns-gap text-primary" style="font-size: 3rem;"></i>
+      <h4 class="mt-3 fw-bold">No Products to Compare</h4>
+      <p class="text-muted">Add products to your comparison list from any product page.</p>
+      <%= link_to "Browse Products", products_path, class: "btn btn-primary" %>
+    </div>
+  <% end %>
+</div>
