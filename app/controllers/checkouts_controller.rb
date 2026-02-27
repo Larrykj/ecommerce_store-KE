@@ -54,7 +54,7 @@ class CheckoutsController < ApplicationController
             coupon_params[:percent_off] = @cart.promo_code.discount_value
           else
             coupon_params[:amount_off] = (@cart.discount_amount * 100).to_i
-            coupon_params[:currency] = "kes"
+            coupon_params[:currency] = STRIPE_CURRENCY
           end
           stripe_coupon = Stripe::Coupon.create(coupon_params)
           session_params[:discounts] = [ { coupon: stripe_coupon.id } ]
@@ -68,7 +68,7 @@ class CheckoutsController < ApplicationController
         @order.transactions.create!(
           stripe_checkout_session_id: session.id,
           amount: @order.total_price,
-          currency: "kes",
+          currency: STRIPE_CURRENCY,
           status: "pending"
         )
 
@@ -146,7 +146,7 @@ class CheckoutsController < ApplicationController
       product = cart_item.variant.product
       {
         price_data: {
-          currency: "kes",
+          currency: STRIPE_CURRENCY,
           product_data: {
             name: "#{product.name} — #{cart_item.variant.name}",
             description: product.description&.truncate(200)
@@ -160,7 +160,7 @@ class CheckoutsController < ApplicationController
     if @cart.shipping_cost > 0
       items << {
         price_data: {
-          currency: "kes",
+          currency: STRIPE_CURRENCY,
           product_data: { name: "Shipping — #{@cart.shipping_method.name}" },
           unit_amount: (@cart.shipping_cost * 100).to_i
         },
@@ -171,7 +171,7 @@ class CheckoutsController < ApplicationController
     if @cart.tax_amount > 0
       items << {
         price_data: {
-          currency: "kes",
+          currency: STRIPE_CURRENCY,
           product_data: { name: "Tax (16% VAT)" },
           unit_amount: (@cart.tax_amount * 100).to_i
         },

@@ -2,16 +2,16 @@
 
 one:
   product: one
-  sku: MyString
-  name: MyString
+  sku: SKU-TEST-001
+  name: Default Variant One
   price: 9.99
-  quantity: 1
+  quantity: 10
   lock_version: 1
 
 two:
   product: two
-  sku: MyString
-  name: MyString
-  price: 9.99
-  quantity: 1
+  sku: SKU-TEST-002
+  name: Default Variant Two
+  price: 19.99
+  quantity: 5
   lock_version: 1

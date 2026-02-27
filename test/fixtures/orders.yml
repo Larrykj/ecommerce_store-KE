@@ -1,13 +1,21 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  name: MyString
-  email: MyString
-  address: MyText
+  user: one
+  name: Test Order One
+  email: user1@example.com
+  address: 123 Test Street, Nairobi
+  phone: "+254700000001"
   total_price: 9.99
+  status: pending
+  payment_status: unpaid
 
 two:
-  name: MyString
-  email: MyString
-  address: MyText
-  total_price: 9.99
+  user: two
+  name: Test Order Two
+  email: user2@example.com
+  address: 456 Sample Road, Mombasa
+  phone: "+254700000002"
+  total_price: 19.99
+  status: processing
+  payment_status: paid
