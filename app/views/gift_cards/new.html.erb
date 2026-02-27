@@ -1,0 +1,44 @@
+<%= render "pages/shared_styles" %>
+<div class="container py-5" style="max-width: 600px;">
+  <h2 class="fw-bold mb-4"><i class="bi bi-gift me-2 text-primary"></i>Purchase Gift Card</h2>
+
+  <div class="card shadow-sm" style="border-radius: 16px; border: none;">
+    <div class="card-body p-4">
+      <%= form_with(model: @gift_card, local: true) do |f| %>
+        <% if @gift_card.errors.any? %>
+          <div class="alert alert-danger">
+            <ul class="mb-0"><% @gift_card.errors.full_messages.each do |msg| %><li><%= msg %></li><% end %></ul>
+          </div>
+        <% end %>
+
+        <div class="mb-3">
+          <%= f.label :initial_value, "Card Value (KSh)", class: "form-label fw-bold" %>
+          <div class="d-flex gap-2 mb-2">
+            <% [500, 1000, 2500, 5000, 10000].each do |value| %>
+              <button type="button" class="btn btn-outline-primary btn-sm preset-value" data-value="<%= value %>" onclick="document.getElementById('gift_card_initial_value').value=<%= value %>">
+                KSh <%= value.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse %>
+              </button>
+            <% end %>
+          </div>
+          <%= f.number_field :initial_value, class: "form-control", min: 100, step: 100, id: "gift_card_initial_value" %>
+        </div>
+
+        <div class="mb-3">
+          <%= f.label :recipient_email, "Recipient Email (optional)", class: "form-label fw-bold" %>
+          <%= f.email_field :recipient_email, class: "form-control", placeholder: "friend@example.com" %>
+          <small class="text-muted">Leave blank to keep the card for yourself.</small>
+        </div>
+
+        <div class="mb-4">
+          <%= f.label :expires_at, "Expiration Date (optional)", class: "form-label fw-bold" %>
+          <%= f.date_field :expires_at, class: "form-control", min: Date.tomorrow.to_s %>
+        </div>
+
+        <div class="d-flex gap-2">
+          <%= f.submit "Purchase Gift Card", class: "btn btn-primary px-4" %>
+          <%= link_to "Cancel", gift_cards_path, class: "btn btn-outline-secondary" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

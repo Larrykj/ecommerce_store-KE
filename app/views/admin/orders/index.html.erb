@@ -1,0 +1,39 @@
+<div class="admin-topbar">
+  <h1><i class="bi bi-receipt me-2"></i>Orders</h1>
+  <div class="topbar-actions">
+    <%= link_to admin_orders_path, class: "btn-admin btn-admin-outline #{'active' unless params[:status].present?}" do %>All<% end %>
+    <%= link_to admin_orders_path(status: "pending"), class: "btn-admin btn-admin-outline #{'active' if params[:status] == 'pending'}" do %>Pending<% end %>
+    <%= link_to admin_orders_path(status: "completed"), class: "btn-admin btn-admin-outline #{'active' if params[:status] == 'completed'}" do %>Completed<% end %>
+    <%= link_to admin_orders_path(status: "shipped"), class: "btn-admin btn-admin-outline #{'active' if params[:status] == 'shipped'}" do %>Shipped<% end %>
+  </div>
+</div>
+
+<div class="admin-card">
+  <div class="admin-card-body">
+    <table class="admin-table">
+      <thead>
+        <tr><th>Order #</th><th>Customer</th><th>Email</th><th>Total</th><th>Status</th><th>Date</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        <% @orders.each do |order| %>
+          <tr>
+            <td><strong>#<%= order.id %></strong></td>
+            <td><%= order.user&.name || order.name || "Guest" %></td>
+            <td class="text-muted"><%= order.user&.email || order.email %></td>
+            <td><strong><%= format_price(order.total_price) %></strong></td>
+            <td><span class="badge-status badge-<%= order.status || 'pending' %>"><%= (order.status || 'pending').capitalize %></span></td>
+            <td class="text-muted"><%= order.created_at.strftime("%b %d, %Y %H:%M") %></td>
+            <td>
+              <%= link_to admin_order_path(order), class: "btn btn-sm btn-outline-primary" do %>
+                <i class="bi bi-eye"></i> View
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+        <% if @orders.empty? %>
+          <tr><td colspan="7" class="text-center text-muted py-4">No orders found</td></tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

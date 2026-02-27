@@ -1,0 +1,81 @@
+<%= render "pages/shared_styles" %>
+<div class="container py-5" style="max-width: 800px;">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="fw-bold mb-0">Invoice #<%= @order.id %></h2>
+      <p class="text-muted mb-0"><%= @order.created_at.strftime("%B %d, %Y") %></p>
+    </div>
+    <div>
+      <%= link_to order_invoice_path(@order, format: :pdf), class: "btn btn-primary", target: "_blank" do %>
+        <i class="bi bi-download me-1"></i>Download PDF
+      <% end %>
+    </div>
+  </div>
+
+  <div class="card shadow-sm" style="border-radius: 16px; border: none;">
+    <div class="card-body p-4">
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <h6 class="text-muted">Bill To</h6>
+          <strong><%= @order.user&.name || @order.name %></strong><br>
+          <span class="text-muted"><%= @order.user&.email || @order.email %></span>
+        </div>
+        <div class="col-md-6 text-md-end">
+          <h6 class="text-muted">Payment Status</h6>
+          <span class="badge rounded-pill <%= @order.paid? ? 'bg-success' : 'bg-warning text-dark' %>" style="font-size: 0.9rem;">
+            <%= @order.paid? ? "PAID" : "UNPAID" %>
+          </span>
+        </div>
+      </div>
+
+      <table class="table">
+        <thead class="table-light">
+          <tr><th>Item</th><th>SKU</th><th class="text-end">Qty</th><th class="text-end">Price</th><th class="text-end">Total</th></tr>
+        </thead>
+        <tbody>
+          <% @order.order_items.each do |item| %>
+            <tr>
+              <td><%= item.variant&.product&.name %></td>
+              <td class="text-muted"><%= item.variant&.sku %></td>
+              <td class="text-end"><%= item.quantity %></td>
+              <td class="text-end"><%= format_price(item.price) %></td>
+              <td class="text-end fw-bold"><%= format_price(item.price * item.quantity) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="4" class="text-end">Subtotal</td>
+            <td class="text-end fw-bold"><%= format_price(@order.order_items.sum { |i| i.price * i.quantity }) %></td>
+          </tr>
+          <% if @order.discount_amount.to_d > 0 %>
+            <tr>
+              <td colspan="4" class="text-end text-success">Discount (<%= @order.promo_code&.code %>)</td>
+              <td class="text-end text-success fw-bold">-<%= format_price(@order.discount_amount) %></td>
+            </tr>
+          <% end %>
+          <% if @order.shipping_cost.to_d > 0 %>
+            <tr>
+              <td colspan="4" class="text-end">Shipping</td>
+              <td class="text-end fw-bold"><%= format_price(@order.shipping_cost) %></td>
+            </tr>
+          <% end %>
+          <% if @order.tax_amount.to_d > 0 %>
+            <tr>
+              <td colspan="4" class="text-end">Tax (<%= (@order.tax_rate.to_f * 100).to_i %>% VAT)</td>
+              <td class="text-end fw-bold"><%= format_price(@order.tax_amount) %></td>
+            </tr>
+          <% end %>
+          <tr style="border-top: 3px solid #1e293b;">
+            <td colspan="4" class="text-end"><strong style="font-size: 1.1rem;">TOTAL</strong></td>
+            <td class="text-end"><strong style="font-size: 1.1rem; color: #667eea;"><%= format_price(@order.total_price) %></strong></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+
+  <div class="text-center mt-4">
+    <%= link_to "← Back to Order", order_path(@order), class: "btn btn-outline-secondary" %>
+  </div>
+</div>

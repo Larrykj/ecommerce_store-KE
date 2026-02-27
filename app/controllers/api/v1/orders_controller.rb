@@ -1,0 +1,52 @@
+# frozen_string_literal: true
+
+module Api
+  module V1
+    class OrdersController < BaseController
+      def index
+        orders = current_api_user.orders.order(created_at: :desc).limit(params[:limit] || 20)
+        render json: {
+          orders: orders.map { |o| serialize_order(o) }
+        }
+      end
+
+      def show
+        order = current_api_user.orders.find(params[:id])
+        render json: { order: serialize_order(order, full: true) }
+      rescue ActiveRecord::RecordNotFound
+        render json: { error: "Order not found" }, status: :not_found
+      end
+
+      private
+
+      def serialize_order(order, full: false)
+        data = {
+          id: order.id,
+          status: order.status,
+          payment_status: order.payment_status,
+          total_price: order.total_price.to_f,
+          created_at: order.created_at
+        }
+
+        if full
+          data[:items] = order.order_items.map { |i|
+            {
+              product: i.variant&.product&.name,
+              variant: i.variant&.name,
+              sku: i.variant&.sku,
+              quantity: i.quantity,
+              price: i.price.to_f,
+              total: (i.price * i.quantity).to_f
+            }
+          }
+          data[:shipping_method] = order.shipping_method&.name
+          data[:discount] = order.discount_amount.to_f
+          data[:tax] = order.tax_amount.to_f
+          data[:shipping_cost] = order.shipping_cost.to_f
+        end
+
+        data
+      end
+    end
+  end
+end

@@ -204,17 +204,52 @@
               <%= render partial: "product_card", locals: { product: product } %>
             <% end %>
           </div>
+          <div class="d-flex justify-content-center mt-4 mb-5">
+            <%== @pagy.series_nav(:bootstrap) if @pagy.pages > 1 %>
+          </div>
         <% else %>
           <div class="empty-state">
             <i class="bi bi-search empty-icon"></i>
             <h3><%= t("no_products_found") %></h3>
             <p><%= t("try_adjusting_search") %></p>
-            <% if @active_filters_count.to_i > 0 %>
-              <%= link_to t("clear_filters"), products_path, class: "btn btn-outline-primary" %>
+            <% if params[:search].present? %>
+              <p class="text-muted small mb-3">Suggestions: Try broader keywords, check your spelling, or browse by category.</p>
             <% end %>
+            <% if @active_filters_count.to_i > 0 %>
+              <%= link_to t("clear_filters"), products_path, class: "btn btn-outline-primary me-2" %>
+            <% end %>
+            <%= link_to "Browse All Products", products_path, class: "btn btn-primary" %>
           </div>
         <% end %>
       </div>
+    </div>
+
+    <!-- Recently Viewed Products -->
+    <% if current_user %>
+      <% 
+        recent_ids = current_user.product_views.order(created_at: :desc).limit(20).pluck(:product_id).uniq.reject { |id| @products.map(&:id).include?(id) }.first(4)
+        recently_viewed = Product.kept.where(id: recent_ids).index_by(&:id).values_at(*recent_ids).compact
+      %>
+      <% if recently_viewed.any? %>
+        <div class="recently-viewed-section mt-5 mb-4 px-3">
+          <h3 class="mb-4 fw-bold" style="color: #1e293b;"><i class="bi bi-clock-history text-primary me-2"></i>Recently Viewed</h3>
+          <div class="products-grid">
+            <% recently_viewed.each do |product| %>
+              <%= render partial: "product_card", locals: { product: product } %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+
+    <!-- Newsletter Signup -->
+    <div class="newsletter-section mt-4 mb-5 mx-3 p-4 text-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 20px; color: white;">
+      <h3 class="fw-bold mb-2"><i class="bi bi-envelope-heart me-2"></i>Stay Updated</h3>
+      <p class="mb-3 opacity-75">Subscribe to our newsletter for the latest deals and new arrivals.</p>
+      <%= form_with url: subscribers_path, method: :post, local: true, class: "d-flex gap-2 justify-content-center", style: "max-width: 500px; margin: 0 auto;" do |f| %>
+        <%= f.email_field :email, placeholder: "Enter your email address", class: "form-control", required: true, value: current_user&.email, style: "border-radius: 50px; padding: 12px 20px;" %>
+        <%= f.submit "Subscribe", class: "btn btn-light fw-bold px-4", style: "border-radius: 50px; color: #667eea;" %>
+      <% end %>
     </div>
   </div>
 </div>

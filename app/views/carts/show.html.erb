@@ -23,6 +23,7 @@
             <tr>
               <td>
                 <%= link_to item.product.name, product_path(item.product) %>
+                <br><small class="text-muted"><%= item.variant.name_with_sku %></small>
               </td>
               <td><%= format_price(item.variant.price || item.product.price) %></td>
               <td>
@@ -40,16 +41,71 @@
         </tbody>
         <tfoot>
           <tr>
-            <td colspan="3" class="text-end"><strong><%= t('total') %></strong></td>
-            <td colspan="2"><strong><%= format_price(@cart.total_price) %></strong></td>
+            <td colspan="4" class="text-end"><strong>Subtotal</strong></td>
+            <td><strong><%= format_price(@cart.subtotal) %></strong></td>
+          </tr>
+          <% if @cart.discount_amount > 0 %>
+            <tr>
+              <td colspan="4" class="text-end text-success">
+                <strong>Discount (<%= @cart.promo_code&.code %>)</strong>
+              </td>
+              <td class="text-success"><strong>-<%= format_price(@cart.discount_amount) %></strong></td>
+            </tr>
+          <% end %>
+          <tr>
+            <td colspan="4" class="text-end"><strong>Shipping (<%= @cart.shipping_method&.name || 'Pending' %>)</strong></td>
+            <td><strong><%= @cart.shipping_cost > 0 ? format_price(@cart.shipping_cost) : 'Free' %></strong></td>
+          </tr>
+          <tr>
+            <td colspan="4" class="text-end"><strong>Tax (16% VAT)</strong></td>
+            <td><strong><%= format_price(@cart.tax_amount) %></strong></td>
+          </tr>
+          <tr>
+            <td colspan="4" class="text-end"><strong><%= t('total') %></strong></td>
+            <td><strong style="font-size:1.25rem;"><%= format_price(@cart.total_price) %></strong></td>
           </tr>
         </tfoot>
       </table>
     </div>
 
-    <div class="mt-3">
-      <%= link_to t('continue_shopping'), products_path, class: 'btn btn-secondary' %>
-     <%= link_to t('checkout'), new_order_path, class: 'btn btn-success' %>
+    <div class="row mt-4">
+      <div class="col-md-6 mb-3">
+        <div class="card shadow-sm border-0">
+          <div class="card-body">
+            <h5 class="card-title mb-3"><i class="bi bi-tag me-2"></i>Promo Code</h5>
+            <% if @cart.promo_code %>
+              <div class="d-flex align-items-center justify-content-between p-3 bg-light rounded text-success fw-bold">
+                <span><i class="bi bi-check-circle me-1"></i> Code Applied: <%= @cart.promo_code.code %></span>
+                <%= button_to "Remove", remove_promo_cart_path, method: :delete, class: "btn btn-sm btn-outline-danger" %>
+              </div>
+            <% else %>
+              <%= form_with url: apply_promo_cart_path, method: :post, local: true, class: "d-flex gap-2" do |f| %>
+                <%= f.text_field :code, class: "form-control", placeholder: "Enter promo code..." %>
+                <%= f.submit "Apply", class: "btn btn-primary px-4" %>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+
+        <% if @shipping_methods.any? %>
+          <div class="card shadow-sm border-0 mt-3">
+            <div class="card-body">
+              <h5 class="card-title mb-3"><i class="bi bi-truck me-2"></i>Shipping Method</h5>
+              <%= form_with url: update_shipping_cart_path, method: :patch, local: true, class: "d-flex gap-2 align-items-center" do |f| %>
+                <%= f.select :shipping_method_id, options_from_collection_for_select(@shipping_methods, :id, ->(m) { "#{m.name} (#{m.base_rate == 0 ? 'Free' : format_price(m.base_rate)})" }, @cart.shipping_method_id), {}, class: "form-select" %>
+                <%= f.submit "Update", class: "btn btn-outline-primary" %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      <div class="col-md-6 text-end d-flex flex-column justify-content-center align-items-end">
+        <div class="mt-3">
+          <%= link_to t('continue_shopping'), products_path, class: 'btn btn-secondary' %>
+          <%= link_to t('checkout'), new_order_path, class: 'btn btn-success' %>
+        </div>
+      </div>
+      </div>
     </div>
   <% end %>
 </div>

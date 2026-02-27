@@ -1,0 +1,45 @@
+<div class="admin-topbar">
+  <h1><i class="bi bi-people me-2"></i>Users</h1>
+  <div class="topbar-actions">
+    <span class="text-muted"><%= @users.count %> registered users</span>
+  </div>
+</div>
+
+<div class="admin-card">
+  <div class="admin-card-body">
+    <table class="admin-table">
+      <thead>
+        <tr><th>Name</th><th>Email</th><th>Role</th><th>Orders</th><th>Joined</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        <% @users.each do |user| %>
+          <tr>
+            <td><strong><%= user.name %></strong></td>
+            <td class="text-muted"><%= user.email %></td>
+            <td>
+              <% if user.admin? %>
+                <span class="badge-status badge-admin"><i class="bi bi-shield-check me-1"></i>Admin</span>
+              <% else %>
+                <span class="badge-status badge-user">Customer</span>
+              <% end %>
+            </td>
+            <td><%= user.orders.count %></td>
+            <td class="text-muted"><%= user.created_at.strftime("%b %d, %Y") %></td>
+            <td>
+              <div class="d-flex gap-2">
+                <%= link_to admin_user_path(user), class: "btn btn-sm btn-outline-primary" do %>
+                  <i class="bi bi-eye"></i>
+                <% end %>
+                <% unless user == current_user %>
+                  <%= button_to toggle_admin_admin_user_path(user), method: :patch, class: "btn btn-sm #{user.admin? ? 'btn-outline-danger' : 'btn-outline-success'}", data: { turbo_confirm: "#{user.admin? ? 'Remove' : 'Grant'} admin access for #{user.name}?" } do %>
+                    <i class="bi bi-shield-<%= user.admin? ? 'x' : 'check' %>"></i>
+                  <% end %>
+                <% end %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

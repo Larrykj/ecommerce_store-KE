@@ -1,0 +1,57 @@
+<div class="admin-topbar">
+  <div>
+    <h1><i class="bi bi-truck me-2"></i>Shipping Methods</h1>
+    <p class="text-muted mb-0"><%= @shipping_methods.count %> method(s) configured</p>
+  </div>
+  <div class="topbar-actions">
+    <%= link_to new_admin_shipping_method_path, class: "btn-admin btn-admin-primary" do %>
+      <i class="bi bi-plus-circle me-1"></i> New Shipping Method
+    <% end %>
+  </div>
+</div>
+
+<div class="admin-card">
+  <div class="admin-card-body">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Base Rate</th>
+          <th>Est. Days</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @shipping_methods.each do |sm| %>
+          <tr>
+            <td><strong><%= sm.name %></strong></td>
+            <td><%= format_price(sm.base_rate) %></td>
+            <td><%= sm.estimated_days %> day(s)</td>
+            <td>
+              <span class="badge-status <%= sm.active? ? 'badge-delivered' : 'badge-cancelled' %>">
+                <%= sm.active? ? "Active" : "Inactive" %>
+              </span>
+            </td>
+            <td>
+              <div class="d-flex gap-2">
+                <%= link_to edit_admin_shipping_method_path(sm), class: "btn-admin btn-admin-outline btn-sm" do %>
+                  <i class="bi bi-pencil"></i>
+                <% end %>
+                <%= button_to toggle_active_admin_shipping_method_path(sm), method: :patch, class: "btn-admin btn-admin-outline btn-sm" do %>
+                  <i class="bi bi-<%= sm.active? ? 'pause-circle' : 'play-circle' %>"></i>
+                <% end %>
+                <%= button_to admin_shipping_method_path(sm), method: :delete, data: { turbo_confirm: "Delete this shipping method?" }, class: "btn-admin btn-admin-danger btn-sm" do %>
+                  <i class="bi bi-trash"></i>
+                <% end %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+        <% if @shipping_methods.empty? %>
+          <tr><td colspan="5" class="text-center text-muted py-4">No shipping methods configured</td></tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

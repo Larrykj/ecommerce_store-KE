@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
   require_relative "../services/exchange_rate_service"
+  include Pagy::Method
 
   before_action :initialize_cart
 

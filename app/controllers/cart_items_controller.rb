@@ -3,9 +3,7 @@ class CartItemsController < ApplicationController
 
   # POST /cart_items
   def create
-    product = Product.find(params[:product_id])
-    variant = product.variants.first
-
+    variant = Variant.find(params[:variant_id])
     @cart_item = @cart.cart_items.find_by(variant: variant)
 
     if @cart_item
@@ -14,7 +12,7 @@ class CartItemsController < ApplicationController
       @cart_item.save
       redirect_to cart_path, notice: t("cart_quantity_updated")
     else
-      # Add new product to cart
+      # Add new variant to cart
       @cart_item = @cart.cart_items.create(variant: variant, quantity: 1)
       redirect_to cart_path, notice: t("cart_product_added")
     end

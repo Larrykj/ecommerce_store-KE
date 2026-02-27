@@ -1,0 +1,25 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  order: one
+  stripe_payment_intent_id: MyString
+  stripe_checkout_session_id: MyString
+  amount: 9.99
+  currency: MyString
+  status: MyString
+  payment_method: MyString
+  error_message: MyText
+  refund_amount: 9.99
+  refunded_at: 2026-02-26 19:31:41
+
+two:
+  order: two
+  stripe_payment_intent_id: MyString
+  stripe_checkout_session_id: MyString
+  amount: 9.99
+  currency: MyString
+  status: MyString
+  payment_method: MyString
+  error_message: MyText
+  refund_amount: 9.99
+  refunded_at: 2026-02-26 19:31:41

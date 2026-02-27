@@ -1,0 +1,89 @@
+<div class="container" style="max-width: 600px; padding: 30px 0;">
+  <nav class="breadcrumb-nav" style="display: flex; align-items: center; gap: 10px; margin-bottom: 24px; font-size: 0.9rem;">
+    <%= link_to "My Account", profile_path, style: "color: #667eea; text-decoration: none;" %>
+    <i class="bi bi-chevron-right" style="color: #cbd5e1; font-size: 0.75rem;"></i>
+    <span style="color: #64748b;"><%= @address.new_record? ? "New Address" : "Edit Address" %></span>
+  </nav>
+
+  <div style="background: white; border-radius: 20px; padding: 32px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
+    <h2 style="margin: 0 0 24px; font-weight: 800; color: #1e293b;">
+      <i class="bi bi-geo-alt me-2" style="color: #667eea;"></i><%= @address.new_record? ? "Add New Address" : "Edit Address" %>
+    </h2>
+
+    <%= form_with model: @address, local: true do |f| %>
+      <% if @address.errors.any? %>
+        <div class="alert alert-danger" style="border-radius: 12px;">
+          <strong><%= pluralize(@address.errors.count, "error") %> prevented this address from being saved:</strong>
+          <ul class="mb-0 mt-2">
+            <% @address.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="mb-3">
+        <%= f.label :label, "Address Label", class: "form-label fw-bold" %>
+        <%= f.select :label, ["Home", "Work", "Office", "Other"], {}, class: "form-select", style: "border-radius: 10px; padding: 12px;" %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :name, "Full Name", class: "form-label fw-bold" %>
+        <%= f.text_field :name, class: "form-control", style: "border-radius: 10px; padding: 12px;", placeholder: "Recipient's full name" %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :phone, "Phone Number", class: "form-label fw-bold" %>
+        <%= f.text_field :phone, class: "form-control", style: "border-radius: 10px; padding: 12px;", placeholder: "+254 7XX XXX XXX" %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :address_line_1, "Address Line 1", class: "form-label fw-bold" %>
+        <%= f.text_field :address_line_1, class: "form-control", style: "border-radius: 10px; padding: 12px;", placeholder: "Street address, building, etc." %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :address_line_2, "Address Line 2 (Optional)", class: "form-label fw-bold" %>
+        <%= f.text_field :address_line_2, class: "form-control", style: "border-radius: 10px; padding: 12px;", placeholder: "Apartment, floor, etc." %>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <%= f.label :city, "City", class: "form-label fw-bold" %>
+          <%= f.text_field :city, class: "form-control", style: "border-radius: 10px; padding: 12px;", placeholder: "e.g. Nairobi" %>
+        </div>
+        <div class="col-md-6 mb-3">
+          <%= f.label :state, "State / County (Optional)", class: "form-label fw-bold" %>
+          <%= f.text_field :state, class: "form-control", style: "border-radius: 10px; padding: 12px;", placeholder: "e.g. Nairobi County" %>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <%= f.label :postal_code, "Postal Code (Optional)", class: "form-label fw-bold" %>
+          <%= f.text_field :postal_code, class: "form-control", style: "border-radius: 10px; padding: 12px;", placeholder: "e.g. 00100" %>
+        </div>
+        <div class="col-md-6 mb-3">
+          <%= f.label :country, "Country", class: "form-label fw-bold" %>
+          <%= f.text_field :country, class: "form-control", style: "border-radius: 10px; padding: 12px;" %>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <div class="form-check">
+          <%= f.check_box :default, class: "form-check-input" %>
+          <%= f.label :default, "Set as default address", class: "form-check-label" %>
+        </div>
+      </div>
+
+      <div class="d-flex gap-3">
+        <%= f.submit @address.new_record? ? "Save Address" : "Update Address",
+            class: "btn btn-lg flex-grow-1",
+            style: "background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 12px; font-weight: 700;" %>
+        <%= link_to "Cancel", profile_path,
+            class: "btn btn-lg",
+            style: "background: #f1f5f9; color: #475569; border: none; border-radius: 12px; font-weight: 600;" %>
+      </div>
+    <% end %>
+  </div>
+</div>

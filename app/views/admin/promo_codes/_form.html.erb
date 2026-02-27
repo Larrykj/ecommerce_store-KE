@@ -1,0 +1,58 @@
+<%= form_with model: [:admin, @promo_code], local: true do |form| %>
+  <% if @promo_code.errors.any? %>
+    <div class="alert alert-danger">
+      <h5><%= pluralize(@promo_code.errors.count, "error") %> prohibited this promo code from being saved:</h5>
+      <ul>
+        <% @promo_code.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row g-3">
+    <div class="col-md-6">
+      <%= form.label :code, class: "form-label fw-bold" %>
+      <%= form.text_field :code, class: "form-control", style: "text-transform: uppercase;", required: true %>
+      <small class="text-muted">e.g. SUMMER2026</small>
+    </div>
+    <div class="col-md-6">
+      <%= form.label :description, class: "form-label fw-bold" %>
+      <%= form.text_field :description, class: "form-control" %>
+    </div>
+
+    <div class="col-md-4">
+      <%= form.label :discount_type, class: "form-label fw-bold" %>
+      <%= form.select :discount_type, [["Percentage (%)", "percentage"], ["Flat Amount", "flat"]], {}, class: "form-select" %>
+    </div>
+    <div class="col-md-4">
+      <%= form.label :discount_value, class: "form-label fw-bold" %>
+      <%= form.number_field :discount_value, step: "0.01", class: "form-control", required: true %>
+    </div>
+    <div class="col-md-4">
+      <%= form.label :min_order_amount, "Min Order Amount (Optional)", class: "form-label fw-bold" %>
+      <%= form.number_field :min_order_amount, step: "0.01", class: "form-control" %>
+    </div>
+
+    <div class="col-md-6">
+      <%= form.label :max_uses, "Max Uses (Optional)", class: "form-label fw-bold" %>
+      <%= form.number_field :max_uses, class: "form-control" %>
+    </div>
+    <div class="col-md-6">
+      <%= form.label :expires_at, "Expiration Date (Optional)", class: "form-label fw-bold" %>
+      <%= form.datetime_field :expires_at, class: "form-control" %>
+    </div>
+
+    <div class="col-12">
+      <div class="form-check form-switch mt-2">
+        <%= form.check_box :active, class: "form-check-input", id: "activeSwitch" %>
+        <%= form.label :active, "Active", class: "form-check-label", for: "activeSwitch" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-4 pt-3 border-top d-flex gap-2">
+    <%= form.submit class: "btn btn-primary" %>
+    <%= link_to "Cancel", admin_promo_codes_path, class: "btn btn-outline-secondary" %>
+  </div>
+<% end %>

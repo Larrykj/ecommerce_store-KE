@@ -1,0 +1,109 @@
+<div class="static-page">
+  <div class="container" style="max-width: 800px;">
+    <div class="page-hero">
+      <h1><i class="bi bi-question-circle me-2"></i>Frequently Asked Questions</h1>
+      <p class="lead">Quick answers to common questions</p>
+    </div>
+
+    <div class="page-content">
+      <div class="accordion" id="faqAccordion">
+
+        <div class="faq-item">
+          <button class="faq-question" data-bs-toggle="collapse" data-bs-target="#faq1">
+            <span>How do I place an order?</span>
+            <i class="bi bi-chevron-down"></i>
+          </button>
+          <div id="faq1" class="collapse show" data-bs-parent="#faqAccordion">
+            <div class="faq-answer">
+              <p>Simply browse our products, add items to your cart, and proceed to checkout. You can pay securely using M-Pesa or card payment through Stripe. Once your order is confirmed, you'll receive a confirmation email.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question collapsed" data-bs-toggle="collapse" data-bs-target="#faq2">
+            <span>What payment methods do you accept?</span>
+            <i class="bi bi-chevron-down"></i>
+          </button>
+          <div id="faq2" class="collapse" data-bs-parent="#faqAccordion">
+            <div class="faq-answer">
+              <p>We accept credit/debit cards (Visa, Mastercard, American Express) through Stripe. All payments are processed securely with full encryption.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question collapsed" data-bs-toggle="collapse" data-bs-target="#faq3">
+            <span>How long does shipping take?</span>
+            <i class="bi bi-chevron-down"></i>
+          </button>
+          <div id="faq3" class="collapse" data-bs-parent="#faqAccordion">
+            <div class="faq-answer">
+              <p>Shipping times vary depending on your location and the shipping method selected. Standard delivery within Nairobi takes 1-3 business days. Nationwide delivery takes 3-7 business days. See our <%= link_to "Shipping Info", shipping_info_path, style: "color: #667eea; font-weight: 600;" %> page for more details.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question collapsed" data-bs-toggle="collapse" data-bs-target="#faq4">
+            <span>Can I return an item?</span>
+            <i class="bi bi-chevron-down"></i>
+          </button>
+          <div id="faq4" class="collapse" data-bs-parent="#faqAccordion">
+            <div class="faq-answer">
+              <p>Yes! We offer a 14-day return policy for most items. Please visit our <%= link_to "Return Policy", return_policy_path, style: "color: #667eea; font-weight: 600;" %> page for complete details on returns and refunds.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question collapsed" data-bs-toggle="collapse" data-bs-target="#faq5">
+            <span>How do I track my order?</span>
+            <i class="bi bi-chevron-down"></i>
+          </button>
+          <div id="faq5" class="collapse" data-bs-parent="#faqAccordion">
+            <div class="faq-answer">
+              <p>Once your order is shipped, you'll receive a tracking number via email. You can also track your order by visiting <strong>My Orders</strong> in your account dashboard and clicking on the specific order.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question collapsed" data-bs-toggle="collapse" data-bs-target="#faq6">
+            <span>How do I use a promo code?</span>
+            <i class="bi bi-chevron-down"></i>
+          </button>
+          <div id="faq6" class="collapse" data-bs-parent="#faqAccordion">
+            <div class="faq-answer">
+              <p>Add items to your cart, then on the cart page, you'll see an "Apply Promo Code" section. Enter your code and click Apply. The discount will be reflected in your order total before checkout.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="content-card" style="text-align: center; margin-top: 30px;">
+        <h4>Still have questions?</h4>
+        <p>Our support team is here to help.</p>
+        <%= link_to new_contact_message_path, class: "btn-cta" do %>
+          <i class="bi bi-headset me-2"></i>Contact Support
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= render "pages/shared_styles" %>
+
+<style>
+.faq-item { background: white; border-radius: 14px; margin-bottom: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); overflow: hidden; }
+.faq-question {
+  width: 100%; display: flex; justify-content: space-between; align-items: center;
+  padding: 20px 24px; border: none; background: none; font-size: 1rem;
+  font-weight: 600; color: #1e293b; cursor: pointer; text-align: left;
+}
+.faq-question i { transition: transform 0.3s; color: #667eea; }
+.faq-question:not(.collapsed) i { transform: rotate(180deg); }
+.faq-answer { padding: 0 24px 20px; }
+.faq-answer p { color: #475569; line-height: 1.7; margin: 0; }
+</style>

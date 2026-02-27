@@ -1,0 +1,53 @@
+<%= render "pages/shared_styles" %>
+<div class="container py-5" style="max-width: 700px;">
+  <nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><%= link_to "My Orders", orders_path %></li>
+      <li class="breadcrumb-item"><%= link_to "Order ##{@order.id}", order_path(@order) %></li>
+      <li class="breadcrumb-item active">Return Request</li>
+    </ol>
+  </nav>
+
+  <div class="card shadow-sm" style="border-radius: 16px; border: none;">
+    <div class="card-body p-4">
+      <h2 class="fw-bold mb-1"><i class="bi bi-arrow-return-left me-2 text-primary"></i>Request a Return</h2>
+      <p class="text-muted mb-4">Order #<%= @order.id %> — placed <%= @order.created_at.strftime("%B %d, %Y") %></p>
+
+      <%= form_with(model: @return_request, url: order_return_requests_path(@order), local: true) do |f| %>
+        <% if @return_request.errors.any? %>
+          <div class="alert alert-danger">
+            <ul class="mb-0"><% @return_request.errors.full_messages.each do |msg| %><li><%= msg %></li><% end %></ul>
+          </div>
+        <% end %>
+
+        <div class="mb-3">
+          <%= f.label :reason, "Reason for Return", class: "form-label fw-bold" %>
+          <%= f.select :reason, ReturnRequest::REASONS, { prompt: "Select a reason..." }, class: "form-select" %>
+        </div>
+
+        <div class="mb-4">
+          <%= f.label :description, "Please describe the issue", class: "form-label fw-bold" %>
+          <%= f.text_area :description, class: "form-control", rows: 5, placeholder: "Provide details about why you're requesting a return..." %>
+        </div>
+
+        <h6 class="fw-bold mb-3">Items in this order:</h6>
+        <div class="list-group mb-4">
+          <% @order.order_items.each do |item| %>
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                <strong><%= item.variant&.product&.name %></strong>
+                <br><small class="text-muted"><%= item.variant&.name_with_sku %> × <%= item.quantity %></small>
+              </div>
+              <span class="fw-bold"><%= format_price(item.price * item.quantity) %></span>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="d-flex gap-2">
+          <%= f.submit "Submit Return Request", class: "btn btn-primary px-4" %>
+          <%= link_to "Cancel", order_path(@order), class: "btn btn-outline-secondary" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

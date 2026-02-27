@@ -42,8 +42,9 @@
       <div class="product-price">
         <span class="amount"><%= format_price(product.price.to_i) %></span>
       </div>
-      <% if product.in_stock? %>
-        <%= button_to cart_items_path(product_id: product.id), method: :post, class: "add-cart-btn", title: t("add_to_cart") do %>
+      <% first_variant = product.variants.where("quantity > 0").first %>
+      <% if first_variant %>
+        <%= button_to cart_items_path(variant_id: first_variant.id), method: :post, class: "add-cart-btn", title: t("add_to_cart") do %>
           <i class="bi bi-cart-plus"></i>
         <% end %>
       <% end %>

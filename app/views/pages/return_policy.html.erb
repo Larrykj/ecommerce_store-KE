@@ -1,0 +1,59 @@
+<div class="static-page">
+  <div class="container" style="max-width: 800px;">
+    <div class="page-hero">
+      <h1><i class="bi bi-arrow-return-left me-2"></i>Return Policy</h1>
+      <p class="lead">We want you to be happy with your purchase</p>
+    </div>
+
+    <div class="page-content">
+      <div class="content-card highlight">
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <div style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
+            <i class="bi bi-clock-history"></i>
+          </div>
+          <div>
+            <h4 style="margin: 0; color: #1e293b;">14-Day Return Window</h4>
+            <p style="margin: 4px 0 0; color: #64748b;">You have 14 days from delivery to initiate a return</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-card">
+        <h3>Eligible Items</h3>
+        <ul>
+          <li>Items must be unused, in original packaging, and in the same condition as received</li>
+          <li>Electronics must include all accessories and manuals</li>
+          <li>Fashion items must have original tags attached</li>
+          <li>Home & Living items must be undamaged</li>
+        </ul>
+      </div>
+
+      <div class="content-card">
+        <h3>Non-Returnable Items</h3>
+        <ul>
+          <li>Grocery and perishable items</li>
+          <li>Beauty & Personal Care products (for hygiene reasons)</li>
+          <li>Items marked as "Final Sale"</li>
+          <li>Customized or personalized items</li>
+        </ul>
+      </div>
+
+      <div class="content-card">
+        <h3>How to Return</h3>
+        <ol>
+          <li><strong>Contact us</strong> — <%= link_to "Send a message", new_contact_message_path, style: "color: #667eea; font-weight: 600;" %> with your order number and reason for return</li>
+          <li><strong>Receive approval</strong> — We'll review your request within 2 business days</li>
+          <li><strong>Ship it back</strong> — We'll provide a return shipping label or pickup arrangement</li>
+          <li><strong>Get refunded</strong> — Refund is processed within 5-7 business days of receiving the item</li>
+        </ol>
+      </div>
+
+      <div class="content-card">
+        <h3>Refund Method</h3>
+        <p>Refunds are issued to the original payment method used for the purchase. Shipping costs are refundable only if the return is due to our error (wrong item, defective product, etc.).</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= render "pages/shared_styles" %>

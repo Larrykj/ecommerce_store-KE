@@ -1,0 +1,107 @@
+<div class="admin-topbar">
+  <h1><i class="bi bi-receipt me-2"></i>Order #<%= @order.id %></h1>
+  <%= link_to admin_orders_path, class: "btn-admin btn-admin-outline" do %>
+    <i class="bi bi-arrow-left me-1"></i> Back to Orders
+  <% end %>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-8">
+    <!-- Order Items -->
+    <div class="admin-card mb-4">
+      <div class="admin-card-header">
+        <h5>Order Items</h5>
+      </div>
+      <div class="admin-card-body">
+        <table class="admin-table">
+          <thead>
+            <tr><th>Product</th><th>Variant</th><th>Price</th><th>Qty</th><th>Subtotal</th></tr>
+          </thead>
+          <tbody>
+            <% @order_items.each do |item| %>
+              <tr>
+                <td><strong><%= item.variant&.product&.name || "Deleted Product" %></strong></td>
+                <td><%= item.variant&.name_with_sku || "N/A" %></td>
+                <td><%= format_price(item.price) %></td>
+                <td><%= item.quantity %></td>
+                <td><strong><%= format_price(item.price * item.quantity) %></strong></td>
+              </tr>
+            <% end %>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="4" class="text-end"><strong>Total:</strong></td>
+              <td><strong style="font-size: 1.1rem; color: #4f46e5;"><%= format_price(@order.total_price) %></strong></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <!-- Order Info -->
+    <div class="admin-card mb-4" style="padding: 24px;">
+      <h5 class="mb-3"><i class="bi bi-info-circle me-2"></i>Order Details</h5>
+      <div class="mb-3">
+        <small class="text-muted">Status</small>
+        <div><span class="badge-status badge-<%= @order.status || 'pending' %>"><%= (@order.status || 'pending').capitalize %></span></div>
+      </div>
+      <div class="mb-3">
+        <small class="text-muted">Date</small>
+        <div><%= @order.created_at.strftime("%B %d, %Y at %H:%M") %></div>
+      </div>
+      <div class="mb-3">
+        <small class="text-muted">Customer</small>
+        <div><strong><%= @order.user&.name || @order.name %></strong></div>
+        <div class="text-muted"><%= @order.user&.email || @order.email %></div>
+      </div>
+      <hr>
+      <h6 class="mb-2">Update Status</h6>
+      <%= form_with model: @order, url: admin_order_path(@order), method: :patch, local: true do |f| %>
+        <div class="d-flex gap-2">
+          <%= f.select :status, [["Pending", "pending"], ["Processing", "processing"], ["Shipped", "shipped"], ["Delivered", "delivered"], ["Cancelled", "cancelled"]], { selected: @order.status || "pending" }, class: "form-select form-select-sm" %>
+          <%= f.submit "Update", class: "btn btn-sm btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Payment Info -->
+    <div class="admin-card mb-4" style="padding: 24px;">
+      <h5 class="mb-3"><i class="bi bi-credit-card me-2"></i>Payment</h5>
+      <div class="mb-3">
+        <small class="text-muted">Payment Status</small>
+        <div>
+          <% if @order.paid? %>
+            <span class="badge-status badge-completed"><i class="bi bi-check-circle me-1"></i>Paid</span>
+          <% else %>
+            <span class="badge-status badge-pending">Unpaid</span>
+          <% end %>
+        </div>
+      </div>
+      <% last_txn = @order.transactions.last %>
+      <% if last_txn %>
+        <div class="mb-3">
+          <small class="text-muted">Transaction</small>
+          <div><code><%= last_txn.stripe_payment_intent_id || "Pending" %></code></div>
+        </div>
+        <div class="mb-3">
+          <small class="text-muted">Amount</small>
+          <div><strong><%= format_price(last_txn.amount) %></strong></div>
+        </div>
+        <% if last_txn.refund_amount.to_d > 0 %>
+          <div class="mb-3">
+            <small class="text-muted">Refunded</small>
+            <div class="text-danger"><strong><%= format_price(last_txn.refund_amount) %></strong></div>
+          </div>
+        <% end %>
+        <% if last_txn.refundable? %>
+          <hr>
+          <%= button_to "Issue Full Refund", admin_order_refunds_path(@order), method: :post, data: { turbo_confirm: "Issue a full refund for this order?" }, class: "btn btn-sm btn-outline-danger w-100" %>
+        <% end %>
+      <% else %>
+        <p class="text-muted">No payment transactions recorded.</p>
+      <% end %>
+    </div>
+  </div>
+</div>

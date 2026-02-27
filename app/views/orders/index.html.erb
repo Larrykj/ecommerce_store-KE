@@ -24,7 +24,7 @@
               <h6><%= t('items') %></h6>
               <ul>
                 <% order.order_items.each do |item| %>
-                  <li><%= item.product.name %> x <%= item.quantity %></li>
+                  <li><%= item.variant.name_with_sku %> x <%= item.quantity %></li>
                 <% end %>
               </ul>
             </div>

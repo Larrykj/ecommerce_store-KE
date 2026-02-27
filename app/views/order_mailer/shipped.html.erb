@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+    <style>
+      body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f7f9fc; margin: 0; padding: 0; color: #333; }
+      .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+      .header { background-color: #10b981; padding: 30px 20px; text-align: center; color: white; }
+      .header h1 { margin: 0; font-size: 24px; font-weight: 700; }
+      .content { padding: 30px; }
+      .content p { font-size: 16px; line-height: 1.6; }
+      .tracking-box { background-color: #f0fdf4; border: 1px solid #bbf7d0; padding: 20px; border-radius: 8px; margin: 25px 0; text-align: center; }
+      .tracking-number { font-size: 24px; font-weight: 800; color: #059669; letter-spacing: 2px; margin: 10px 0; }
+      .footer { background-color: #f1f5f9; padding: 20px; text-align: center; color: #64748b; font-size: 14px; }
+      .btn { display: inline-block; padding: 12px 24px; background-color: #10b981; color: white; text-decoration: none; border-radius: 6px; font-weight: bold; margin-top: 10px; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Your Order is on the Way! 🚚</h1>
+      </div>
+      <div class="content">
+        <p>Hi <%= @order.name %>,</p>
+        <p>Great news! Your order <strong>#<%= @order.id %></strong> has been shipped and is on its way to you.</p>
+        
+        <p><strong>Shipping to:</strong><br>
+        <%= @order.address %></p>
+
+        <div class="tracking-box">
+          <p style="margin: 0; color: #047857; font-weight: bold; text-transform: uppercase; font-size: 12px; letter-spacing: 1px;">Estimated Delivery</p>
+          <div class="tracking-number"><%= @order.estimated_delivery_date&.strftime("%A, %b %d") || "Within 3-5 Business Days" %></div>
+          <p style="margin: 0; font-size: 14px; color: #065f46;">Via Standard Courier Service</p>
+        </div>
+
+        <p>Click the button below to view your full order details and track its live status on our website.</p>
+
+        <div style="text-align: center;">
+          <%= link_to 'Track Order', order_url(@order), class: 'btn' %>
+        </div>
+      </div>
+      <div class="footer">
+        <p>If you have any questions, reply to this email or contact our support.</p>
+        <p>&copy; <%= Time.current.year %> Larry Commerce. All rights reserved.</p>
+      </div>
+    </div>
+  </body>
+</html>

@@ -11,8 +11,8 @@ class CategoriesController < ApplicationController
   def show
     # Get products with filtering
     @products = @category.products
-                         .search_by_text(params[:search])
-                         .by_min_price(params[:min_price])
+    @products = @products.search_by_text(params[:search]) if params[:search].present?
+    @products = @products.by_min_price(params[:min_price])
                          .by_max_price(params[:max_price])
                          .by_stock_status(params[:stock_status])
                          .sorted_by(params[:sort])

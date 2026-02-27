@@ -176,6 +176,14 @@
 
         <% if user_signed_in? %>
 
+          <% if current_user.admin? %>
+          <li class="nav-item">
+            <%= link_to admin_root_path, class: "nav-link" do %>
+              <i class="bi bi-shield-lock me-1"></i> Admin
+            <% end %>
+          </li>
+          <% end %>
+
           <li class="nav-item">
 
             <%= link_to t("add_product"), new_product_path, class: "nav-link" %>
@@ -212,7 +220,11 @@
 
             <ul class="dropdown-menu">
 
+              <li><%= link_to "My Account", profile_path, class: "dropdown-item" %></li>
+
               <li><%= link_to t("my_orders"), orders_path, class: "dropdown-item" %></li>
+
+              <li><%= link_to t("my_wishlist"), wishlist_items_path, class: "dropdown-item" %></li>
 
               <li><%= link_to t("edit_profile"), edit_user_registration_path, class: "dropdown-item" %></li>
 
@@ -306,14 +318,46 @@
 
 
 
-    <footer class="bg-dark text-white text-center py-3 mt-auto">
-
+    <footer class="bg-dark text-white pt-5 pb-3 mt-auto">
       <div class="container">
-
-        <p class="mb-0">&copy; <%= Time.current.year %> <%= t('app_name') %>. <%= t('footer_rights') %></p>
-
+        <div class="row g-4 mb-4">
+          <div class="col-lg-4 col-md-6">
+            <h5 class="fw-bold mb-3"><%= t('app_name') %></h5>
+            <p class="text-white-50 small">Bringing the best of Kenya to your doorstep. Quality products, secure payments, and fast delivery.</p>
+            <div class="d-flex gap-2 mt-3">
+              <a href="#" class="btn btn-outline-light btn-sm rounded-circle" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;"><i class="bi bi-twitter-x"></i></a>
+              <a href="#" class="btn btn-outline-light btn-sm rounded-circle" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;"><i class="bi bi-facebook"></i></a>
+              <a href="#" class="btn btn-outline-light btn-sm rounded-circle" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;"><i class="bi bi-instagram"></i></a>
+            </div>
+          </div>
+          <div class="col-lg-2 col-md-6">
+            <h6 class="fw-bold mb-3">Shop</h6>
+            <ul class="list-unstyled small">
+              <li class="mb-2"><%= link_to t('products'), products_path, class: 'text-white-50 text-decoration-none' %></li>
+              <li class="mb-2"><%= link_to t('categories'), categories_path, class: 'text-white-50 text-decoration-none' %></li>
+            </ul>
+          </div>
+          <div class="col-lg-3 col-md-6">
+            <h6 class="fw-bold mb-3">Company</h6>
+            <ul class="list-unstyled small">
+              <li class="mb-2"><%= link_to 'About Us', about_path, class: 'text-white-50 text-decoration-none' %></li>
+              <li class="mb-2"><%= link_to 'Contact Us', new_contact_message_path, class: 'text-white-50 text-decoration-none' %></li>
+              <li class="mb-2"><%= link_to 'FAQ', faq_path, class: 'text-white-50 text-decoration-none' %></li>
+            </ul>
+          </div>
+          <div class="col-lg-3 col-md-6">
+            <h6 class="fw-bold mb-3">Policies</h6>
+            <ul class="list-unstyled small">
+              <li class="mb-2"><%= link_to 'Shipping Info', shipping_info_path, class: 'text-white-50 text-decoration-none' %></li>
+              <li class="mb-2"><%= link_to 'Return Policy', return_policy_path, class: 'text-white-50 text-decoration-none' %></li>
+              <li class="mb-2"><%= link_to 'Privacy Policy', privacy_policy_path, class: 'text-white-50 text-decoration-none' %></li>
+              <li class="mb-2"><%= link_to 'Terms & Conditions', terms_path, class: 'text-white-50 text-decoration-none' %></li>
+            </ul>
+          </div>
+        </div>
+        <hr class="border-secondary">
+        <p class="text-center text-white-50 small mb-0">&copy; <%= Time.current.year %> <%= t('app_name') %>. <%= t('footer_rights') %></p>
       </div>
-
     </footer>
 
 
