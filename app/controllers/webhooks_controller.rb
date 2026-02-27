@@ -13,9 +13,9 @@ class WebhooksController < ApplicationController
     begin
       event = if endpoint_secret.present?
                 Stripe::Webhook.construct_event(payload, sig_header, endpoint_secret)
-              else
+      else
                 JSON.parse(payload, symbolize_names: true)
-              end
+      end
     rescue JSON::ParserError, Stripe::SignatureVerificationError => e
       Rails.logger.error "Webhook error: #{e.message}"
       head :bad_request

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Admin::UsersController < Admin::BaseController
-  before_action :set_user, only: [:show, :toggle_admin]
+  before_action :set_user, only: [ :show, :toggle_admin ]
 
   def index
     @users = User.kept.order(created_at: :desc)

@@ -25,10 +25,10 @@ class Product < ApplicationRecord
 
   # Full-text search using pg_search
   pg_search_scope :search_by_text,
-                  against: [:name, :description],
+                  against: [ :name, :description ],
                   associated_against: {
-                    category: [:name],
-                    variants: [:sku, :name]
+                    category: [ :name ],
+                    variants: [ :sku, :name ]
                   },
                   using: {
                     tsearch: { prefix: true }

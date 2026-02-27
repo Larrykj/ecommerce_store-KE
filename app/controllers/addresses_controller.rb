@@ -2,7 +2,7 @@
 
 class AddressesController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_address, only: [:edit, :update, :destroy, :set_default]
+  before_action :set_address, only: [ :edit, :update, :destroy, :set_default ]
 
   def index
     @addresses = current_user.addresses.ordered

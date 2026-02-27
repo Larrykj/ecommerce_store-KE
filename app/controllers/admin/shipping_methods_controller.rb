@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Admin::ShippingMethodsController < Admin::BaseController
-  before_action :set_shipping_method, only: [:edit, :update, :destroy, :toggle_active]
+  before_action :set_shipping_method, only: [ :edit, :update, :destroy, :toggle_active ]
 
   def index
     @shipping_methods = ShippingMethod.order(:name)

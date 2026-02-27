@@ -8,7 +8,7 @@ class CreateProductComparisons < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    add_index :product_comparisons, [:user_id, :product_id], unique: true
-    add_index :product_comparisons, [:session_id, :product_id], unique: true
+    add_index :product_comparisons, [ :user_id, :product_id ], unique: true
+    add_index :product_comparisons, [ :session_id, :product_id ], unique: true
   end
 end

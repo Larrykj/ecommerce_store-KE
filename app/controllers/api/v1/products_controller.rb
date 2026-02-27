@@ -3,7 +3,7 @@
 module Api
   module V1
     class ProductsController < BaseController
-      skip_before_action :authenticate_api_user!, only: [:index, :show]
+      skip_before_action :authenticate_api_user!, only: [ :index, :show ]
 
       def index
         products = Product.kept

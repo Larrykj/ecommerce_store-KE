@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Admin::ContactMessagesController < Admin::BaseController
-  before_action :set_message, only: [:show, :destroy, :mark_read]
+  before_action :set_message, only: [ :show, :destroy, :mark_read ]
 
   def index
     @messages = ContactMessage.recent

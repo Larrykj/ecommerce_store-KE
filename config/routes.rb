@@ -6,47 +6,47 @@ Rails.application.routes.draw do
   # Admin namespace
   namespace :admin do
     root "dashboard#index"
-    resources :products, only: [:index, :show, :edit, :update, :destroy] do
+    resources :products, only: [ :index, :show, :edit, :update, :destroy ] do
       member do
         patch :restore
       end
     end
-    resources :orders, only: [:index, :show, :update] do
-      resources :refunds, only: [:create], controller: "refunds"
+    resources :orders, only: [ :index, :show, :update ] do
+      resources :refunds, only: [ :create ], controller: "refunds"
     end
-    resources :users, only: [:index, :show] do
+    resources :users, only: [ :index, :show ] do
       member do
         patch :toggle_admin
       end
     end
-    resources :promo_codes, except: [:show]
-    resources :shipping_methods, except: [:show] do
+    resources :promo_codes, except: [ :show ]
+    resources :shipping_methods, except: [ :show ] do
       member do
         patch :toggle_active
       end
     end
-    resources :contact_messages, only: [:index, :show, :destroy] do
+    resources :contact_messages, only: [ :index, :show, :destroy ] do
       member do
         patch :mark_read
       end
     end
-    resources :return_requests, only: [:index, :show, :update]
-    resources :gift_cards, only: [:index, :new, :create, :destroy]
-    resources :subscribers, only: [:index, :destroy]
+    resources :return_requests, only: [ :index, :show, :update ]
+    resources :gift_cards, only: [ :index, :new, :create, :destroy ]
+    resources :subscribers, only: [ :index, :destroy ]
   end
 
   root "products#index"
 
   # User Profile & Addresses
-  resource :profile, only: [:show]
-  resources :addresses, except: [:show] do
+  resource :profile, only: [ :show ]
+  resources :addresses, except: [ :show ] do
     member do
       patch :set_default
     end
   end
 
   resources :wishlist_items, only: [ :index, :create, :destroy ]
-  resources :server_times, only: [:index]
+  resources :server_times, only: [ :index ]
 
   resources :products do
     resources :reviews, only: [ :create, :edit, :update, :destroy ] do
@@ -55,7 +55,7 @@ Rails.application.routes.draw do
       end
     end
     # Back-in-stock notifications
-    resources :stock_notifications, only: [:create]
+    resources :stock_notifications, only: [ :create ]
   end
 
   resources :categories
@@ -70,20 +70,20 @@ Rails.application.routes.draw do
 
   resources :orders, only: [ :index, :show, :new ] do
     # Order invoices
-    resource :invoice, only: [:show]
+    resource :invoice, only: [ :show ]
     # Return requests
-    resources :return_requests, only: [:new, :create]
+    resources :return_requests, only: [ :new, :create ]
   end
 
   # My return requests
-  resources :return_requests, only: [:index]
+  resources :return_requests, only: [ :index ]
 
   # Gift Cards
-  resources :gift_cards, only: [:index, :new, :create]
+  resources :gift_cards, only: [ :index, :new, :create ]
   post "/gift-cards/check-balance", to: "gift_cards#check_balance", as: :check_gift_card_balance
 
   # Newsletter
-  resources :subscribers, only: [:create]
+  resources :subscribers, only: [ :create ]
   get "/unsubscribe/:token", to: "subscribers#unsubscribe", as: :unsubscribe
 
   # Product Comparison
@@ -103,7 +103,7 @@ Rails.application.routes.draw do
   get "/server_time", to: "server_time#show"
 
   # Contact Us
-  resources :contact_messages, only: [:new, :create], path: "contact"
+  resources :contact_messages, only: [ :new, :create ], path: "contact"
   get "/contact/thank-you", to: "contact_messages#thank_you", as: :contact_thank_you
 
   # Static Pages
@@ -117,8 +117,8 @@ Rails.application.routes.draw do
   # API
   namespace :api do
     namespace :v1 do
-      resources :products, only: [:index, :show]
-      resources :orders, only: [:index, :show]
+      resources :products, only: [ :index, :show ]
+      resources :orders, only: [ :index, :show ]
     end
   end
 end
