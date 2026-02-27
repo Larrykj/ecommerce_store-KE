@@ -1,23 +1,23 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  code: MyString
-  discount_type: MyString
-  discount_value: 9.99
+  code: PROMO10
+  discount_type: percentage
+  discount_value: 10.00
   min_order_amount: 9.99
-  max_uses: 1
-  current_uses: 1
-  expires_at: 2026-02-26 20:49:38
-  active: false
-  description: MyString
+  max_uses: 100
+  current_uses: 0
+  expires_at: 2027-12-31 23:59:59
+  active: true
+  description: 10 percent off
 
 two:
-  code: MyString
-  discount_type: MyString
-  discount_value: 9.99
-  min_order_amount: 9.99
-  max_uses: 1
-  current_uses: 1
-  expires_at: 2026-02-26 20:49:38
-  active: false
-  description: MyString
+  code: FLAT500
+  discount_type: fixed
+  discount_value: 500.00
+  min_order_amount: 1000.00
+  max_uses: 50
+  current_uses: 0
+  expires_at: 2027-12-31 23:59:59
+  active: true
+  description: 500 off orders over 1000

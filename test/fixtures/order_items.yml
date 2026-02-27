@@ -2,12 +2,12 @@
 
 one:
   order: one
-  product: one
+  variant: one
   quantity: 1
   price: 9.99
 
 two:
   order: two
-  product: two
+  variant: two
   quantity: 1
   price: 9.99

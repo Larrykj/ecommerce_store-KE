@@ -7,21 +7,20 @@
 # - name: minimum 3 characters, maximum 100
 # - description: minimum 10 characters
 # - price: greater than 0
-# - quantity: greater than or equal to 0
+#
+# Stock is now tracked via variants, not a product-level quantity column.
 #
 # Author: Larrykj
-# Last Updated: 2026-01-30
+# Last Updated: 2026-02-27
 
 one:
   name: Test Product One
   description: This is a test product with a long enough description
   price: 9.99
-  quantity: 10
   category: one
 
 two:
   name: Test Product Two
   description: This is another test product with a detailed description
   price: 19.99
-  quantity: 5
   category: two

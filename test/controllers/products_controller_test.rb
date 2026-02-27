@@ -45,7 +45,6 @@ class ProductsControllerTest < ActionDispatch::IntegrationTest
           name: "New Test Product",
           description: "This is a test product with a description that is long enough",
           price: 29.99,
-          quantity: 10,
           category_id: categories(:one).id
         }
       }
@@ -66,14 +65,13 @@ class ProductsControllerTest < ActionDispatch::IntegrationTest
       product: {
         name: "Updated Product",
         description: "Updated description that is long enough for validation",
-        price: 39.99,
-        quantity: 20
+        price: 39.99
       }
     }
     assert_redirected_to product_url(@product)
   end
 
-  # Test: Verify product deletion
+  # Test: Verify product deletion (soft-delete via discard)
   # Creates a standalone product without cart_items to avoid FK constraint errors
   test "should destroy product" do
     # Create a standalone product without any cart_items referencing it
@@ -81,14 +79,13 @@ class ProductsControllerTest < ActionDispatch::IntegrationTest
       name: "Product To Delete",
       description: "This product will be deleted in the test",
       price: 10.00,
-      quantity: 5,
       category: categories(:one)
     )
 
-    assert_difference("Product.count", -1) do
-      delete product_url(product_to_delete)
-    end
+    # discard is a soft-delete, so Product.count doesn't change
+    delete product_url(product_to_delete)
 
     assert_redirected_to products_url
+    assert product_to_delete.reload.discarded?
   end
 end

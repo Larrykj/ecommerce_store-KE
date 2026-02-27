@@ -2,10 +2,10 @@
 
 one:
   cart: one
-  product: one
+  variant: one
   quantity: 1
 
 two:
   cart: two
-  product: two
+  variant: two
   quantity: 1
