@@ -72,7 +72,7 @@ sw:
   unhappy: "Hujaridhika?"
   back: "Rudi"
   email: "Barua pepe"
-  password: "Nenosiri"
+  password: "Nenosiri" # ggignore
   remember_me: "Nikumbuke"
   enter_full_name: "Ingiza jina lako kamili"
   password_confirmation: "Thibitisha nenosiri"
@@ -205,7 +205,7 @@ sw:
   email_confirmation_message: "Tutakutumia uthibitisho kwa barua pepe hivi punde."
   updates_message: "Utapokea masasisho kuhusu hali ya oda yako kwa barua pepe na SMS."
   view_all_orders: "Angalia Oda Zote"
-  current_password: "Nenosiri la Sasa"
+  current_password: "Nenosiri la Sasa" # ggignore
   waiting_confirmation_for: "Inasubiri uthibitisho kwa"
   forgot_password: "Umesahau nenosiri?"
   confirmation_instructions: "Hukupata maelekezo ya uthibitisho?"
@@ -221,8 +221,8 @@ sw:
   image_upload_hint: "Ukubwa unaopendekezwa: 800x600 pixels. Upeo 5MB."
   send_password_reset_instructions: "Nitumie maelekezo ya kuweka upya nenosiri"
   change_password: "Badilisha nenosiri lako"
-  new_password: "Nenosiri mpya"
-  confirm_new_password: "Thibitisha nenosiri mpya"
+  new_password: "Nenosiri mpya" # ggignore
+  confirm_new_password: "Thibitisha nenosiri mpya" # ggignore
   change_my_password: "Badilisha nenosiri langu"
   price_min_default: "0"
   price_max_unlimited: "∞"
@@ -249,3 +249,16 @@ sw:
     home_living: "Nyumbani na Maisha"
     groceries: "Maduka"
     beauty_personal_care: "Urembo na Utunzaji Binafsi"
+  product_descriptions:
+    wireless_headphones: "Vifaa vya kusikiliza sauti visivyotumia waya vyenye uwezo wa kuzuia kelele."
+    usb_c_cable: "Kebo ya USB-C inayodumu kwa kuchaji haraka na kuhamisha data."
+    portable_power_bank: "Power bank ya 20000mAh ili kukuweka hewani wakati wa kukatika kwa umeme."
+    smart_watch_series_5: "Fuatilia mazoezi yako na arifa popote uendapo."
+    bluetooth_speaker: "Spika inayobebeka yenye besi nzito kwa safari zako."
+    kitenge_bomber_jacket: "Jaketi ya kisasa yenye michoro halisi ya Kitenge."
+    maasai_beaded_sandals: "Viatu vya ngozi vilivyotengenezwa kwa mikono na kupambwa kwa shanga."
+    ankara_tote_bag: "Mkoba mpana uliotengenezwa kwa kitambaa cha Ankara."
+    denim_jacket: "Jaketi la denim la kisasa kwa jioni za baridi."
+    khaki_trousers: "Suruali za khaki zinazofaa kwa ofisi au matembezi."
+    handwoven_sisal_basket: "Kikapu kilichofumwa kwa ustadi kutoka Machakos."
+    soapstone_carving: "Sanamu ya Kisii iliyochongwa kwa ustadi."

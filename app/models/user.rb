@@ -15,6 +15,7 @@ class User < ApplicationRecord
   has_many :wishlist_products, through: :wishlist_items, source: :product
 
   validates :name, presence: true
+  validates :password, length: { minimum: 12 }, if: -> { new_record? || password.present? }
 
   def recommended_products(limit = 4)
     recent_views = product_views.order(created_at: :desc).limit(10).includes(:product)
