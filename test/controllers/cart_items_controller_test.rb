@@ -13,7 +13,7 @@ require "test_helper"
 # Last Updated: 2026-01-30
 class CartItemsControllerTest < ActionDispatch::IntegrationTest
   setup do
-    @product = products(:one)
+    @variant = variants(:one)
   end
 
   # Test: Verify adding a product to the cart
@@ -23,7 +23,7 @@ class CartItemsControllerTest < ActionDispatch::IntegrationTest
     get products_url
 
     assert_difference("CartItem.count") do
-      post cart_items_url, params: { product_id: @product.id }
+      post cart_items_url, params: { variant_id: @variant.id }
     end
 
     assert_redirected_to cart_url
@@ -33,7 +33,7 @@ class CartItemsControllerTest < ActionDispatch::IntegrationTest
   test "should update cart_item" do
     # Initialize cart and add an item first
     get products_url
-    post cart_items_url, params: { product_id: @product.id }
+    post cart_items_url, params: { variant_id: @variant.id }
 
     # Get the cart item that was just created
     cart_item = CartItem.last
@@ -47,7 +47,7 @@ class CartItemsControllerTest < ActionDispatch::IntegrationTest
   test "should destroy cart_item" do
     # Initialize cart and add an item first
     get products_url
-    post cart_items_url, params: { product_id: @product.id }
+    post cart_items_url, params: { variant_id: @variant.id }
 
     cart_item = CartItem.last
 
