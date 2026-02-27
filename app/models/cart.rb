@@ -20,11 +20,11 @@ class Cart < ApplicationRecord
   end
 
   def tax_amount
-    ([subtotal - discount_amount, 0].max * TAX_RATE).round(2)
+    ([ subtotal - discount_amount, 0 ].max * TAX_RATE).round(2)
   end
 
   def total_price
-    [subtotal - discount_amount, 0].max + shipping_cost + tax_amount
+    [ subtotal - discount_amount, 0 ].max + shipping_cost + tax_amount
   end
 
   def total_items

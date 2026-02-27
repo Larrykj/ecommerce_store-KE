@@ -9,7 +9,7 @@ class Admin::DashboardController < Admin::BaseController
     @recent_orders = Order.order(created_at: :desc).limit(10).includes(:user)
     @low_stock_variants = Variant.where("quantity <= 5").includes(:product).order(:quantity).limit(10)
     @top_products = Product.kept
-                           .joins(:variants => :order_items)
+                           .joins(variants: :order_items)
                            .group("products.id")
                            .select("products.*, SUM(order_items.quantity) as total_sold")
                            .order("total_sold DESC")

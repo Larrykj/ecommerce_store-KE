@@ -22,7 +22,7 @@ class GiftCard < ApplicationRecord
   end
 
   def apply!(amount)
-    deduction = [amount, balance].min
+    deduction = [ amount, balance ].min
     update!(balance: balance - deduction)
     deduction
   end

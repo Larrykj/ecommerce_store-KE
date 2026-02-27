@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class GiftCardsController < ApplicationController
-  before_action :authenticate_user!, except: [:check_balance]
+  before_action :authenticate_user!, except: [ :check_balance ]
 
   def index
     @gift_cards = GiftCard.where(purchased_by: current_user).or(GiftCard.where(redeemed_by: current_user)).order(created_at: :desc)

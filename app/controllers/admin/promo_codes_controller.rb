@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Admin::PromoCodesController < Admin::BaseController
-  before_action :set_promo_code, only: [:edit, :update, :destroy]
+  before_action :set_promo_code, only: [ :edit, :update, :destroy ]
 
   def index
     @pagy, @promo_codes = pagy(PromoCode.order(created_at: :desc), limit: 10)

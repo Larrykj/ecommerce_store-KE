@@ -17,7 +17,7 @@ class Transaction < ApplicationRecord
 
   scope :successful, -> { where(status: :succeeded) }
   scope :failed, -> { where(status: :failed) }
-  scope :refunded, -> { where(status: [:refunded, :partially_refunded]) }
+  scope :refunded, -> { where(status: [ :refunded, :partially_refunded ]) }
 
   def refundable?
     succeeded? && refund_amount.to_d < amount

@@ -9,6 +9,6 @@ class CreateStockNotifications < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    add_index :stock_notifications, [:product_id, :email], unique: true
+    add_index :stock_notifications, [ :product_id, :email ], unique: true
   end
 end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Admin::OrdersController < Admin::BaseController
-  before_action :set_order, only: [:show, :update]
+  before_action :set_order, only: [ :show, :update ]
 
   def index
     @orders = Order.order(created_at: :desc).includes(:user)

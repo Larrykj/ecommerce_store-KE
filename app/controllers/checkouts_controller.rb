@@ -38,7 +38,7 @@ class CheckoutsController < ApplicationController
       # Create Stripe Checkout Session
       begin
         session_params = {
-          payment_method_types: ["card"],
+          payment_method_types: [ "card" ],
           mode: "payment",
           customer_email: current_user.email,
           line_items: build_line_items,
@@ -57,7 +57,7 @@ class CheckoutsController < ApplicationController
             coupon_params[:currency] = "kes"
           end
           stripe_coupon = Stripe::Coupon.create(coupon_params)
-          session_params[:discounts] = [{ coupon: stripe_coupon.id }]
+          session_params[:discounts] = [ { coupon: stripe_coupon.id } ]
         end
 
         session = Stripe::Checkout::Session.create(session_params)
@@ -105,7 +105,7 @@ class CheckoutsController < ApplicationController
           # Deduct inventory
           @order.order_items.each do |item|
             variant = item.variant
-            variant.update!(quantity: [variant.quantity - item.quantity, 0].max) if variant
+            variant.update!(quantity: [ variant.quantity - item.quantity, 0 ].max) if variant
           end
 
           # Increment promo code usage if applicable

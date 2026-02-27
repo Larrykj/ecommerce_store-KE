@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class OrderMailer < ApplicationMailer
-  default from: 'no-reply@larrycommerce.com'
+  default from: "no-reply@larrycommerce.com"
 
   def confirmation
     @order = params[:order]

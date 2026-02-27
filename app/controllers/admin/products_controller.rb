@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Admin::ProductsController < Admin::BaseController
-  before_action :set_product, only: [:show, :edit, :update, :destroy, :restore]
+  before_action :set_product, only: [ :show, :edit, :update, :destroy, :restore ]
 
   def index
     @products = Product.unscoped.order(created_at: :desc)
@@ -41,6 +41,6 @@ class Admin::ProductsController < Admin::BaseController
 
   def product_params
     params.require(:product).permit(:name, :description, :price, :image, :category_id,
-                                    variants_attributes: [:id, :sku, :name, :price, :quantity, :_destroy])
+                                    variants_attributes: [ :id, :sku, :name, :price, :quantity, :_destroy ])
   end
 end

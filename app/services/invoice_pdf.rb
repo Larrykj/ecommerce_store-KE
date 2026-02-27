@@ -30,8 +30,8 @@ class InvoicePdf
     move_down 15
 
     # Invoice details
-    text_box "Invoice ##{@order.id}", at: [0, cursor], size: 12, style: :bold
-    text_box "Date: #{@order.created_at.strftime('%B %d, %Y')}", at: [300, cursor], size: 10, width: 200, align: :right
+    text_box "Invoice ##{@order.id}", at: [ 0, cursor ], size: 12, style: :bold
+    text_box "Date: #{@order.created_at.strftime('%B %d, %Y')}", at: [ 300, cursor ], size: 10, width: 200, align: :right
     move_down 20
   end
 
@@ -46,7 +46,7 @@ class InvoicePdf
   end
 
   def order_items_table
-    items_data = [["Item", "SKU", "Qty", "Price", "Total"]]
+    items_data = [ [ "Item", "SKU", "Qty", "Price", "Total" ] ]
 
     @order.order_items.each do |item|
       items_data << [
@@ -58,12 +58,12 @@ class InvoicePdf
       ]
     end
 
-    table(items_data, width: bounds.width, cell_style: { size: 10, padding: [8, 10] }) do
+    table(items_data, width: bounds.width, cell_style: { size: 10, padding: [ 8, 10 ] }) do
       row(0).font_style = :bold
       row(0).background_color = "4f46e5"
       row(0).text_color = "ffffff"
       columns(2..4).align = :right
-      cells.borders = [:bottom]
+      cells.borders = [ :bottom ]
       cells.border_color = "e2e8f0"
     end
     move_down 15
@@ -73,29 +73,29 @@ class InvoicePdf
     subtotal = @order.order_items.sum { |i| i.price * i.quantity }
 
     totals_data = []
-    totals_data << ["Subtotal", format_kes(subtotal)]
+    totals_data << [ "Subtotal", format_kes(subtotal) ]
 
     if @order.discount_amount.to_d > 0
-      totals_data << ["Discount (#{@order.promo_code&.code})", "-#{format_kes(@order.discount_amount)}"]
+      totals_data << [ "Discount (#{@order.promo_code&.code})", "-#{format_kes(@order.discount_amount)}" ]
     end
 
     if @order.shipping_cost.to_d > 0
-      totals_data << ["Shipping (#{@order.shipping_method&.name || 'Standard'})", format_kes(@order.shipping_cost)]
+      totals_data << [ "Shipping (#{@order.shipping_method&.name || 'Standard'})", format_kes(@order.shipping_cost) ]
     end
 
     if @order.tax_amount.to_d > 0
-      totals_data << ["Tax (#{(@order.tax_rate.to_f * 100).to_i}% VAT)", format_kes(@order.tax_amount)]
+      totals_data << [ "Tax (#{(@order.tax_rate.to_f * 100).to_i}% VAT)", format_kes(@order.tax_amount) ]
     end
 
-    totals_data << ["TOTAL", format_kes(@order.total_price)]
+    totals_data << [ "TOTAL", format_kes(@order.total_price) ]
 
-    totals_table = make_table(totals_data, cell_style: { size: 10, padding: [6, 10], borders: [] }, column_widths: [120, 100]) do
+    totals_table = make_table(totals_data, cell_style: { size: 10, padding: [ 6, 10 ], borders: [] }, column_widths: [ 120, 100 ]) do
       columns(1).align = :right
       row(-1).font_style = :bold
       row(-1).size = 13
     end
 
-    bounding_box([bounds.width - 230, cursor], width: 230) { totals_table.draw }
+    bounding_box([ bounds.width - 230, cursor ], width: 230) { totals_table.draw }
     move_down 15
 
     # Payment status

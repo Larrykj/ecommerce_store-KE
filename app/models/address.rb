@@ -14,7 +14,7 @@ class Address < ApplicationRecord
   before_save :unset_other_defaults, if: :default?
 
   def full_address
-    parts = [address_line_1, address_line_2, city, state, postal_code, country].compact_blank
+    parts = [ address_line_1, address_line_2, city, state, postal_code, country ].compact_blank
     parts.join(", ")
   end
 
