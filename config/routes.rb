@@ -49,7 +49,7 @@ Rails.application.routes.draw do
   resources :wishlist_items, only: [ :index, :create, :destroy ]
   resources :server_times, only: [ :index ]
 
-  resources :products, only: [ :index, :show ] do
+  resources :products, only: [ :index, :show, :new, :create, :edit, :update, :destroy ] do
     resources :reviews, only: [ :create, :edit, :update, :destroy ] do
       member do
         post :helpful
@@ -59,7 +59,7 @@ Rails.application.routes.draw do
     resources :stock_notifications, only: [ :create ]
   end
 
-  resources :categories, only: [ :index, :show ]
+  resources :categories, only: [ :index, :show, :new, :create, :edit, :update, :destroy ]
 
   resource :cart, only: [ :show ] do
     post "apply_promo", to: "promo_codes#apply"
@@ -69,9 +69,10 @@ Rails.application.routes.draw do
 
   resources :cart_items, only: [ :create, :update, :destroy ]
 
-  resources :orders, only: [ :index, :show, :new ] do
+  resources :orders, only: [ :index, :show, :new, :create ] do
     member do
       patch :cancel
+      patch :update_status
     end
     # Order invoices
     resource :invoice, only: [ :show ]
