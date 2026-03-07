@@ -4,7 +4,9 @@ class CartItemsController < ApplicationController
   # POST /cart_items
   def create
     product = Product.find(params[:product_id])
-    @cart_item = @cart.cart_items.find_by(product: product)
+    variant = product.variants.first
+
+    @cart_item = @cart.cart_items.find_by(variant: variant)
 
     if @cart_item
       # If product already in cart, increase quantity
@@ -13,7 +15,7 @@ class CartItemsController < ApplicationController
       redirect_to cart_path, notice: t("cart_quantity_updated")
     else
       # Add new product to cart
-      @cart_item = @cart.cart_items.create(product: product, quantity: 1)
+      @cart_item = @cart.cart_items.create(variant: variant, quantity: 1)
       redirect_to cart_path, notice: t("cart_product_added")
     end
   end

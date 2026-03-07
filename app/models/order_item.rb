@@ -1,6 +1,7 @@
 class OrderItem < ApplicationRecord
   belongs_to :order
-  belongs_to :product
+  belongs_to :variant
+  has_one :product, through: :variant
 
   def formatted_subtotal
     "KSh #{(price * quantity).round(2)}"

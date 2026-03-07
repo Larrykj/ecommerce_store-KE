@@ -4,13 +4,13 @@ class Product < ApplicationRecord
   has_many :reviews, dependent: :destroy
   has_many :product_views, dependent: :destroy
   has_many :wishlist_items, dependent: :destroy
+  has_many :variants, dependent: :destroy
   has_one_attached :image
 
   # Validations
   validates :name, presence: true, length: { minimum: 3, maximum: 100 }
   validates :description, presence: true, length: { minimum: 10 }
   validates :price, presence: true, numericality: { greater_than: 0 }
-  validates :quantity, presence: true, numericality: { greater_than_or_equal_to: 0, only_integer: true }
   validate :acceptable_image
 
   def acceptable_image
@@ -56,8 +56,8 @@ class Product < ApplicationRecord
   }
 
   # Filter by stock status
-  scope :in_stock_only, -> { where("quantity > 0") }
-  scope :out_of_stock_only, -> { where(quantity: 0) }
+  scope :in_stock_only, -> { joins(:variants).where("variants.quantity > 0").distinct }
+  scope :out_of_stock_only, -> { where.not(id: in_stock_only) }
 
   scope :by_stock_status, ->(status) {
     case status
@@ -114,7 +114,8 @@ class Product < ApplicationRecord
 
   # Check if product is in stock
   def in_stock?
-    quantity > 0
+    total_qty = respond_to?(:variants) ? variants.sum(:quantity) : (self[:quantity] || 0)
+    total_qty > 0
   end
 
   # Format price for display in KSH
@@ -124,20 +125,22 @@ class Product < ApplicationRecord
 
   # Stock status label
   def stock_status_label
-    if quantity.zero?
+    total_qty = respond_to?(:variants) ? variants.sum(:quantity) : (self[:quantity] || 0)
+    if total_qty.zero?
       I18n.t("out_of_stock")
-    elsif quantity <= 5
-      I18n.t("low_stock", count: quantity)
+    elsif total_qty <= 5
+      I18n.t("low_stock", count: total_qty)
     else
-      I18n.t("in_stock_with_count", count: quantity)
+      I18n.t("in_stock_with_count", count: total_qty)
     end
   end
 
   # Stock status badge class for Bootstrap
   def stock_status_class
-    if quantity.zero?
+    total_qty = respond_to?(:variants) ? variants.sum(:quantity) : (self[:quantity] || 0)
+    if total_qty.zero?
       "danger"
-    elsif quantity <= 5
+    elsif total_qty <= 5
       "warning"
     else
       "success"

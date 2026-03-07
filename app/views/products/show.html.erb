@@ -69,7 +69,7 @@
             <i class="bi bi-box"></i>
             <div>
               <span class="meta-label"><%= t("quantity_available") %></span>
-              <span class="meta-value"><%= @product.quantity %> <%= t("units") %></span>
+              <span class="meta-value"><%= @product.variants.sum(:quantity) %> <%= t("units") %></span>
             </div>
           </div>
           <div class="meta-item">

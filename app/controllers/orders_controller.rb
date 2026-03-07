@@ -31,7 +31,7 @@ class OrdersController < ApplicationController
     total = 0
 
     @cart.cart_items.each do |cart_item|
-      total += cart_item.product.price * cart_item.quantity
+      total += cart_item.subtotal
     end
 
     @order.total_price = total
@@ -40,15 +40,15 @@ class OrdersController < ApplicationController
       # Transfer cart items to order items
       @cart.cart_items.each do |cart_item|
         @order.order_items.create(
-          product: cart_item.product,
+          variant: cart_item.variant,
           quantity: cart_item.quantity,
-          price: cart_item.product.price
+          price: cart_item.variant.price || cart_item.product.price
         )
 
-        # Reduce product quantity
-        product = cart_item.product
-        product.quantity -= cart_item.quantity
-        product.save
+        # Reduce variant quantity
+        variant = cart_item.variant
+        variant.quantity -= cart_item.quantity
+        variant.save!
       end
 
       # Clear the cart
