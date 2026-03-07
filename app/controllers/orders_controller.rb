@@ -22,7 +22,7 @@ class OrdersController < ApplicationController
     @order.email = current_user.email
   end
 
-<<<<<<< HEAD  def create
+  def create
     @order = current_user.orders.new(order_params)
     @order.status = "pending"
     @order.estimated_delivery_date = 5.days.from_now

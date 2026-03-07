@@ -99,12 +99,12 @@ class ProductTest < ActiveSupport::TestCase
 
   test "rating_distribution returns hash with keys 1-5" do
     dist = @product.rating_distribution
-    assert_equal [1, 2, 3, 4, 5], dist.keys.sort
+    assert_equal [ 1, 2, 3, 4, 5 ], dist.keys.sort
   end
 
   test "reviewed_by? returns boolean" do
     user = users(:one)
-    assert_includes [true, false], @product.reviewed_by?(user)
+    assert_includes [ true, false ], @product.reviewed_by?(user)
   end
 
   test "reviewed_by? returns false for nil user" do
