@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_27_050105) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_07_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -129,6 +129,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_27_050105) do
   create_table "orders", force: :cascade do |t|
     t.text "address"
     t.text "address_ciphertext"
+    t.bigint "address_id"
     t.datetime "created_at", null: false
     t.decimal "discount_amount"
     t.string "email"
@@ -136,6 +137,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_27_050105) do
     t.datetime "estimated_delivery_date"
     t.string "name"
     t.text "name_ciphertext"
+    t.text "notes"
+    t.string "payment_method", default: "manual_confirmation", null: false
     t.string "payment_status"
     t.string "phone"
     t.text "phone_ciphertext"
@@ -338,6 +341,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_27_050105) do
   add_foreign_key "gift_cards", "users", column: "redeemed_by_id"
   add_foreign_key "order_items", "orders"
   add_foreign_key "order_items", "variants"
+  add_foreign_key "orders", "addresses"
   add_foreign_key "orders", "promo_codes"
   add_foreign_key "orders", "shipping_methods"
   add_foreign_key "orders", "users"

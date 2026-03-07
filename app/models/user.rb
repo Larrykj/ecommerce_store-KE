@@ -56,5 +56,31 @@ class User < ApplicationRecord
       Product.order(created_at: :desc).limit(limit)
     end
   end
+
+  # ============ ADMIN AUTHORIZATION ============
+
+  def admin?
+    admin == true
+  end
+
+  def can_manage_products?
+    admin?
+  end
+
+  def can_manage_categories?
+    admin?
+  end
+
+  def can_manage_orders?
+    admin?
+  end
+
+  def can_manage_users?
+    admin?
+  end
+
+  def can_view_admin_dashboard?
+    admin?
+  end
 end
 # EOF
