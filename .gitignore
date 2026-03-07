@@ -11,22 +11,11 @@
 /.env*
 
 # Ignore all logfiles and tempfiles.
-/log/*
-/tmp/*
-!/log/.keep
-!/tmp/.keep
-
-# Ignore pidfiles, but keep the directory.
-/tmp/pids/*
-!/tmp/pids/
-!/tmp/pids/.keep
+/log/
+/tmp/
 
 # Ignore storage (uploaded files in development and any SQLite databases).
-/storage/*
-!/storage/.keep
-/tmp/storage/*
-!/tmp/storage/
-!/tmp/storage/.keep
+/storage/
 
 /public/assets
 
@@ -45,6 +34,7 @@
 
 # Ignore yarn and node
 /node_modules
+/vendor
 yarn-error.log
 yarn-debug.log*
 .yarn-integrity
