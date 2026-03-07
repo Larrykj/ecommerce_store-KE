@@ -1,6 +1,6 @@
 class CategoriesController < ApplicationController
   before_action :authenticate_user!, except: [ :index, :show ]
-  before_action :set_category, only: [ :show, :edit, :update, :destroy ]
+  before_action :set_category, only: [ :show ]
 
   def index
     @categories = Category.advanced_search(search_params)
@@ -21,35 +21,7 @@ class CategoriesController < ApplicationController
     @active_filters_count = count_active_filters
   end
 
-  def new
-    @category = Category.new
-  end
 
-  def create
-    @category = Category.new(category_params)
-
-    if @category.save
-      redirect_to categories_path, notice: t("category_created_success")
-    else
-      render :new, status: :unprocessable_entity
-    end
-  end
-
-  def edit
-  end
-
-  def update
-    if @category.update(category_params)
-      redirect_to @category, notice: t("category_updated_success")
-    else
-      render :edit, status: :unprocessable_entity
-    end
-  end
-
-  def destroy
-    @category.destroy
-    redirect_to categories_path, notice: t("category_deleted_success")
-  end
 
   private
 

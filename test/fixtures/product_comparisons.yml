@@ -1,0 +1,9 @@
+one:
+  user: one
+  product: one
+  session_id: "test_session_one"
+
+two:
+  user: one
+  product: two
+  session_id: "test_session_one"

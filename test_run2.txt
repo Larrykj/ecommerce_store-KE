@@ -1,0 +1,66 @@
+﻿bundle : DEPRECATION WARNING: 
+ActiveSupport::Configurable is 
+deprecated without replacement, and 
+will be removed in Rails 8.2.
+At line:1 char:1
++ bundle exec rails test 2>&1 | 
+Out-File -Encoding utf8 test_run2.txt
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpe 
+   cified: (DEPRECATION WAR...d in   
+  Rails 8.2.:String) [], RemoteExc   
+ eption
+    + FullyQualifiedErrorId : Native 
+   CommandError
+ 
+
+You can emulate the previous 
+behavior with `class_attribute`.
+ (called from <main> at C:/Users/Home
+PC/Desktop/E-Commerce-Rails/config/ap
+plication.rb:7)
+C:/Ruby40-x64/lib/ruby/gems/4.0.0/gem
+s/activesupport-8.1.2/lib/active_supp
+ort/testing/parallelization/worker.rb
+:15:in 'Kernel#start': fork() 
+function is unimplemented on this 
+machine (NotImplementedError)
+	from C:/Ruby40-x64/lib/ruby/gems/4.0
+.0/gems/activesupport-8.1.2/lib/activ
+e_support/testing/parallelization/wor
+ker.rb:15:in 'ActiveSupport::Testing:
+:Parallelization::Worker#start'
+	from C:/Ruby40-x64/lib/ruby/gems/4.0
+.0/gems/activesupport-8.1.2/lib/activ
+e_support/testing/parallelization.rb:
+50:in 'block in ActiveSupport::Testin
+g::Parallelization#start'
+	from C:/Ruby40-x64/lib/ruby/gems/4.0
+.0/gems/activesupport-8.1.2/lib/activ
+e_support/testing/parallelization.rb:
+49:in 'Integer#times'
+	from C:/Ruby40-x64/lib/ruby/gems/4.0
+.0/gems/activesupport-8.1.2/lib/activ
+e_support/testing/parallelization.rb:
+49:in 'Enumerator#each'
+	from C:/Ruby40-x64/lib/ruby/gems/4.0
+.0/gems/activesupport-8.1.2/lib/activ
+e_support/testing/parallelization.rb:
+49:in 'Enumerable#map'
+	from C:/Ruby40-x64/lib/ruby/gems/4.0
+.0/gems/activesupport-8.1.2/lib/activ
+e_support/testing/parallelization.rb:
+49:in 'ActiveSupport::Testing::Parall
+elization#start'
+	from C:/Ruby40-x64/lib/ruby/gems/4.0
+.0/gems/activesupport-8.1.2/lib/activ
+e_support/testing/parallelize_executo
+r.rb:19:in 'ActiveSupport::Testing::P
+arallelizeExecutor#start'
+	from C:/Ruby40-x64/lib/ruby/gems/4.0
+.0/gems/minitest-6.0.1/lib/minitest.r
+b:312:in 'Minitest.run'
+	from C:/Ruby40-x64/lib/ruby/gems/4.0
+.0/gems/minitest-6.0.1/lib/minitest.r
+b:84:in 'block in Minitest.autorun'
+Running 202 tests in parallel using 4 processes

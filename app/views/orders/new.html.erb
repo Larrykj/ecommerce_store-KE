@@ -48,18 +48,50 @@
               <!-- Payment Section -->
               <div class="payment-section mt-4">
                 <h5 class="mb-3"><i class="bi bi-shield-lock me-2"></i>Payment</h5>
-                <div class="stripe-info">
-                  <div class="d-flex align-items-center gap-3 mb-2">
-                    <i class="bi bi-credit-card-2-front" style="font-size: 1.5rem; color: #635bff;"></i>
-                    <div>
-                      <strong>Secure payment via Stripe</strong>
-                      <p class="text-muted mb-0" style="font-size: 0.85rem;">You'll be redirected to Stripe's secure checkout page</p>
-                    </div>
+                
+                <div class="payment-methods">
+                  <div class="payment-method-option">
+                    <label class="d-flex align-items-center gap-3 w-100 cursor-pointer">
+                      <input type="radio" name="payment_method" value="stripe" checked class="form-check-input mt-0">
+                      <div class="flex-grow-1">
+                        <strong>Credit Card (Stripe)</strong>
+                        <p class="text-muted mb-0" style="font-size: 0.85rem;">Secure online payment</p>
+                      </div>
+                      <i class="bi bi-credit-card-2-front" style="font-size: 1.5rem; color: #635bff;"></i>
+                    </label>
                   </div>
-                  <div class="accepted-cards">
-                    <span class="card-badge"><i class="bi bi-credit-card me-1"></i>Visa</span>
-                    <span class="card-badge"><i class="bi bi-credit-card me-1"></i>Mastercard</span>
-                    <span class="card-badge"><i class="bi bi-credit-card me-1"></i>Amex</span>
+                  
+                  <div class="payment-method-option">
+                    <label class="d-flex align-items-center gap-3 w-100 cursor-pointer">
+                      <input type="radio" name="payment_method" value="mpesa" class="form-check-input mt-0">
+                      <div class="flex-grow-1">
+                        <strong>M-Pesa Checkout</strong>
+                        <p class="text-muted mb-0" style="font-size: 0.85rem;">Sandbox M-Pesa payment</p>
+                      </div>
+                      <i class="bi bi-phone" style="font-size: 1.5rem; color: #43a047;"></i>
+                    </label>
+                  </div>
+                  
+                  <div class="payment-method-option">
+                    <label class="d-flex align-items-center gap-3 w-100 cursor-pointer">
+                      <input type="radio" name="payment_method" value="cod" class="form-check-input mt-0">
+                      <div class="flex-grow-1">
+                        <strong>Cash on Delivery (COD)</strong>
+                        <p class="text-muted mb-0" style="font-size: 0.85rem;">Pay when you receive your order</p>
+                      </div>
+                      <i class="bi bi-cash-stack" style="font-size: 1.5rem; color: #198754;"></i>
+                    </label>
+                  </div>
+                  
+                  <div class="payment-method-option">
+                    <label class="d-flex align-items-center gap-3 w-100 cursor-pointer">
+                      <input type="radio" name="payment_method" value="bank_transfer" class="form-check-input mt-0">
+                      <div class="flex-grow-1">
+                        <strong>Bank Transfer</strong>
+                        <p class="text-muted mb-0" style="font-size: 0.85rem;">Manual payment confirmation</p>
+                      </div>
+                      <i class="bi bi-bank" style="font-size: 1.5rem; color: #0f172a;"></i>
+                    </label>
                   </div>
                 </div>
               </div>
@@ -147,9 +179,11 @@
 .checkout-input { width: 100%; padding: 12px 16px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 0.95rem; transition: border-color 0.2s; }
 .checkout-input:focus { outline: none; border-color: #635bff; box-shadow: 0 0 0 3px rgba(99,91,255,0.1); }
 .payment-section { padding: 20px; background: #f8fafc; border-radius: 12px; border: 2px solid #e2e8f0; }
-.stripe-info { padding: 16px; background: white; border-radius: 10px; border: 1px solid #e2e8f0; }
-.accepted-cards { display: flex; gap: 8px; margin-top: 10px; }
-.card-badge { padding: 4px 10px; background: #f1f5f9; border-radius: 6px; font-size: 0.75rem; color: #64748b; }
+.payment-methods { display: flex; flex-direction: column; gap: 12px; }
+.payment-method-option { padding: 16px; background: white; border-radius: 10px; border: 1px solid #e2e8f0; transition: all 0.2s; }
+.payment-method-option:hover { border-color: #cbd5e1; }
+.payment-method-option:has(input:checked) { border-color: #635bff; background: rgba(99,91,255,0.02); }
+.cursor-pointer { cursor: pointer; }
 .btn-checkout { display: block; width: 100%; padding: 16px; background: linear-gradient(135deg, #635bff 0%, #7c3aed 100%); color: white; border: none; border-radius: 12px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: all 0.3s; }
 .btn-checkout:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(99,91,255,0.4); }
 .btn-back { display: block; width: 100%; text-align: center; padding: 14px; color: #64748b; text-decoration: none; margin-top: 12px; border: 2px solid #e2e8f0; border-radius: 12px; font-weight: 600; transition: all 0.2s; }

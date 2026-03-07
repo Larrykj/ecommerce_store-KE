@@ -1,0 +1,14 @@
+one:
+  name: "John Doe"
+  email: "john@example.com"
+  subject: "Order Inquiry"
+  message: "I have a question about my recent order and its delivery timeline."
+  status: "unread"
+  user: one
+
+two:
+  name: "Jane Smith"
+  email: "jane@example.com"
+  subject: "Product Feedback"
+  message: "I wanted to share some feedback about the product quality and packaging."
+  status: "read"

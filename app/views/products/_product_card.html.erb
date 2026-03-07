@@ -15,20 +15,8 @@
         <i class="bi bi-eye"></i>
       <% end %>
       
-      <% if current_user && defined?(@wishlist_map) %>
-        <% if wishlist_item = @wishlist_map[product.id] %>
-            <%= button_to wishlist_item_path(wishlist_item), method: :delete, class: "overlay-btn", style: "color: #ef4444;", title: t("remove_from_wishlist") do %>
-                <i class="bi bi-heart-fill"></i>
-            <% end %>
-        <% else %>
-            <%= button_to wishlist_items_path(product_id: product.id), method: :post, class: "overlay-btn", title: t("add_to_wishlist") do %>
-                <i class="bi bi-heart"></i>
-            <% end %>
-        <% end %>
-      <% end %>
-
-      <%= link_to edit_product_path(product), class: "overlay-btn", title: t("edit") do %>
-        <i class="bi bi-pencil"></i>
+      <% if current_user %>
+        <%= render partial: "shared/wishlist_button", locals: { product: product } %>
       <% end %>
     </div>
   </div>
@@ -37,6 +25,16 @@
       <span class="product-category"><%= t("categories_data.#{product.category.name.parameterize.underscore}", default: product.category.name) %></span>
     <% end %>
     <h3 class="product-name"><%= link_to product.name, product_path(product) %></h3>
+    <% if product.reviews_count > 0 %>
+      <div class="product-rating" style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+        <div class="stars" style="display:flex;gap:1px;">
+          <% 5.times do |i| %>
+            <i class="bi bi-star<%= i < product.average_rating.round ? '-fill' : '' %>" style="font-size:0.8rem;color:#fbbf24;"></i>
+          <% end %>
+        </div>
+        <span style="font-size:0.75rem;color:#94a3b8;"><%= product.average_rating %> (<%= product.reviews_count %>)</span>
+      </div>
+    <% end %>
     <p class="product-desc"><%= truncate(t("product_descriptions.#{product.name.parameterize.underscore}", default: product.description), length: 80) %></p>
     <div class="product-footer">
       <div class="product-price">

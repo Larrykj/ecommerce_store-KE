@@ -1,63 +1,266 @@
 <!DOCTYPE html>
-
-<html>
-
+<html data-theme="light">
   <head>
-
     <title><%= t('app_name') %></title>
-
     <meta name="viewport" content="width=device-width,initial-scale=1">
-
+    <meta name="description" content="E-Commerce Store - Quality products, secure payments, and fast delivery.">
     <%= csrf_meta_tags %>
-
     <%= csp_meta_tag %>
-
-
-
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-
     <%= javascript_importmap_tags %>
 
-    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <!-- Bootstrap CSS -->
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
 
-    
-
     <style>
+      /* ====== Theme Variables ====== */
+      :root, [data-theme="light"] {
+        --bg-primary: #f8fafc;
+        --bg-card: #ffffff;
+        --bg-navbar: #1e293b;
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --text-muted: #94a3b8;
+        --border-color: #e2e8f0;
+        --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+        --shadow-md: 0 4px 20px rgba(0,0,0,0.08);
+        --shadow-lg: 0 12px 40px rgba(0,0,0,0.12);
+        --accent: #667eea;
+        --accent-dark: #5a67d8;
+        --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --footer-bg: #0f172a;
+      }
+      [data-theme="dark"] {
+        --bg-primary: #0f172a;
+        --bg-card: #1e293b;
+        --bg-navbar: #0f172a;
+        --text-primary: #f1f5f9;
+        --text-secondary: #94a3b8;
+        --text-muted: #64748b;
+        --border-color: #334155;
+        --shadow-sm: 0 2px 8px rgba(0,0,0,0.2);
+        --shadow-md: 0 4px 20px rgba(0,0,0,0.3);
+        --shadow-lg: 0 12px 40px rgba(0,0,0,0.4);
+        --footer-bg: #020617;
+      }
+      [data-theme="dark"] .navbar { background-color: var(--bg-navbar) !important; }
+      [data-theme="dark"] .bg-dark { background-color: var(--bg-navbar) !important; }
+      [data-theme="dark"] .dropdown-menu { background: var(--bg-card); border-color: var(--border-color); }
+      [data-theme="dark"] .dropdown-item { color: var(--text-primary); }
+      [data-theme="dark"] .dropdown-item:hover { background: rgba(102,126,234,0.15); }
+      [data-theme="dark"] .container.mb-5 { color: var(--text-primary); }
+      [data-theme="dark"] footer { background-color: var(--footer-bg) !important; }
+      [data-theme="dark"] .alert { background: var(--bg-card); border-color: var(--border-color); color: var(--text-primary); }
 
+      /* ====== Base Styles ====== */
       body {
-
-        background-color: #f8f9fa;
-
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-
+        background-color: var(--bg-primary);
+        font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         min-height: 100vh;
-
         display: flex;
-
         flex-direction: column;
-
+        color: var(--text-primary);
+        transition: background-color 0.3s ease, color 0.3s ease;
       }
-
       .navbar {
+        box-shadow: var(--shadow-sm);
+        transition: background-color 0.3s ease;
+      }
+      footer { margin-top: auto; }
 
-        box-shadow: 0 2px 4px rgba(0,0,0,.1);
-
+      /* ====== Page Transition Animation ====== */
+      .page-content {
+        animation: fadeSlideIn 0.4s ease-out;
+      }
+      @keyframes fadeSlideIn {
+        from { opacity: 0; transform: translateY(12px); }
+        to { opacity: 1; transform: translateY(0); }
       }
 
-      footer {
+      /* ====== Toast Notifications ====== */
+      .toast-container {
+        position: fixed; top: 80px; right: 20px; z-index: 9999;
+        display: flex; flex-direction: column; gap: 10px;
+        pointer-events: none;
+      }
+      .toast-notification {
+        display: flex; align-items: center; gap: 12px;
+        padding: 14px 20px; border-radius: 14px;
+        background: var(--bg-card); color: var(--text-primary);
+        box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        border-left: 4px solid var(--accent);
+        transform: translateX(120%); opacity: 0;
+        transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        pointer-events: auto; min-width: 280px; max-width: 400px;
+        backdrop-filter: blur(10px);
+      }
+      .toast-notification.show { transform: translateX(0); opacity: 1; }
+      .toast-notification.success { border-left-color: var(--success); }
+      .toast-notification.warning { border-left-color: var(--warning); }
+      .toast-notification.error { border-left-color: var(--danger); }
+      .toast-notification .toast-icon {
+        width: 36px; height: 36px; border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.1rem; flex-shrink: 0;
+      }
+      .toast-notification.success .toast-icon { background: rgba(16,185,129,0.15); color: var(--success); }
+      .toast-notification.warning .toast-icon { background: rgba(245,158,11,0.15); color: var(--warning); }
+      .toast-notification.error .toast-icon { background: rgba(239,68,68,0.15); color: var(--danger); }
+      .toast-notification .toast-message { font-size: 0.9rem; font-weight: 500; }
+      .toast-notification .toast-close {
+        margin-left: auto; background: none; border: none; color: var(--text-muted);
+        cursor: pointer; font-size: 1rem; padding: 4px;
+      }
+      .toast-notification .toast-close:hover { color: var(--text-primary); }
+      .toast-progress {
+        position: absolute; bottom: 0; left: 0; height: 3px; border-radius: 0 0 14px 14px;
+        background: var(--accent); animation: toastProgress 4s linear forwards;
+      }
+      @keyframes toastProgress { from { width: 100%; } to { width: 0; } }
 
-        margin-top: auto;
+      /* ====== Scroll to Top Button ====== */
+      .scroll-to-top {
+        position: fixed; bottom: 30px; right: 30px; z-index: 1000;
+        width: 48px; height: 48px; border-radius: 14px;
+        background: var(--accent-gradient); color: white; border: none;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.2rem; cursor: pointer;
+        box-shadow: 0 4px 15px rgba(102,126,234,0.4);
+        transform: translateY(100px); opacity: 0;
+        transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+      }
+      .scroll-to-top.visible { transform: translateY(0); opacity: 1; }
+      .scroll-to-top:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(102,126,234,0.5); }
 
+      /* ====== Dark Mode Toggle ====== */
+      .theme-toggle {
+        background: none; border: none; color: white;
+        font-size: 1.15rem; cursor: pointer; padding: 6px 10px;
+        border-radius: 8px; transition: all 0.2s;
+        display: flex; align-items: center;
+      }
+      .theme-toggle:hover { background: rgba(255,255,255,0.1); }
+
+      /* ====== Enhanced Flash Messages ====== */
+      .alert-modern {
+        border: none; border-radius: 14px; padding: 16px 20px;
+        display: flex; align-items: center; gap: 12px;
+        animation: slideDown 0.4s ease-out;
+        box-shadow: var(--shadow-sm);
+      }
+      .alert-modern.alert-success {
+        background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(16,185,129,0.05));
+        color: #065f46; border-left: 4px solid var(--success);
+      }
+      .alert-modern.alert-danger {
+        background: linear-gradient(135deg, rgba(239,68,68,0.1), rgba(239,68,68,0.05));
+        color: #991b1b; border-left: 4px solid var(--danger);
+      }
+      @keyframes slideDown { from { opacity:0; transform: translateY(-10px); } to { opacity:1; transform: translateY(0); } }
+
+      /* ====== Cart Badge Pulse ====== */
+      .cart-badge-pulse { animation: badgePulse 2s ease-in-out infinite; }
+      @keyframes badgePulse { 0%,100% { transform: translate(-50%,-50%) scale(1); } 50% { transform: translate(-50%,-50%) scale(1.15); } }
+
+      /* ====== Modern Footer ====== */
+      .footer-modern {
+        background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+        color: #e2e8f0; padding: 60px 0 0; margin-top: auto;
+      }
+      .footer-brand h4 { color: white; font-weight: 800; font-size: 1.4rem; margin-bottom: 12px; }
+      .footer-brand p { color: #94a3b8; font-size: 0.9rem; line-height: 1.6; }
+      .social-links { display: flex; gap: 10px; margin-top: 16px; }
+      .social-btn {
+        width: 40px; height: 40px; border-radius: 10px;
+        background: rgba(255,255,255,0.08); color: #94a3b8;
+        display: flex; align-items: center; justify-content: center;
+        transition: all 0.3s; text-decoration: none; font-size: 1rem;
+      }
+      .social-btn:hover { background: var(--accent-gradient); color: white; transform: translateY(-3px); }
+      .footer-title {
+        color: white; font-weight: 700; font-size: 0.95rem;
+        margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.05em;
+      }
+      .footer-links { list-style: none; padding: 0; margin: 0; }
+      .footer-links li { margin-bottom: 10px; }
+      .footer-links a {
+        color: #94a3b8; text-decoration: none; font-size: 0.88rem;
+        transition: all 0.2s; display: inline-flex; align-items: center;
+      }
+      .footer-links a:hover { color: white; transform: translateX(4px); }
+      .footer-links a i { font-size: 0.8rem; opacity: 0.6; }
+      .footer-newsletter-text { color: #94a3b8; font-size: 0.88rem; margin-bottom: 14px; }
+      .footer-input-wrap {
+        display: flex; gap: 0; border-radius: 10px; overflow: hidden;
+        background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1);
+      }
+      .footer-email-input {
+        flex: 1; background: transparent; border: none; padding: 12px 16px;
+        color: white; font-size: 0.9rem; outline: none;
+      }
+      .footer-email-input::placeholder { color: #64748b; }
+      .footer-subscribe-btn {
+        background: var(--accent-gradient); color: white; border: none;
+        padding: 12px 20px; font-size: 1.1rem; cursor: pointer;
+        transition: opacity 0.2s; font-weight: 700;
+      }
+      .footer-subscribe-btn:hover { opacity: 0.9; }
+      .footer-trust {
+        display: flex; gap: 16px; flex-wrap: wrap;
+      }
+      .footer-trust span {
+        color: #64748b; font-size: 0.78rem; display: flex; align-items: center;
+      }
+      .footer-trust i { color: var(--accent); }
+      .footer-bottom {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 24px 0; margin-top: 40px;
+        border-top: 1px solid rgba(255,255,255,0.08); flex-wrap: wrap; gap: 12px;
+      }
+      .footer-bottom-left span { color: #64748b; font-size: 0.82rem; }
+      .footer-bottom-right { display: flex; gap: 20px; }
+      .footer-bottom-right a { color: #64748b; text-decoration: none; font-size: 0.82rem; transition: color 0.2s; }
+      .footer-bottom-right a:hover { color: white; }
+      @media (max-width: 768px) {
+        .footer-modern { padding: 40px 0 0; }
+        .footer-bottom { flex-direction: column; text-align: center; }
       }
 
+      /* ====== Cookie Consent ====== */
+      .cookie-consent {
+        position: fixed; bottom: 24px; left: 24px; z-index: 10000;
+        background: var(--bg-navbar); color: white;
+        padding: 16px 24px; border-radius: 16px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1);
+        display: flex; align-items: center; justify-content: space-between;
+        max-width: 500px; animation: slideUp 0.5s ease-out;
+      }
+      .cookie-consent .cookie-content { display: flex; align-items: center; font-size: 0.85rem; line-height: 1.5; }
+      @media (max-width: 576px) {
+        .cookie-consent {
+          bottom: 16px; left: 16px; right: 16px; max-width: none;
+          flex-direction: column; text-align: center; gap: 16px;
+        }
+        .cookie-consent .cookie-actions { margin-left: 0 !important; width: 100%; }
+        .cookie-consent .cookie-actions button { width: 100%; }
+      }
+      @keyframes slideUp { from { transform: translateY(150%); } to { transform: translateY(0); } }
+
+      /* ====== Dropdown Enhancements ====== */
+      .dropdown-menu { border-radius: 12px; border: 1px solid var(--border-color); box-shadow: var(--shadow-lg); padding: 8px; }
+      .dropdown-item { border-radius: 8px; padding: 8px 14px; font-size: 0.9rem; transition: all 0.15s; }
+      .dropdown-item:hover { background: rgba(102,126,234,0.1); }
+      .dropdown-item i { width: 20px; text-align: center; }
     </style>
 
   </head>
@@ -172,7 +375,12 @@
 
         </li>
 
-
+        <!-- Dark Mode Toggle -->
+        <li class="nav-item">
+          <button class="theme-toggle nav-link" id="themeToggleBtn" onclick="toggleDarkMode()" title="Toggle dark mode">
+            <i class="bi bi-moon-fill"></i>
+          </button>
+        </li>
 
         <% if user_signed_in? %>
 
@@ -184,30 +392,8 @@
           </li>
           <% end %>
 
-          <li class="nav-item">
-
-            <%= link_to t("add_product"), new_product_path, class: "nav-link" %>
-
-          </li>
-
-          <li class="nav-item">
-
-            <%= link_to cart_path, class: "nav-link position-relative" do %>
-
-              🛒 <%= t("cart") %>
-
-              <% if @cart && @cart.total_items > 0 %>
-
-                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-
-                  <%= @cart.total_items %>
-
-                </span>
-
-              <% end %>
-
-            <% end %>
-
+          <li class="nav-item" id="cart-nav-item">
+            <%= render "shared/cart_badge" %>
           </li>
 
           <li class="nav-item dropdown">
@@ -218,20 +404,16 @@
 
             </a>
 
-            <ul class="dropdown-menu">
-
-              <li><%= link_to "My Account", profile_path, class: "dropdown-item" %></li>
-
-              <li><%= link_to t("my_orders"), orders_path, class: "dropdown-item" %></li>
-
-              <li><%= link_to t("my_wishlist"), wishlist_items_path, class: "dropdown-item" %></li>
-
-              <li><%= link_to t("edit_profile"), edit_user_registration_path, class: "dropdown-item" %></li>
-
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><%= link_to profile_path, class: "dropdown-item" do %><i class="bi bi-person me-2"></i>My Account<% end %></li>
+              <li><%= link_to orders_path, class: "dropdown-item" do %><i class="bi bi-receipt me-2"></i><%= t("my_orders") %><% end %></li>
+              <li><%= link_to wishlist_items_path, class: "dropdown-item" do %><i class="bi bi-heart me-2"></i><%= t("my_wishlist") %><% end %></li>
+              <li><%= link_to comparison_path, class: "dropdown-item" do %><i class="bi bi-arrow-left-right me-2"></i>Compare<% end %></li>
+              <li><%= link_to gift_cards_path, class: "dropdown-item" do %><i class="bi bi-gift me-2"></i>Gift Cards<% end %></li>
+              <li><%= link_to return_requests_path, class: "dropdown-item" do %><i class="bi bi-arrow-return-left me-2"></i>My Returns<% end %></li>
               <li><hr class="dropdown-divider"></li>
-
-              <li><%= button_to t("logout"), destroy_user_session_path, method: :delete, class: "dropdown-item" %></li>
-
+              <li><%= link_to edit_user_registration_path, class: "dropdown-item" do %><i class="bi bi-gear me-2"></i><%= t("edit_profile") %><% end %></li>
+              <li><%= button_to destroy_user_session_path, method: :delete, class: "dropdown-item text-danger" do %><i class="bi bi-box-arrow-right me-2"></i><%= t("logout") %><% end %></li>
             </ul>
 
           </li>
@@ -250,24 +432,8 @@
 
           </li>
 
-          <li class="nav-item">
-
-            <%= link_to cart_path, class: "nav-link position-relative" do %>
-
-              🛒 <%= t("cart") %>
-
-              <% if @cart && @cart.total_items > 0 %>
-
-                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-
-                  <%= @cart.total_items %>
-
-                </span>
-
-              <% end %>
-
-            <% end %>
-
+          <li class="nav-item" id="cart-nav-item-guest">
+            <%= render "shared/cart_badge" %>
           </li>
 
         <% end %>
@@ -282,103 +448,228 @@
 
 
 
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
     <div class="container mb-5">
-
       <% if notice %>
-
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-
-          <%= notice %>
-
+        <div class="alert alert-modern alert-success alert-dismissible fade show" role="alert">
+          <i class="bi bi-check-circle-fill"></i>
+          <span><%= notice %></span>
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-
         </div>
-
       <% end %>
-
-      
 
       <% if alert %>
-
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-
-          <%= alert %>
-
+        <div class="alert alert-modern alert-danger alert-dismissible fade show" role="alert">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+          <span><%= alert %></span>
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-
         </div>
-
       <% end %>
 
-      
-
-      <%= yield %>
-
+      <div class="page-content">
+        <%= yield %>
+      </div>
     </div>
 
+    <!-- Scroll to Top -->
+    <button class="scroll-to-top" id="scrollToTop" title="Back to top">
+      <i class="bi bi-arrow-up"></i>
+    </button>
 
+    <!-- Cookie Consent Banner -->
+    <div id="cookieConsent" class="cookie-consent" style="display: none;">
+      <div class="cookie-content">
+        <i class="bi bi-cookie me-2 text-warning fs-4"></i>
+        <span>
+          We use cookies to improve your experience. By continuing to visit this site you agree to our use of cookies.
+          <%= link_to "Learn more", privacy_policy_path, class: "text-white text-decoration-underline" %>
+        </span>
+      </div>
+      <div class="cookie-actions ms-3">
+        <button id="acceptCookies" class="btn btn-primary btn-sm rounded-pill px-4">Accept</button>
+      </div>
+    </div>
 
-    <footer class="bg-dark text-white pt-5 pb-3 mt-auto">
+    <footer class="footer-modern">
       <div class="container">
-        <div class="row g-4 mb-4">
-          <div class="col-lg-4 col-md-6">
-            <h5 class="fw-bold mb-3"><%= t('app_name') %></h5>
-            <p class="text-white-50 small">Bringing the best of Kenya to your doorstep. Quality products, secure payments, and fast delivery.</p>
-            <div class="d-flex gap-2 mt-3">
-              <a href="#" class="btn btn-outline-light btn-sm rounded-circle" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;"><i class="bi bi-twitter-x"></i></a>
-              <a href="#" class="btn btn-outline-light btn-sm rounded-circle" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;"><i class="bi bi-facebook"></i></a>
-              <a href="#" class="btn btn-outline-light btn-sm rounded-circle" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;"><i class="bi bi-instagram"></i></a>
+        <!-- Footer Top -->
+        <div class="footer-top">
+          <div class="row g-4">
+            <!-- Brand -->
+            <div class="col-lg-3 col-md-6">
+              <div class="footer-brand">
+                <h4><i class="bi bi-shop me-2"></i><%= t('app_name') %></h4>
+                <p>Bringing the best of Kenya to your doorstep. Quality products, secure payments, and fast delivery.</p>
+                <div class="social-links">
+                  <a href="https://twitter.com/ecommerce_store" target="_blank" rel="noopener noreferrer" class="social-btn" title="Twitter"><i class="bi bi-twitter-x"></i></a>
+                  <a href="https://facebook.com/ecommerce_store" target="_blank" rel="noopener noreferrer" class="social-btn" title="Facebook"><i class="bi bi-facebook"></i></a>
+                  <a href="https://instagram.com/ecommerce_store" target="_blank" rel="noopener noreferrer" class="social-btn" title="Instagram"><i class="bi bi-instagram"></i></a>
+                  <a href="https://tiktok.com/@ecommerce_store" target="_blank" rel="noopener noreferrer" class="social-btn" title="TikTok"><i class="bi bi-tiktok"></i></a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Shop -->
+            <div class="col-lg-2 col-md-6 col-6">
+              <h6 class="footer-title">Shop</h6>
+              <ul class="footer-links">
+                <li><%= link_to products_path do %><i class="bi bi-grid me-2"></i><%= t('products') %><% end %></li>
+                <li><%= link_to categories_path do %><i class="bi bi-collection me-2"></i><%= t('categories') %><% end %></li>
+                <li><%= link_to gift_cards_path do %><i class="bi bi-gift me-2"></i>Gift Cards<% end %></li>
+                <li><%= link_to comparison_path do %><i class="bi bi-arrow-left-right me-2"></i>Compare<% end %></li>
+              </ul>
+            </div>
+
+            <!-- Account -->
+            <div class="col-lg-2 col-md-6 col-6">
+              <h6 class="footer-title">Account</h6>
+              <ul class="footer-links">
+                <% if user_signed_in? %>
+                  <li><%= link_to profile_path do %><i class="bi bi-person me-2"></i>Profile<% end %></li>
+                  <li><%= link_to orders_path do %><i class="bi bi-receipt me-2"></i>Orders<% end %></li>
+                  <li><%= link_to wishlist_items_path do %><i class="bi bi-heart me-2"></i>Wishlist<% end %></li>
+                  <li><%= link_to return_requests_path do %><i class="bi bi-arrow-return-left me-2"></i>Returns<% end %></li>
+                <% else %>
+                  <li><%= link_to new_user_session_path do %><i class="bi bi-box-arrow-in-right me-2"></i>Login<% end %></li>
+                  <li><%= link_to new_user_registration_path do %><i class="bi bi-person-plus me-2"></i>Register<% end %></li>
+                <% end %>
+              </ul>
+            </div>
+
+            <!-- Support -->
+            <div class="col-lg-2 col-md-6 col-6">
+              <h6 class="footer-title">Support</h6>
+              <ul class="footer-links">
+                <li><%= link_to new_contact_message_path do %><i class="bi bi-headset me-2"></i>Contact Us<% end %></li>
+                <li><%= link_to faq_path do %><i class="bi bi-question-circle me-2"></i>FAQ<% end %></li>
+                <li><%= link_to shipping_info_path do %><i class="bi bi-truck me-2"></i>Shipping<% end %></li>
+                <li><%= link_to about_path do %><i class="bi bi-info-circle me-2"></i>About Us<% end %></li>
+              </ul>
+            </div>
+
+            <!-- Newsletter -->
+            <div class="col-lg-3 col-md-6">
+              <h6 class="footer-title">Stay Connected</h6>
+              <p class="footer-newsletter-text">Subscribe for exclusive deals and new arrivals.</p>
+              <%= form_with model: Subscriber.new, url: subscribers_path, class: "footer-newsletter-form" do |f| %>
+                <div class="footer-input-wrap">
+                  <%= f.email_field :email, class: "footer-email-input", placeholder: "Your email address", required: true %>
+                  <%= f.submit "→", class: "footer-subscribe-btn" %>
+                </div>
+              <% end %>
+              <div class="footer-trust mt-3">
+                <span><i class="bi bi-shield-check me-1"></i>Secure Payments</span>
+                <span><i class="bi bi-truck me-1"></i>Fast Delivery</span>
+              </div>
             </div>
           </div>
-          <div class="col-lg-2 col-md-6">
-            <h6 class="fw-bold mb-3">Shop</h6>
-            <ul class="list-unstyled small">
-              <li class="mb-2"><%= link_to t('products'), products_path, class: 'text-white-50 text-decoration-none' %></li>
-              <li class="mb-2"><%= link_to t('categories'), categories_path, class: 'text-white-50 text-decoration-none' %></li>
-            </ul>
+        </div>
+
+        <!-- Footer Bottom / Policies -->
+        <div class="footer-bottom">
+          <div class="footer-bottom-left">
+            <span>&copy; <%= Time.current.year %> <%= t('app_name') %>. <%= t('footer_rights') %></span>
           </div>
-          <div class="col-lg-3 col-md-6">
-            <h6 class="fw-bold mb-3">Company</h6>
-            <ul class="list-unstyled small">
-              <li class="mb-2"><%= link_to 'About Us', about_path, class: 'text-white-50 text-decoration-none' %></li>
-              <li class="mb-2"><%= link_to 'Contact Us', new_contact_message_path, class: 'text-white-50 text-decoration-none' %></li>
-              <li class="mb-2"><%= link_to 'FAQ', faq_path, class: 'text-white-50 text-decoration-none' %></li>
-            </ul>
-          </div>
-          <div class="col-lg-3 col-md-6">
-            <h6 class="fw-bold mb-3">Policies</h6>
-            <ul class="list-unstyled small">
-              <li class="mb-2"><%= link_to 'Shipping Info', shipping_info_path, class: 'text-white-50 text-decoration-none' %></li>
-              <li class="mb-2"><%= link_to 'Return Policy', return_policy_path, class: 'text-white-50 text-decoration-none' %></li>
-              <li class="mb-2"><%= link_to 'Privacy Policy', privacy_policy_path, class: 'text-white-50 text-decoration-none' %></li>
-              <li class="mb-2"><%= link_to 'Terms & Conditions', terms_path, class: 'text-white-50 text-decoration-none' %></li>
-            </ul>
+          <div class="footer-bottom-right">
+            <%= link_to 'Privacy', privacy_policy_path %>
+            <%= link_to 'Terms', terms_path %>
+            <%= link_to 'Returns', return_policy_path %>
           </div>
         </div>
-        <hr class="border-secondary">
-        <p class="text-center text-white-50 small mb-0">&copy; <%= Time.current.year %> <%= t('app_name') %>. <%= t('footer_rights') %></p>
       </div>
     </footer>
 
 
 
-    <!-- Bootstrap JS Bundle with Popper -->
-    
     <script>
-      // Password visibility toggle - Compatible with Turbo
+      // ====== Dark Mode Toggle ======
+      function initDarkMode() {
+        var saved = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', saved);
+        updateThemeIcon(saved);
+      }
+      function toggleDarkMode() {
+        var current = document.documentElement.getAttribute('data-theme');
+        var next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+        updateThemeIcon(next);
+      }
+      function updateThemeIcon(theme) {
+        var btn = document.getElementById('themeToggleBtn');
+        if (btn) {
+          btn.innerHTML = theme === 'dark'
+            ? '<i class="bi bi-sun-fill"></i>'
+            : '<i class="bi bi-moon-fill"></i>';
+        }
+      }
+
+      // ====== Toast Notification System ======
+      function showToast(message, type) {
+        type = type || 'success';
+        var container = document.getElementById('toastContainer');
+        if (!container) return;
+        var icons = { success: 'bi-check-lg', warning: 'bi-exclamation-lg', error: 'bi-x-lg' };
+        var toast = document.createElement('div');
+        toast.className = 'toast-notification ' + type;
+        toast.innerHTML =
+          '<div class="toast-icon"><i class="bi ' + (icons[type] || icons.success) + '"></i></div>' +
+          '<span class="toast-message">' + message + '</span>' +
+          '<button class="toast-close" onclick="this.parentElement.remove()"><i class="bi bi-x"></i></button>' +
+          '<div class="toast-progress"></div>';
+        container.appendChild(toast);
+        setTimeout(function() { toast.classList.add('show'); }, 50);
+        setTimeout(function() {
+          toast.classList.remove('show');
+          setTimeout(function() { toast.remove(); }, 400);
+        }, 4000);
+      }
+
+      // Auto-convert flash messages to toasts
+      function flashToToast() {
+        document.querySelectorAll('.alert-modern').forEach(function(alert) {
+          var msg = alert.querySelector('span');
+          if (msg && msg.textContent.trim()) {
+            var type = alert.classList.contains('alert-danger') ? 'error' : 'success';
+            showToast(msg.textContent.trim(), type);
+            alert.style.display = 'none';
+          }
+        });
+      }
+
+      // ====== Scroll to Top ======
+      function initScrollToTop() {
+        var btn = document.getElementById('scrollToTop');
+        if (!btn) return;
+        window.addEventListener('scroll', function() {
+          if (window.scrollY > 400) btn.classList.add('visible');
+          else btn.classList.remove('visible');
+        });
+        btn.addEventListener('click', function() {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      }
+
+      // ====== Cart Badge Pulse ======
+      function initCartBadge() {
+        document.querySelectorAll('.badge.rounded-pill.bg-danger').forEach(function(badge) {
+          badge.classList.add('cart-badge-pulse');
+        });
+      }
+
+      // ====== Password Toggles ======
       function setupPasswordToggles() {
         function setupPasswordToggle(passwordId, buttonId, iconId) {
-          const button = document.getElementById(buttonId);
+          var button = document.getElementById(buttonId);
           if (button) {
-            // Remove old listener if exists
             button.replaceWith(button.cloneNode(true));
-            const newButton = document.getElementById(buttonId);
-            
+            var newButton = document.getElementById(buttonId);
             newButton.addEventListener('click', function(e) {
               e.preventDefault();
-              const passwordField = document.getElementById(passwordId);
-              const eyeIcon = document.getElementById(iconId);
-              
+              var passwordField = document.getElementById(passwordId);
+              var eyeIcon = document.getElementById(iconId);
               if (passwordField && eyeIcon) {
                 if (passwordField.type === 'password') {
                   passwordField.type = 'text';
@@ -393,19 +684,47 @@
             });
           }
         }
-        
-        // Setup all password toggles
         setupPasswordToggle('login-password', 'toggle-login-password', 'login-eye-icon');
         setupPasswordToggle('signup-password', 'toggle-signup-password', 'signup-eye-icon');
         setupPasswordToggle('signup-password-confirm', 'toggle-signup-password-confirm', 'signup-confirm-eye-icon');
         setupPasswordToggle('reset-password', 'toggle-reset-password', 'reset-eye-icon');
         setupPasswordToggle('reset-password-confirm', 'toggle-reset-password-confirm', 'reset-confirm-eye-icon');
       }
-      
-      // Run on initial load and every Turbo navigation
-      document.addEventListener('DOMContentLoaded', setupPasswordToggles);
-      document.addEventListener('turbo:load', setupPasswordToggles);
-      document.addEventListener('turbo:render', setupPasswordToggles);
+
+      // ====== Cookie Consent ======
+      function initCookieConsent() {
+        var banner = document.getElementById('cookieConsent');
+        var btn = document.getElementById('acceptCookies');
+        if (!banner || !btn) return;
+        
+        if (!localStorage.getItem('cookiesAccepted')) {
+          setTimeout(function() {
+            banner.style.display = 'flex';
+          }, 1000);
+        }
+        
+        btn.addEventListener('click', function() {
+          localStorage.setItem('cookiesAccepted', 'true');
+          banner.style.animation = 'slideDown 0.4s ease-in forwards';
+          setTimeout(function() { banner.style.display = 'none'; }, 400);
+        });
+      }
+
+      // ====== Init All ======
+      function initAllFeatures() {
+        initDarkMode();
+        initScrollToTop();
+        initCartBadge();
+        setupPasswordToggles();
+        initCookieConsent();
+        setTimeout(flashToToast, 300);
+      }
+
+      // Run on page load + Turbo navigations
+      initDarkMode(); // Run immediately to prevent flash
+      document.addEventListener('DOMContentLoaded', initAllFeatures);
+      document.addEventListener('turbo:load', initAllFeatures);
+      document.addEventListener('turbo:render', initAllFeatures);
     </script>
 
   </body>

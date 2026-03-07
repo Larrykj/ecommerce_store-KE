@@ -27,7 +27,7 @@ class Order < ApplicationRecord
   validates :phone, presence: true
 
   # Updated enum syntax for Rails 7+
-  enum :status, { pending: "pending", processing: "processing", shipped: "shipped", delivered: "delivered", cancelled: "cancelled" }, default: :pending
+  enum :status, { pending: "pending", paid: "paid", processing: "processing", shipped: "shipped", delivered: "delivered", cancelled: "cancelled" }, default: :pending
 
   def total_price
     order_items.sum { |item| item.price * item.quantity }
@@ -37,7 +37,7 @@ class Order < ApplicationRecord
   # Broadcast changes to the order for real-time updates
   after_update_commit -> { broadcast_replace_to self, target: "order_tracking_section", partial: "orders/tracking_details", locals: { order: self } }
 
-  ORDER_STEPS = %w[pending processing shipped delivered].freeze
+  ORDER_STEPS = %w[pending paid processing shipped delivered].freeze
 
   def current_step_index
     ORDER_STEPS.index(status) || 0

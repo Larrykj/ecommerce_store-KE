@@ -102,7 +102,7 @@
         <div class="product-actions">
           <% in_stock_variants = @product.variants.where("quantity > 0") %>
           <% if in_stock_variants.any? %>
-            <%= form_with url: cart_items_path, method: :post, local: true, class: "add-to-cart-form" do |form| %>
+            <%= form_with url: cart_items_path, method: :post, class: "add-to-cart-form" do |form| %>
               <% if in_stock_variants.count > 1 %>
                 <div class="variant-select mb-3">
                   <%= form.label :variant_id, "Select Option:", class: "form-label" %>
@@ -138,13 +138,6 @@
             <!-- Compare Button -->
             <%= button_to add_comparison_path(product_id: @product.id), method: :post, class: "action-btn", title: "Add to Compare" do %>
               <i class="bi bi-columns-gap"></i>
-            <% end %>
-
-            <%= link_to edit_product_path(@product), class: "action-btn edit" do %>
-              <i class="bi bi-pencil"></i>
-            <% end %>
-            <%= button_to product_path(@product), method: :delete, data: { turbo_confirm: t("are_you_sure") }, class: "action-btn delete" do %>
-              <i class="bi bi-trash"></i>
             <% end %>
           </div>
         </div>
@@ -298,10 +291,12 @@
                 
                 <div class="review-footer">
                   <div class="review-actions">
-                    <%= button_to helpful_product_review_path(@product, review), method: :post, class: "helpful-btn", data: { turbo: false } do %>
-                      <i class="bi bi-hand-thumbs-up"></i>
-                      <%= t("helpful") %> (<%= review.helpful_count %>)
-                    <% end %>
+                    <div id="review_helpful_container_<%= review.id %>" style="display:inline-block;">
+                      <%= button_to helpful_product_review_path(@product, review), method: :post, class: "helpful-btn" do %>
+                        <i class="bi bi-hand-thumbs-up"></i>
+                        <%= t("helpful") %> (<%= review.helpful_count %>)
+                      <% end %>
+                    </div>
                     
                     <% if review.editable_by?(current_user) %>
                       <%= link_to edit_product_review_path(@product, review), class: "review-action-btn" do %>

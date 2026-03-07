@@ -11,6 +11,20 @@ class Admin::ProductsController < Admin::BaseController
   def show
   end
 
+  def new
+    @product = Product.new
+    @product.variants.build
+  end
+
+  def create
+    @product = Product.new(product_params)
+    if @product.save
+      redirect_to admin_products_path, notice: "Product created successfully."
+    else
+      render :new, status: :unprocessable_entity
+    end
+  end
+
   def edit
     @product.variants.build if @product.variants.empty?
   end
@@ -40,7 +54,7 @@ class Admin::ProductsController < Admin::BaseController
   end
 
   def product_params
-    params.require(:product).permit(:name, :description, :price, :image, :category_id,
-                                    variants_attributes: [ :id, :sku, :name, :price, :quantity, :_destroy ])
+    params.require(:product).permit(:name, :description, :price, :image, :category_id, gallery_images: [],
+                                    variants_attributes: [ :id, :sku, :name, :price, :quantity, :variant_image, :_destroy ])
   end
 end

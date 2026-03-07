@@ -60,7 +60,7 @@
       <h6 class="mb-2">Update Status</h6>
       <%= form_with model: @order, url: admin_order_path(@order), method: :patch, local: true do |f| %>
         <div class="d-flex gap-2">
-          <%= f.select :status, [["Pending", "pending"], ["Processing", "processing"], ["Shipped", "shipped"], ["Delivered", "delivered"], ["Cancelled", "cancelled"]], { selected: @order.status || "pending" }, class: "form-select form-select-sm" %>
+          <%= f.select :status, [["Pending", "pending"], ["Paid", "paid"], ["Processing", "processing"], ["Shipped", "shipped"], ["Delivered", "delivered"], ["Cancelled", "cancelled"]], { selected: @order.status || "pending" }, class: "form-select form-select-sm" %>
           <%= f.submit "Update", class: "btn btn-sm btn-primary" %>
         </div>
       <% end %>

@@ -119,7 +119,7 @@ class Product < ApplicationRecord
       errors.add(:image, "is too big (max 5MB)")
     end
 
-    acceptable_types = ["image/jpeg", "image/png", "image/webp"]
+    acceptable_types = [ "image/jpeg", "image/png", "image/webp" ]
     unless acceptable_types.include?(image.content_type)
       errors.add(:image, "must be a JPEG, PNG or WebP")
     end

@@ -22,7 +22,7 @@ class OrdersController < ApplicationController
     @order.email = current_user.email
   end
 
-  def create
+<<<<<<< HEAD  def create
     @order = current_user.orders.new(order_params)
     @order.status = "pending"
     @order.estimated_delivery_date = 5.days.from_now
@@ -57,6 +57,24 @@ class OrdersController < ApplicationController
       redirect_to order_path(@order), notice: t("order_placed_success")
     else
       render :new, status: :unprocessable_entity
+    end
+  end
+
+  def cancel
+    @order = current_user.orders.find(params[:id])
+    if %w[pending paid processing].include?(@order.status)
+      Order.transaction do
+        @order.order_items.each do |item|
+          variant = item.variant
+          variant.with_lock do
+            variant.update!(quantity: variant.quantity + item.quantity)
+          end
+        end
+        @order.update!(status: "cancelled")
+      end
+      redirect_to @order, notice: t("order_cancelled_success", default: "Order has been cancelled successfully.")
+    else
+      redirect_to @order, alert: t("order_cannot_cancel", default: "Order cannot be cancelled at this stage.")
     end
   end
 

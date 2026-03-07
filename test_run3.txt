@@ -1,0 +1,30 @@
+﻿bundle : DEPRECATION WARNING: 
+ActiveSupport::Configurable is 
+deprecated without replacement, and 
+will be removed in Rails 8.2.
+At line:1 char:1
++ bundle exec rails test 2>&1 | 
+Out-File -Encoding utf8 test_run3.txt
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpe 
+   cified: (DEPRECATION WAR...d in   
+  Rails 8.2.:String) [], RemoteExc   
+ eption
+    + FullyQualifiedErrorId : Native 
+   CommandError
+ 
+
+You can emulate the previous 
+behavior with `class_attribute`.
+ (called from <main> at C:/Users/Home
+PC/Desktop/E-Commerce-Rails/config/ap
+plication.rb:7)
+
+Run options: --seed 15352
+
+# Running:
+
+..........................................................................................................................................................................................................
+
+Finished in 5.316121s, 37.9976 runs/s, 54.9273 assertions/s.
+202 runs, 292 assertions, 0 failures, 0 errors, 0 skips

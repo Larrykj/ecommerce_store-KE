@@ -1,4 +1,4 @@
-<%= form_with(model: product, local: true) do |form| %>
+<%= form_with(model: [:admin, product], local: true) do |form| %>
   <% if product.errors.any? %>
     <div class="alert alert-danger">
       <h4><%= t('error_prohibited_save', count: product.errors.count, resource: t('product')) %>:</h4>
@@ -25,6 +25,10 @@
     <%= form.number_field :price, class: 'form-control', step: 0.01, placeholder: '0.00' %>
   </div>
 
+  <div class="mb-3">
+    <%= form.label :category_id, t('category'), class: 'form-label' %>
+    <%= form.collection_select :category_id, Category.all, :id, :name, { prompt: "Select Category" }, class: 'form-control' %>
+  </div>
 
   <div class="mb-3">
     <%= form.label :image, t('product_image'), class: 'form-label' %>
@@ -100,6 +104,6 @@
 
   <div class="actions">
     <%= form.submit t('save_product'), class: 'btn btn-success' %>
-    <%= link_to t('cancel'), products_path, class: 'btn btn-secondary' %>
+    <%= link_to t('cancel'), admin_products_path, class: 'btn btn-secondary' %>
   </div>
 <% end %>

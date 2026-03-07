@@ -10,12 +10,19 @@ class WishlistItemsController < ApplicationController
 
     unless current_user.wishlist_products.include?(@product)
       current_user.wishlist_products << @product
-      flash[:notice] = t("wishlist_added_success")
+      respond_to do |format|
+        format.turbo_stream { render turbo_stream: [
+          turbo_stream.replace("wishlist-btn-#{@product.id}", partial: "shared/wishlist_button", locals: { product: @product }),
+          turbo_stream.append("toastContainer", "<script>showToast('#{t("wishlist_added_success")}', 'success')</script>".html_safe)
+        ] }
+        format.html { redirect_back fallback_location: products_path, notice: t("wishlist_added_success") }
+      end
     else
-      flash[:alert] = t("wishlist_already_exists")
+      respond_to do |format|
+        format.turbo_stream { render turbo_stream: turbo_stream.append("toastContainer", "<script>showToast('#{t("wishlist_already_exists")}', 'warning')</script>".html_safe) }
+        format.html { redirect_back fallback_location: products_path, alert: t("wishlist_already_exists") }
+      end
     end
-
-    redirect_back fallback_location: products_path
   end
 
   def destroy
@@ -27,13 +34,21 @@ class WishlistItemsController < ApplicationController
     end
 
     if @item
+      @product = @item.product
       @item.destroy
-      flash[:notice] = t("wishlist_removed_success")
+      respond_to do |format|
+        format.turbo_stream { render turbo_stream: [
+          turbo_stream.replace("wishlist-btn-#{@product.id}", partial: "shared/wishlist_button", locals: { product: @product }),
+          turbo_stream.append("toastContainer", "<script>showToast('#{t("wishlist_removed_success")}', 'success')</script>".html_safe)
+        ] }
+        format.html { redirect_back fallback_location: products_path, notice: t("wishlist_removed_success") }
+      end
     else
-      flash[:alert] = t("wishlist_item_not_found")
+      respond_to do |format|
+        format.turbo_stream { render turbo_stream: turbo_stream.append("toastContainer", "<script>showToast('#{t("wishlist_item_not_found")}', 'error')</script>".html_safe) }
+        format.html { redirect_back fallback_location: products_path, alert: t("wishlist_item_not_found") }
+      end
     end
-
-    redirect_back fallback_location: products_path
   end
 end
 # EOF

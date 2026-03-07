@@ -5,6 +5,9 @@
       <input type="text" name="search" value="<%= params[:search] %>" class="form-control" placeholder="Search products..." style="width: 250px;">
       <button type="submit" class="btn-admin btn-admin-primary"><i class="bi bi-search"></i></button>
     <% end %>
+    <%= link_to new_admin_product_path, class: "btn-admin btn-admin-primary" do %>
+      <i class="bi bi-plus-lg me-1"></i> New Product
+    <% end %>
   </div>
 </div>
 

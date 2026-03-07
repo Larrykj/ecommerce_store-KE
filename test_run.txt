@@ -1,0 +1,217 @@
+﻿bundle : DEPRECATION WARNING: 
+ActiveSupport::Configurable is 
+deprecated without replacement, and 
+will be removed in Rails 8.2.
+At line:1 char:1
++ bundle exec rails test 2>&1 | 
+Out-File -Encoding utf8 test_run.txt
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpe 
+   cified: (DEPRECATION WAR...d in   
+  Rails 8.2.:String) [], RemoteExc   
+ eption
+    + FullyQualifiedErrorId : Native 
+   CommandError
+ 
+
+You can emulate the previous 
+behavior with `class_attribute`.
+ (called from <main> at C:/Users/Home
+PC/Desktop/E-Commerce-Rails/config/ap
+plication.rb:7)
+WARNING: Rails was not able to 
+disable referential integrity.
+
+This is most likely caused due to 
+missing permissions.
+Rails needs superuser privileges to 
+disable referential integrity.
+
+    cause: PG::TRDeadlockDetected: 
+ERROR:  deadlock detected
+DETAIL:  Process 2920 waits for 
+ShareRowExclusiveLock on relation 
+18727 of database 17078; blocked by 
+process 8968.
+Process 8968 waits for 
+ShareUpdateExclusiveLock on relation 
+18693 of database 17078; blocked by 
+process 2920.
+HINT:  See server log for query 
+details.
+
+
+Running 197 tests in parallel using 4 threads
+Run options: --seed 29376
+
+# Running:
+
+E
+
+Error:
+GiftCardsControllerTest#test_should_get_index_when_signed_in:
+ActiveRecord::InvalidForeignKey: PG::ForeignKeyViolation: ERROR:  update or delete on table "categories" violates foreign key constraint "fk_rails_fb915499a4" on table "products"
+DETAIL:  Key (id)=(980190962) is still referenced from table "products".
+
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activerecord-8.1.2/lib/active_record/connection_adapters/postgresql/database_statements.rb:167:in 'PG::Connection#exec'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activerecord-8.1.2/lib/active_record/connection_adapters/postgresql/database_statements.rb:167:in 'ActiveRecord::ConnectionAdapters::PostgreSQL::DatabaseStatements#perform_query'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activerecord-8.1.2/lib/active_record/connection_adapters/abstract/database_statements.rb:571:in 'block (2 levels) in ActiveRecord::ConnectionAdapters::DatabaseStatements#raw_execute'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activerecord-8.1.2/lib/active_record/connection_adapters/abstract_adapter.rb:1086:in 'block in ActiveRecord::ConnectionAdapters::AbstractAdapter#with_raw_connection'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activesupport-8.1.2/lib/active_support/concurrency/null_lock.rb:9:in 'ActiveSupport::Concurrency::NullLock#synchronize'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activerecord-8.1.2/lib/active_record/connection_adapters/abstract_adapter.rb:1055:in 'ActiveRecord::ConnectionAdapters::AbstractAdapter#with_raw_connection'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activerecord-8.1.2/lib/active_record/connection_adapters/abstract/database_statements.rb:570:in 'block in ActiveRecord::ConnectionAdapters::DatabaseStatements#raw_execute'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activesupport-8.1.2/lib/active_support/notifications/instrumenter.rb:58:in 'ActiveSupport::Notifications::Instrumenter#instrument'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activerecord-8.1.2/lib/active_record/connection_adapters/abstract_adapter.rb:1206:in 'ActiveRecord::ConnectionAdapters::AbstractAdapter#log'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activerecord-8.1.2/lib/active_record/connection_adapters/abstract/database_statements.rb:569:in 'ActiveRecord::ConnectionAdapters::DatabaseStatements#raw_execute'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activerecord-8.1.2/lib/active_record/connection_adapters/postgresql/database_statements.rb:205:in 'ActiveRecord::ConnectionAdapters::PostgreSQL::DatabaseStatements#execute_batch'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activerecord-8.1.2/lib/active_record/connection_adapters/abstract/database_statements.rb:515:in 'block (2 levels) in ActiveRecord::ConnectionAdapters::DatabaseStatements#insert_fixtures_set'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activerecord-8.1.2/lib/active_record/connection_adapters/postgresql/referential_integrity.rb:19:in 'ActiveRecord::ConnectionAdapters::PostgreSQL::ReferentialIntegrity#disable_referential_integrity'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activerecord-8.1.2/lib/active_record/connection_adapters/abstract/database_statements.rb:514:in 'block in ActiveRecord::ConnectionAdapters::DatabaseStatements#insert_fixtures_set'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activerecord-8.1.2/lib/active_record/connection_adapters/abstract/transaction.rb:648:in 'block in ActiveRecord::ConnectionAdapters::TransactionManager#within_new_transaction'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activesupport-8.1.2/lib/active_support/concurrency/null_lock.rb:9:in 'ActiveSupport::Concurrency::NullLock#synchronize'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activerecord-8.1.2/lib/active_record/connection_adapters/abstract/transaction.rb:645:in 'ActiveRecord::ConnectionAdapters::TransactionManager#within_new_transaction'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activerecord-8.1.2/lib/active_record/connection_adapters/abstract/database_statements.rb:386:in 'ActiveRecord::ConnectionAdapters::DatabaseStatements#within_new_transaction'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activerecord-8.1.2/lib/active_record/connection_adapters/abstract/database_statements.rb:378:in 'ActiveRecord::ConnectionAdapters::DatabaseStatements#transaction'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activerecord-8.1.2/lib/active_record/connection_adapters/abstract/database_statements.rb:513:in 'ActiveRecord::ConnectionAdapters::DatabaseStatements#insert_fixtures_set'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activerecord-8.1.2/lib/active_record/fixtures.rb:684:in 'block (2 levels) in ActiveRecord::FixtureSet.insert'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activerecord-8.1.2/lib/active_record/connection_adapters/abstract/connection_pool.rb:463:in 'ActiveRecord::ConnectionAdapters::ConnectionPool#with_connection'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activerecord-8.1.2/lib/active_record/fixtures.rb:683:in 'block in ActiveRecord::FixtureSet.insert'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activerecord-8.1.2/lib/active_record/fixtures.rb:674:in 'Hash#each'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activerecord-8.1.2/lib/active_record/fixtures.rb:674:in 'ActiveRecord::FixtureSet.insert'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activerecord-8.1.2/lib/active_record/fixtures.rb:660:in 'ActiveRecord::FixtureSet.read_and_insert'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activerecord-8.1.2/lib/active_record/fixtures.rb:605:in 'ActiveRecord::FixtureSet.create_fixtures'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activerecord-8.1.2/lib/active_record/test_fixtures.rb:282:in 'ActiveRecord::TestFixtures#load_fixtures'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activerecord-8.1.2/lib/active_record/test_fixtures.rb:146:in 'ActiveRecord::TestFixtures#setup_fixtures'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activerecord-8.1.2/lib/active_record/test_fixtures.rb:10:in 'ActiveRecord::TestFixtures#before_setup'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activesupport-8.1.2/lib/active_support/testing/setup_and_teardown.rb:40:in 'ActiveSupport::Testing::SetupAndTeardown#before_setup'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/actionpack-8.1.2/lib/action_dispatch/testing/integration.rb:349:in 'ActionDispatch::Integration::Runner#before_setup'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activejob-8.1.2/lib/active_job/test_helper.rb:53:in 'ActiveJob::TestHelper#before_setup'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/railties-8.1.2/lib/rails/test_help.rb:45:in 'ActionDispatch::IntegrationTest#before_setup'
+
+bin/rails test test/controllers/gift_cards_controller_test.rb:15
+
+E
+
+Error:
+GiftCardsControllerTest#test_should_check_balance:
+NameError: undefined local variable or method 'check_gift_card_balance_url' for an instance of GiftCardsControllerTest
+    test/controllers/gift_cards_controller_test.rb:39:in 'block in <class:GiftCardsControllerTest>'
+
+bin/rails test test/controllers/gift_cards_controller_test.rb:37
+
+E
+
+Error:
+GiftCardsControllerTest#test_should_not_create_gift_card_with_invalid_value:
+RuntimeError: Could not find a valid mapping for #<User id: 980190962, admin: false, created_at: "2026-03-05 09:12:15.551103000 +0000", discarded_at: nil, email: [FILTERED], name: "Test User One", name_ciphertext: nil, provider: nil, uid: nil, updated_at: "2026-03-05 09:12:15.551103000 +0000">
+    test/controllers/gift_cards_controller_test.rb:44:in 'block in <class:GiftCardsControllerTest>'
+
+bin/rails test test/controllers/gift_cards_controller_test.rb:43
+
+E
+
+Error:
+SubscribersControllerTest#test_should_not_create_duplicate_subscriber:
+NameError: undefined local variable or method 'subscribers_url' for an instance of SubscribersControllerTest
+    test/controllers/subscribers_controller_test.rb:24:in 'block (2 levels) in <class:SubscribersControllerTest>'
+    test/controllers/subscribers_controller_test.rb:23:in 'block in <class:SubscribersControllerTest>'
+
+bin/rails test test/controllers/subscribers_controller_test.rb:21
+
+E
+
+Error:
+SubscribersControllerTest#test_should_create_subscriber_with_valid_email:
+NameError: undefined local variable or method 'subscribers_url' for an instance of SubscribersControllerTest
+    test/controllers/subscribers_controller_test.rb:6:in 'block (2 levels) in <class:SubscribersControllerTest>'
+    test/controllers/subscribers_controller_test.rb:5:in 'block in <class:SubscribersControllerTest>'
+
+bin/rails test test/controllers/subscribers_controller_test.rb:4
+
+E
+
+Error:
+SubscribersControllerTest#test_should_unsubscribe_with_valid_token:
+NoMethodError: undefined method 'unsubscribe_url' for an instance of SubscribersControllerTest
+    test/controllers/subscribers_controller_test.rb:32:in 'block in <class:SubscribersControllerTest>'
+
+bin/rails test test/controllers/subscribers_controller_test.rb:30
+
+E
+
+Error:
+SubscribersControllerTest#test_should_not_create_subscriber_with_invalid_email:
+NameError: undefined local variable or method 'subscribers_url' for an instance of SubscribersControllerTest
+    test/controllers/subscribers_controller_test.rb:15:in 'block (2 levels) in <class:SubscribersControllerTest>'
+    test/controllers/subscribers_controller_test.rb:14:in 'block in <class:SubscribersControllerTest>'
+
+bin/rails test test/controllers/subscribers_controller_test.rb:13
+
+..........E
+
+Error:
+ReturnRequestTest#test_pending?_returns_false_for_approved:
+StandardError: No fixture named 'two' found for fixture set 'return_requests'
+    test/models/return_request_test.rb:42:in 'block in <class:ReturnRequestTest>'
+
+bin/rails test test/models/return_request_test.rb:41
+
+..E
+
+Error:
+GiftCardsControllerTest#test_should_create_gift_card:
+RuntimeError: Foreign key violations found in your fixture data. Ensure you aren't referring to labels that don't exist on associations. Error from database:
+
+PG::TRDeadlockDetected: ERROR:  deadlock detected
+DETAIL:  Process 1940 waits for ShareUpdateExclusiveLock on relation 18693 of database 17078; blocked by process 4040.
+Process 4040 waits for ShareRowExclusiveLock on relation 18727 of database 17078; blocked by process 1940.
+HINT:  See server log for query details.
+CONTEXT:  SQL statement "UPDATE pg_catalog.pg_constraint SET convalidated=false WHERE conname = 'fk_rails_993965df05' AND connamespace::regnamespace = 'public'::regnamespace; ALTER TABLE public.active_storage_variant_records VALIDATE CONSTRAINT fk_rails_993965df05;"
+PL/pgSQL function inline_code_block line 14 at EXECUTE
+
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activerecord-8.1.2/lib/active_record/fixtures.rb:702:in 'ActiveRecord::FixtureSet.check_all_foreign_keys_valid!'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activerecord-8.1.2/lib/active_record/fixtures.rb:686:in 'block (2 levels) in ActiveRecord::FixtureSet.insert'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activerecord-8.1.2/lib/active_record/connection_adapters/abstract/connection_pool.rb:463:in 'ActiveRecord::ConnectionAdapters::ConnectionPool#with_connection'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activerecord-8.1.2/lib/active_record/fixtures.rb:683:in 'block in ActiveRecord::FixtureSet.insert'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activerecord-8.1.2/lib/active_record/fixtures.rb:674:in 'Hash#each'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activerecord-8.1.2/lib/active_record/fixtures.rb:674:in 'ActiveRecord::FixtureSet.insert'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activerecord-8.1.2/lib/active_record/fixtures.rb:660:in 'ActiveRecord::FixtureSet.read_and_insert'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activerecord-8.1.2/lib/active_record/fixtures.rb:605:in 'ActiveRecord::FixtureSet.create_fixtures'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activerecord-8.1.2/lib/active_record/test_fixtures.rb:282:in 'ActiveRecord::TestFixtures#load_fixtures'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activerecord-8.1.2/lib/active_record/test_fixtures.rb:146:in 'ActiveRecord::TestFixtures#setup_fixtures'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activerecord-8.1.2/lib/active_record/test_fixtures.rb:10:in 'ActiveRecord::TestFixtures#before_setup'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activesupport-8.1.2/lib/active_support/testing/setup_and_teardown.rb:40:in 'ActiveSupport::Testing::SetupAndTeardown#before_setup'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/actionpack-8.1.2/lib/action_dispatch/testing/integration.rb:349:in 'ActionDispatch::Integration::Runner#before_setup'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/activejob-8.1.2/lib/active_job/test_helper.rb:53:in 'ActiveJob::TestHelper#before_setup'
+    C:/Ruby40-x64/lib/ruby/gems/4.0.0/gems/railties-8.1.2/lib/rails/test_help.rb:45:in 'ActionDispatch::IntegrationTest#before_setup'
+
+bin/rails test test/controllers/gift_cards_controller_test.rb:27
+
+.E
+
+Error:
+ReturnRequestsControllerTest#test_should_redirect_index_when_not_signed_in:
+ActiveRecord::RecordNotUnique: PG::UniqueViolation: ERROR:  duplicate key value violates unique constraint "carts_pkey"
+DETAIL:  Key (id)=(980190963) already exists.
+
+    app/controllers/application_controller.rb:21:in 'ApplicationController#initialize_cart'
+    test/controllers/return_requests_controller_test.rb:12:in 'block in <class:ReturnRequestsControllerTest>'
+
+bin/rails test test/controllers/return_requests_controller_test.rb:11
+
+...........................F
+
+Failure:
+AddressesControllerTest#test_should_get_index_when_signed_in [test/controllers/addresses_controller_test.rb:19]:
+Expected response to be a <2XX: success>, but was a <406: Not Acceptable>
+
+bin/rails test test/controllers/addresses_controller_test.rb:16
+
+.................................................................................F
+
+Failure:
+CategoryTest#test_should_have_unique_name [test/models/category_test.rb:23]:
+Expected true to be nil or false
+
+bin/rails test test/models/category_test.rb:21
+

@@ -1,0 +1,11 @@
+one:
+  product: one
+  email: "notify1@example.com"
+  user: one
+  notified: false
+
+two:
+  product: two
+  email: "notify2@example.com"
+  user: two
+  notified: true
