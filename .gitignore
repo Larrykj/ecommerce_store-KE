@@ -56,4 +56,12 @@ yarn-debug.log*
 # Ignore coverage
 /coverage/
 
+# Ignore test output and runtime artifacts
+test_output.txt
+test_run*.txt
+_locale_fix.txt
+
+# Ignore SQLite cache
+/db/cache/
+
 # EOF
