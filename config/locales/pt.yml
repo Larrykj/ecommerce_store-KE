@@ -72,7 +72,7 @@ pt:
   unhappy: "Insatisfeito?"
   back: "Voltar"
   email: "E-mail"
-  password: "Senha"
+  password: "Senha" # ggignore
   remember_me: "Lembrar-me"
   enter_full_name: "Digite seu nome completo"
   password_confirmation: "Confirmação de senha"
@@ -205,7 +205,7 @@ pt:
   email_confirmation_message: "Enviaremos uma confirmação por e-mail em breve."
   updates_message: "Você receberá atualizações sobre o status do seu pedido por e-mail e SMS."
   view_all_orders: "Ver Todos os Pedidos"
-  current_password: "Senha atual"
+  current_password: "Senha atual" # ggignore
   waiting_confirmation_for: "Aguardando confirmação para"
   forgot_password: "Esqueceu sua senha?"
   confirmation_instructions: "Não recebeu instruções de confirmação?"
@@ -221,8 +221,8 @@ pt:
   image_upload_hint: "Tamanho recomendado: 800x600 pixels. Máx 5MB."
   send_password_reset_instructions: "Envie-me instruções de redefinição de senha"
   change_password: "Altere sua senha"
-  new_password: "Nova senha"
-  confirm_new_password: "Confirme a nova senha"
+  new_password: "Nova senha" # ggignore
+  confirm_new_password: "Confirme a nova senha" # ggignore
   change_my_password: "Alterar minha senha"
   price_min_default: "0"
   price_max_unlimited: "∞"

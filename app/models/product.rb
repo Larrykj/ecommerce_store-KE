@@ -11,20 +11,6 @@ class Product < ApplicationRecord
   validates :name, presence: true, length: { minimum: 3, maximum: 100 }
   validates :description, presence: true, length: { minimum: 10 }
   validates :price, presence: true, numericality: { greater_than: 0 }
-  validate :acceptable_image
-
-  def acceptable_image
-    return unless image.attached?
-
-    unless image.blob.byte_size <= 5.megabytes
-      errors.add(:image, "is too big (max 5MB)")
-    end
-
-    acceptable_types = ["image/jpeg", "image/png", "image/webp"]
-    unless acceptable_types.include?(image.content_type)
-      errors.add(:image, "must be a JPEG, PNG or WebP")
-    end
-  end
 
   # ============ SEARCH SCOPES ============
 
