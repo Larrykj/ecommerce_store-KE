@@ -73,4 +73,3 @@ class CategoriesController < ApplicationController
     count
   end
 end
-

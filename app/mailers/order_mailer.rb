@@ -25,4 +25,3 @@ class OrderMailer < ApplicationMailer
     mail(to: @order.email, subject: "Your order ##{@order.id} has shipped!")
   end
 end
-
