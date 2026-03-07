@@ -25,6 +25,12 @@ class GiftCardsController < ApplicationController
 
   def check_balance
     @gift_card = GiftCard.find_by(code: params[:code]&.upcase&.strip)
+    @gift_cards = if user_signed_in?
+      GiftCard.where(purchased_by: current_user).or(GiftCard.where(redeemed_by: current_user)).order(created_at: :desc)
+    else
+      GiftCard.none
+    end
+    render :index
   end
 
   private

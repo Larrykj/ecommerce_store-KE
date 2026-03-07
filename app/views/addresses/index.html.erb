@@ -1,0 +1,65 @@
+<%= render "pages/shared_styles" %>
+<div class="container py-5" style="max-width: 800px;">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold mb-0"><i class="bi bi-geo-alt me-2 text-primary"></i>My Addresses</h2>
+    <%= link_to new_address_path, class: "btn btn-primary" do %>
+      <i class="bi bi-plus-lg me-1"></i>Add Address
+    <% end %>
+  </div>
+
+  <% if @addresses.any? %>
+    <div class="row g-3">
+      <% @addresses.each do |address| %>
+        <div class="col-md-6">
+          <div class="card h-100 shadow-sm" style="border-radius: 16px; border: 2px solid <%= address.default? ? '#667eea' : '#f1f5f9' %>;">
+            <div class="card-body p-4">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <h6 class="fw-bold mb-0">
+                  <i class="bi bi-tag me-1"></i><%= address.label || "Address" %>
+                </h6>
+                <% if address.default? %>
+                  <span class="badge bg-primary rounded-pill">Default</span>
+                <% end %>
+              </div>
+              <p class="mb-1"><strong><%= address.name %></strong></p>
+              <p class="text-muted small mb-1"><%= address.address_line_1 %></p>
+              <% if address.address_line_2.present? %>
+                <p class="text-muted small mb-1"><%= address.address_line_2 %></p>
+              <% end %>
+              <p class="text-muted small mb-1"><%= address.city %><%= ", #{address.state}" if address.state.present? %> <%= address.postal_code %></p>
+              <p class="text-muted small mb-2"><%= address.country %></p>
+              <p class="text-muted small mb-3"><i class="bi bi-telephone me-1"></i><%= address.phone %></p>
+
+              <div class="d-flex gap-2">
+                <%= link_to edit_address_path(address), class: "btn btn-sm btn-outline-primary" do %>
+                  <i class="bi bi-pencil me-1"></i>Edit
+                <% end %>
+                <% unless address.default? %>
+                  <%= button_to set_default_address_path(address), method: :patch, class: "btn btn-sm btn-outline-secondary" do %>
+                    <i class="bi bi-star me-1"></i>Set Default
+                  <% end %>
+                <% end %>
+                <%= button_to address_path(address), method: :delete, class: "btn btn-sm btn-outline-danger", data: { turbo_confirm: "Remove this address?" } do %>
+                  <i class="bi bi-trash me-1"></i>Remove
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="text-center py-5" style="background: #f8fafc; border-radius: 16px;">
+      <i class="bi bi-geo-alt text-primary" style="font-size: 3rem;"></i>
+      <h4 class="mt-3 fw-bold">No Addresses Yet</h4>
+      <p class="text-muted">Add your first address for faster checkout.</p>
+      <%= link_to "Add Address", new_address_path, class: "btn btn-primary" %>
+    </div>
+  <% end %>
+
+  <div class="mt-4">
+    <%= link_to profile_path, class: "btn btn-outline-secondary" do %>
+      <i class="bi bi-arrow-left me-1"></i>Back to Profile
+    <% end %>
+  </div>
+</div>

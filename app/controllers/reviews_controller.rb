@@ -44,7 +44,10 @@ class ReviewsController < ApplicationController
     @review.mark_helpful!
     respond_to do |format|
       format.html { redirect_to @product, notice: t("review_helpful_thanks") }
-      format.turbo_stream
+      format.turbo_stream { render turbo_stream: [
+        turbo_stream.replace("review_helpful_container_#{@review.id}", %(<div id="review_helpful_container_#{@review.id}" style="display:inline-block;"><form class="button_to" method="post" action="#{helpful_product_review_path(@product, @review)}"><button class="helpful-btn" type="submit"><i class="bi bi-hand-thumbs-up"></i> #{t("helpful")} (#{@review.helpful_count})</button></form></div>).html_safe),
+        turbo_stream.append("toastContainer", "<script>showToast('#{t("review_helpful_thanks", default: "Thanks for your feedback!")}', 'success')</script>".html_safe)
+      ] }
     end
   end
 

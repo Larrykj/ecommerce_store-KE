@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ProductsController < ApplicationController
-  before_action :set_product, only: [ :show, :edit, :update, :destroy ]
+  before_action :set_product, only: [ :show ]
   after_action :track_view, only: [ :show ]
   # GET /products
   def index
@@ -24,42 +24,6 @@ class ProductsController < ApplicationController
   def show
   end
 
-  # GET /products/new
-  def new
-    @product = Product.new
-    @product.variants.build
-  end
-
-  # POST /products
-  def create
-    @product = Product.new(product_params)
-
-    if @product.save
-      redirect_to @product, notice: t("product_created_success")
-    else
-      render :new, status: :unprocessable_entity
-    end
-  end
-
-  # GET /products/:id/edit
-  def edit
-    @product.variants.build if @product.variants.empty?
-  end
-
-  # PATCH/PUT /products/:id
-  def update
-    if @product.update(product_params)
-      redirect_to @product, notice: t("product_updated_success")
-    else
-      render :edit, status: :unprocessable_entity
-    end
-  end
-
-  # DELETE /products/:id
-  def destroy
-    @product.discard
-    redirect_to products_url, notice: t("product_deleted_success")
-  end
 
   private
 
@@ -76,7 +40,7 @@ class ProductsController < ApplicationController
   end
 
   def product_params
-    params.require(:product).permit(:name, :description, :price, :image, :category_id, gallery_images: [], variants_attributes: [ :id, :sku, :name, :price, :quantity, :variant_image, :_destroy ])
+    params.require(:product).permit(:name, :description, :price, :image, :category_id, gallery_images: [])
   end
 
   def search_params

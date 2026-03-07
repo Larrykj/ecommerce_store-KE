@@ -1,0 +1,8 @@
+<%= link_to cart_path, class: "nav-link position-relative" do %>
+  🛒 <%= t("cart", default: 'Cart') %>
+  <% if @cart && @cart.total_items > 0 %>
+    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cart-badge-count">
+      <%= @cart.total_items %>
+    </span>
+  <% end %>
+<% end %>

@@ -1,0 +1,14 @@
+<div id="wishlist-btn-<%= product.id %>" style="display:inline-block;">
+  <% if current_user %>
+    <% if current_user.wishlist_items.exists?(product_id: product.id) %>
+      <% wishlist_item = current_user.wishlist_items.find_by(product_id: product.id) %>
+      <%= button_to wishlist_item_path(wishlist_item), method: :delete, class: "overlay-btn", style: "color: #ef4444;", title: t("remove_from_wishlist") do %>
+          <i class="bi bi-heart-fill"></i>
+      <% end %>
+    <% else %>
+      <%= button_to wishlist_items_path(product_id: product.id), method: :post, class: "overlay-btn", title: t("add_to_wishlist") do %>
+          <i class="bi bi-heart"></i>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>

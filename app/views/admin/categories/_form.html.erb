@@ -1,0 +1,37 @@
+<%= form_with(model: [:admin, category], local: true) do |form| %>
+  <% if category.errors.any? %>
+    <div class="alert alert-danger">
+      <h4><%= pluralize(category.errors.count, "error") %> prohibited this category from being saved:</h4>
+      <ul>
+        <% category.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :name, "Category Name", class: 'form-label' %>
+    <%= form.text_field :name, class: 'form-control', placeholder: "e.g., Electronics" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :description, "Description", class: 'form-label' %>
+    <%= form.text_area :description, class: 'form-control', rows: 4, placeholder: "Category description..." %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :image, "Category Image", class: 'form-label' %>
+    <%= form.file_field :image, class: 'form-control', accept: 'image/png,image/jpg,image/jpeg,image/webp' %>
+    
+    <% if category.image.attached? %>
+      <div class="mt-2 text-muted">Current image:</div>
+      <%= image_tag category.image, width: 100, class: 'img-thumbnail mt-1' %>
+    <% end %>
+  </div>
+
+  <div class="actions mt-4">
+    <%= form.submit "Save Category", class: 'btn btn-success px-4' %>
+    <%= link_to "Cancel", admin_categories_path, class: 'btn btn-secondary px-4 ms-2' %>
+  </div>
+<% end %>

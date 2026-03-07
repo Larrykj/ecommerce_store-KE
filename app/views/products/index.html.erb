@@ -5,7 +5,7 @@
       <h1 class="search-title"><%= t("discover_products") %></h1>
       <p class="search-subtitle"><%= t("find_what_looking_for") %></p>
 
-      <%= form_with url: products_path, method: :get, local: true, class: "hero-search-form" do |f| %>
+      <%= form_with url: products_path, method: :get, class: "hero-search-form" do |f| %>
         <div class="hero-search-wrapper">
           <i class="bi bi-search search-icon"></i>
           <%= f.text_field :search,
@@ -52,7 +52,7 @@
             <% end %>
           </div>
 
-          <%= form_with url: products_path, method: :get, local: true, id: "sidebar-filter-form" do |f| %>
+          <%= form_with url: products_path, method: :get, id: "sidebar-filter-form", data: { turbo_action: "advance" } do |f| %>
             <%= hidden_field_tag :search, params[:search] if params[:search].present? %>
 
             <!-- Category Filter -->
@@ -153,10 +153,6 @@
               <% end %>
             </h2>
             <p class="results-count"><%= @products.count %> <%= t("products_found") %></p>
-          </div>
-          <%= link_to new_product_path, class: "add-product-btn" do %>
-            <i class="bi bi-plus-lg me-2"></i><%= t("add_product") %>
-          <% end %>
         </div>
 
         <!-- Active Filters -->

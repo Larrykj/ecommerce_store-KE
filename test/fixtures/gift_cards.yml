@@ -1,0 +1,22 @@
+one:
+  code: "GC-TEST0001"
+  initial_value: 5000
+  balance: 5000
+  status: "active"
+  purchased_by_id: <%= ActiveRecord::FixtureSet.identify(:one) %>
+
+two:
+  code: "GC-TEST0002"
+  initial_value: 2000
+  balance: 500
+  status: "active"
+  recipient_email: "friend@example.com"
+  purchased_by_id: <%= ActiveRecord::FixtureSet.identify(:two) %>
+
+expired:
+  code: "GC-EXPIRED1"
+  initial_value: 1000
+  balance: 1000
+  status: "active"
+  expires_at: <%= 1.day.ago.to_date %>
+  purchased_by_id: <%= ActiveRecord::FixtureSet.identify(:one) %>

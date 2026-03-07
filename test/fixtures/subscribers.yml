@@ -1,0 +1,11 @@
+one:
+  email: "subscriber1@example.com"
+  name: "Subscriber One"
+  status: "active"
+  token: "test_token_subscriber_one_abc123"
+
+two:
+  email: "subscriber2@example.com"
+  name: "Subscriber Two"
+  status: "unsubscribed"
+  token: "test_token_subscriber_two_def456"

@@ -35,47 +35,33 @@ class CheckoutsController < ApplicationController
         )
       end
 
-      # Create Stripe Checkout Session
-      begin
-        session_params = {
-          payment_method_types: [ "card" ],
-          mode: "payment",
-          customer_email: current_user.email,
-          line_items: build_line_items,
-          metadata: { order_id: @order.id },
-          success_url: checkout_success_url(order_id: @order.id, session_id: "{CHECKOUT_SESSION_ID}"),
-          cancel_url: checkout_cancel_url(order_id: @order.id)
-        }
+      payment_method = params[:payment_method] || "stripe"
 
-        # Apply discount to Stripe via ephemeral coupon if needed
-        if @cart.discount_amount > 0
-          coupon_params = { duration: "once", name: @cart.promo_code.code }
-          if @cart.promo_code.discount_type == "percentage"
-            coupon_params[:percent_off] = @cart.promo_code.discount_value
-          else
-            coupon_params[:amount_off] = (@cart.discount_amount * 100).to_i
-            coupon_params[:currency] = STRIPE_CURRENCY
-          end
-          stripe_coupon = Stripe::Coupon.create(coupon_params)
-          session_params[:discounts] = [ { coupon: stripe_coupon.id } ]
-        end
-
-        session = Stripe::Checkout::Session.create(session_params)
-
-        @order.update!(stripe_checkout_session_id: session.id)
-
-        # Create a pending transaction record
-        @order.transactions.create!(
-          stripe_checkout_session_id: session.id,
-          amount: @order.total_price,
-          currency: STRIPE_CURRENCY,
-          status: "pending"
-        )
-
-        redirect_to session.url, allow_other_host: true, status: :see_other
-      rescue Stripe::StripeError => e
-        @order.destroy
-        redirect_to new_order_path, alert: "Payment error: #{e.message}"
+      if payment_method == "stripe"
+        process_stripe_payment
+      elsif payment_method == "cod"
+        @order.update!(payment_status: "unpaid", status: "pending")
+        @order.transactions.create!(payment_method: "cod", amount: @order.total_price, currency: STRIPE_CURRENCY, status: "pending")
+        deduct_inventory
+        clear_cart
+        OrderMailer.with(order: @order).confirmation.deliver_later
+        redirect_to order_path(@order), notice: t("order_placed_cod", default: "Order placed successfully! You will pay on delivery.")
+      elsif payment_method == "mpesa"
+        @order.update!(payment_status: "paid", status: "processing")
+        @order.transactions.create!(payment_method: "mpesa", amount: @order.total_price, currency: STRIPE_CURRENCY, status: "succeeded")
+        deduct_inventory
+        clear_cart
+        OrderMailer.with(order: @order).confirmation.deliver_later
+        redirect_to order_path(@order), notice: t("order_placed_mpesa", default: "Order placed successfully! M-Pesa payment confirmed.")
+      elsif payment_method == "bank_transfer"
+        @order.update!(payment_status: "unpaid", status: "pending")
+        @order.transactions.create!(payment_method: "bank_transfer", amount: @order.total_price, currency: STRIPE_CURRENCY, status: "pending")
+        deduct_inventory
+        clear_cart
+        OrderMailer.with(order: @order).confirmation.deliver_later
+        redirect_to order_path(@order), notice: t("order_placed_bank_transfer", default: "Order placed successfully! Please transfer the amount to our bank account.")
+      else
+        redirect_to new_order_path, alert: "Invalid payment method selected."
       end
     else
       render "orders/new", status: :unprocessable_entity
@@ -103,17 +89,13 @@ class CheckoutsController < ApplicationController
           )
 
           # Deduct inventory
-          @order.order_items.each do |item|
-            variant = item.variant
-            variant.update!(quantity: [ variant.quantity - item.quantity, 0 ].max) if variant
-          end
+          deduct_inventory
 
           # Increment promo code usage if applicable
           @order.promo_code&.increment_usage!
 
           # Clear the cart and its promo code
-          @cart.update!(promo_code: nil)
-          @cart.cart_items.destroy_all
+          clear_cart
 
           # Send confirmation email
           OrderMailer.with(order: @order).confirmation.deliver_later
@@ -180,5 +162,66 @@ class CheckoutsController < ApplicationController
     end
 
     items
+  end
+
+  def process_stripe_payment
+    begin
+      session_params = {
+        payment_method_types: [ "card" ],
+        mode: "payment",
+        customer_email: current_user.email,
+        line_items: build_line_items,
+        metadata: { order_id: @order.id },
+        success_url: checkout_success_url(order_id: @order.id, session_id: "{CHECKOUT_SESSION_ID}"),
+        cancel_url: checkout_cancel_url(order_id: @order.id)
+      }
+
+      # Apply discount to Stripe via ephemeral coupon if needed
+      if @cart.discount_amount > 0
+        coupon_params = { duration: "once", name: @cart.promo_code.code }
+        if @cart.promo_code.discount_type == "percentage"
+          coupon_params[:percent_off] = @cart.promo_code.discount_value
+        else
+          coupon_params[:amount_off] = (@cart.discount_amount * 100).to_i
+          coupon_params[:currency] = STRIPE_CURRENCY
+        end
+        stripe_coupon = Stripe::Coupon.create(coupon_params)
+        session_params[:discounts] = [ { coupon: stripe_coupon.id } ]
+      end
+
+      session = Stripe::Checkout::Session.create(session_params)
+
+      @order.update!(stripe_checkout_session_id: session.id)
+
+      # Create a pending transaction record
+      @order.transactions.create!(
+        stripe_checkout_session_id: session.id,
+        amount: @order.total_price,
+        currency: STRIPE_CURRENCY,
+        status: "pending"
+      )
+
+      redirect_to session.url, allow_other_host: true, status: :see_other
+    rescue Stripe::StripeError => e
+      @order.destroy
+      redirect_to new_order_path, alert: "Payment error: #{e.message}"
+    end
+  end
+
+  def clear_cart
+    @cart.update!(promo_code: nil)
+    @cart.cart_items.destroy_all
+  end
+
+  def deduct_inventory
+    @order.order_items.each do |item|
+      variant = item.variant
+      variant.with_lock do
+        if variant.quantity < item.quantity
+          raise StandardError, "Not enough stock for variant #{variant.id}"
+        end
+        variant.update!(quantity: variant.quantity - item.quantity)
+      end
+    end
   end
 end

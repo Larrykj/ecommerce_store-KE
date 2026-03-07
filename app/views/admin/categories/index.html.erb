@@ -1,0 +1,57 @@
+<div class="admin-topbar">
+  <h1><i class="bi bi-tags-fill me-2"></i>Categories</h1>
+  <div class="topbar-actions">
+    <%= form_with url: admin_categories_path, method: :get, local: true, class: "d-flex gap-2" do %>
+      <input type="text" name="search" value="<%= params[:search] %>" class="form-control" placeholder="Search categories..." style="width: 250px;">
+      <button type="submit" class="btn-admin btn-admin-primary"><i class="bi bi-search"></i></button>
+    <% end %>
+    <%= link_to new_admin_category_path, class: "btn-admin btn-admin-primary" do %>
+      <i class="bi bi-plus-lg me-1"></i> New Category
+    <% end %>
+  </div>
+</div>
+
+<div class="admin-card">
+  <div class="admin-card-body">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Description</th>
+          <th>Products Count</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @categories.each do |category| %>
+          <tr>
+            <td>
+              <div class="d-flex align-items-center gap-3">
+                <% if category.image.attached? %>
+                  <%= image_tag category.image, style: "width:40px; height:40px; border-radius:8px; object-fit:cover;" %>
+                <% else %>
+                  <div style="width:40px; height:40px; border-radius:8px; background:#f1f5f9; display:flex; align-items:center; justify-content:center;">
+                    <i class="bi bi-tags text-muted"></i>
+                  </div>
+                <% end %>
+                <strong><%= category.name %></strong>
+              </div>
+            </td>
+            <td><%= truncate(category.description, length: 50) %></td>
+            <td><span class="badge-status badge-active"><%= category.products.count %> products</span></td>
+            <td>
+              <div class="d-flex gap-2">
+                <%= link_to edit_admin_category_path(category), class: "btn btn-sm btn-outline-primary" do %>
+                  <i class="bi bi-pencil"></i>
+                <% end %>
+                <%= button_to admin_category_path(category), method: :delete, class: "btn btn-sm btn-outline-danger", data: { turbo_confirm: "Delete this category?" } do %>
+                  <i class="bi bi-trash"></i>
+                <% end %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

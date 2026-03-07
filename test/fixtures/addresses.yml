@@ -1,0 +1,24 @@
+one:
+  user: one
+  label: "Home"
+  name: "Test User One"
+  phone: "+254700000001"
+  address_line_1: "123 Test Street"
+  address_line_2: "Apt 4B"
+  city: "Nairobi"
+  state: "Nairobi County"
+  postal_code: "00100"
+  country: "Kenya"
+  default: true
+
+two:
+  user: one
+  label: "Office"
+  name: "Test User One"
+  phone: "+254700000001"
+  address_line_1: "456 Work Avenue"
+  city: "Mombasa"
+  state: "Mombasa County"
+  postal_code: "80100"
+  country: "Kenya"
+  default: false

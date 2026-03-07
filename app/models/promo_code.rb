@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class PromoCode < ApplicationRecord
-  has_many :orders
+  has_many :orders, dependent: :nullify
+  has_many :carts, dependent: :nullify
 
   validates :code, presence: true, uniqueness: { case_sensitive: false }
   validates :discount_type, presence: true, inclusion: { in: %w[percentage flat] }
