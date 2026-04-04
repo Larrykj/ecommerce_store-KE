@@ -17,4 +17,3 @@ class CartItem < ApplicationRecord
     "KSh #{subtotal.round(2)}"
   end
 end
-

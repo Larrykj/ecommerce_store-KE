@@ -34,7 +34,7 @@ class Cart < ApplicationRecord
 
   def gift_card_amount
     return 0 unless gift_card&.active?
-    [gift_card.balance, pre_gift_card_total].min
+    [ gift_card.balance, pre_gift_card_total ].min
   end
 
   def total_price

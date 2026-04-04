@@ -9,4 +9,3 @@ class OrderItem < ApplicationRecord
     "KSh #{(price * quantity).round(2)}"
   end
 end
-

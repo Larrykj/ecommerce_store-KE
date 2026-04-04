@@ -53,6 +53,4 @@ class Review < ApplicationRecord
   def update_product_cache
     product.update_review_cache if product
   end
-
 end
-

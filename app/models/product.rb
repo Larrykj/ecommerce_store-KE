@@ -135,7 +135,7 @@ class Product < ApplicationRecord
     if variants.loaded?
       variants.any? { |v| v.quantity > 0 }
     else
-      variants.exists?(["quantity > 0"])
+      variants.exists?([ "quantity > 0" ])
     end
   end
 

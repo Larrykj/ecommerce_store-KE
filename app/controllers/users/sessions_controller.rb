@@ -2,16 +2,21 @@
 
 class Users::SessionsController < Devise::SessionsController
   def create
+    email = params.dig(:user, :email).to_s
+    password = params.dig(:user, :password).to_s
+
+    return super if email.blank? || password.blank?
+
     # First, try to find the user by their email
-    user = User.find_by(email: params.dig(:user, :email))
+    user = User.find_by(email: email)
 
     # If the user exists and they signed up via a social provider (e.g., Google or GitHub),
     # but they are trying to log in using a regular password manually, they will fail
     # because their Devise password is randomized. We intercept this edge case to guide them.
-    if user.present? && user.provider.present? && !user.valid_password?(params.dig(:user, :password))
+    if user.present? && user.provider.present? && !user.valid_password?(password)
       # Flash a specific message guiding them to use the social login button
       flash.now[:alert] = "This account is linked to #{user.provider.capitalize}. Please click 'Continue with #{user.provider.capitalize}' below to sign in."
-      
+
       # Stop the login process and re-render the login page with our friendly error
       self.resource = user
       render :new, status: :unprocessable_entity

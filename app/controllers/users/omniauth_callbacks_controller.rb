@@ -17,13 +17,13 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   def handle_auth(provider)
     auth = request.env["omniauth.auth"]
-    
+
     email = auth.info.email
     email = "#{auth.uid}@#{provider.downcase}.com" if email.blank?
 
     # Standard fix for "Email has already been taken" when mixing social & normal logins
     @user = User.find_by(email: email)
-    
+
     if @user
       # Link social account if not already linked
       @user.update(provider: auth.provider, uid: auth.uid) if @user.provider.blank?
