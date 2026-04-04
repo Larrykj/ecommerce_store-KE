@@ -81,7 +81,7 @@ gem "discard", "~> 1.4"
 gem "pagy", "~> 43.3"
 gem "pg_search", "~> 2.3"
 
-gem "stripe", "~> 18.4"
+gem "stripe", "~> 19.0"
 gem "ruby-openai", "~> 7.3"
 gem "letter_opener", "~> 1.10", group: :development
 
