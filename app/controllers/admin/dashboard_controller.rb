@@ -27,7 +27,7 @@ class Admin::DashboardController < Admin::BaseController
                             .group(Arel.sql("DATE_TRUNC('month', created_at)"))
                             .order(Arel.sql("DATE_TRUNC('month', created_at)"))
                             .pluck(Arel.sql("DATE_TRUNC('month', created_at)"), Arel.sql("SUM(total_price)"))
-                            .to_h { |month, total| [month.to_date.strftime("%b %Y"), total.to_f] }
+                            .to_h { |month, total| [ month.to_date.strftime("%b %Y"), total.to_f ] }
 
     # Order status breakdown — single query
     @order_status_counts = Order.group(:status).count

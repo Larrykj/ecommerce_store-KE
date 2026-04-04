@@ -33,7 +33,7 @@ class Api::V1::AiController < Api::V1::BaseController
               { role: "system", content: "You are a helpful customer service assistant for E-Commerce KE. Answer politely and concisely." },
               { role: "user", content: message }
             ],
-            temperature: 0.7,
+            temperature: 0.7
           }
         )
 

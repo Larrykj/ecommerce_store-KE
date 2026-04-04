@@ -58,4 +58,3 @@ class Admin::ProductsController < Admin::BaseController
                                     variants_attributes: [ :id, :sku, :name, :price, :quantity, :variant_image, :_destroy ])
   end
 end
-

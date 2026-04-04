@@ -19,4 +19,3 @@ class Variant < ApplicationRecord
     quantity > 0
   end
 end
-

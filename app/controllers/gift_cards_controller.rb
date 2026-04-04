@@ -46,7 +46,11 @@ class GiftCardsController < ApplicationController
     else
       GiftCard.none
     end
-    render :index, status: :unprocessable_entity
+    if @gift_card
+      render :index
+    else
+      render :index, status: :unprocessable_entity
+    end
   end
 
   private

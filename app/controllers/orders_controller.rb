@@ -156,4 +156,3 @@ class OrdersController < ApplicationController
     OrderMailer.with(order: order).confirmation.deliver_later
   end
 end
-

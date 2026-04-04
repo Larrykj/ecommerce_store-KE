@@ -9,6 +9,8 @@ if Rails.env.development?
         Bullet.bullet_logger = true
         Bullet.console       = true
         Bullet.rails_logger  = true
+        Bullet.alert         = true
+        Bullet.add_footer    = true
 
         # Don't alert for these common patterns in e-commerce
         Bullet.add_safelist type: :n_plus_one_query, class_name: "Product", association: :variants

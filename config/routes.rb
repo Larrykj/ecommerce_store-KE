@@ -131,15 +131,13 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :products, only: [ :index, :show ]
       resources :orders, only: [ :index, :show ]
-      
+
       # Native Stripe Integration
       post "/payments/create_intent", to: "payments#create_intent"
-      
+
       # AI Features
       post "/ai/chat", to: "ai#chat"
       post "/ai/recommendations", to: "ai#recommendations"
     end
   end
 end
-
-

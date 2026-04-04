@@ -54,4 +54,3 @@ class WishlistItemsController < ApplicationController
   end
 end
 # EOF
-

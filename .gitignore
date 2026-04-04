@@ -30,6 +30,7 @@
 # Ignore IDEs and OS files
 /.vscode/
 /.idea/
+**/.idea/
 .DS_Store
 
 # Ignore yarn and node

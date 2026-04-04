@@ -19,7 +19,7 @@ class AddPerformanceIndices < ActiveRecord::Migration[8.1]
     # Reviews
     add_index :reviews, :product_id unless index_exists?(:reviews, :product_id)
     add_index :reviews, :user_id unless index_exists?(:reviews, :user_id)
-    add_index :reviews, [:product_id, :user_id], unique: true unless index_exists?(:reviews, [:product_id, :user_id])
+    add_index :reviews, [ :product_id, :user_id ], unique: true unless index_exists?(:reviews, [ :product_id, :user_id ])
 
     # Wishlist items
     add_index :wishlist_items, :user_id unless index_exists?(:wishlist_items, :user_id)
@@ -60,7 +60,7 @@ class AddPerformanceIndices < ActiveRecord::Migration[8.1]
 
     # Addresses
     add_index :addresses, :user_id unless index_exists?(:addresses, :user_id)
-    add_index :addresses, [:user_id, :default] unless index_exists?(:addresses, [:user_id, :default])
+    add_index :addresses, [ :user_id, :default ] unless index_exists?(:addresses, [ :user_id, :default ])
 
     # Return requests
     add_index :return_requests, :status unless index_exists?(:return_requests, :status)

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# WARNING: This controller returns mock Stripe credentials.
-# Before going to production, implement real customer creation and ephemeral key generation.
 class Api::V1::PaymentsController < Api::V1::BaseController
   SUPPORTED_CURRENCIES = %w[kes].freeze
   DEFAULT_PAYMENT_AMOUNT = 1000
@@ -12,7 +10,7 @@ class Api::V1::PaymentsController < Api::V1::BaseController
       intent = Stripe::PaymentIntent.create({
         amount: amount,
         currency: currency,
-        automatic_payment_methods: { enabled: true },
+        automatic_payment_methods: { enabled: true }
       })
       render json: {
         paymentIntent: intent.client_secret,
@@ -24,12 +22,15 @@ class Api::V1::PaymentsController < Api::V1::BaseController
       render json: { error: e.message }, status: :unprocessable_entity
     end
   end
+
   private
+
   def payment_amount_cents
     # Compute this from server-side cart/order data for the authenticated user.
     # Do not trust client-provided amounts.
     DEFAULT_PAYMENT_AMOUNT
   end
+
   def validated_currency
     currency = params.fetch(:currency, "kes").to_s.downcase
     unless SUPPORTED_CURRENCIES.include?(currency)
