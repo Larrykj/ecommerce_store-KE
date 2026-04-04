@@ -7,6 +7,7 @@ class GiftCard < ApplicationRecord
   validates :code, presence: true, uniqueness: { case_sensitive: false }
   validates :initial_value, presence: true, numericality: { greater_than: 0 }
   validates :balance, presence: true, numericality: { greater_than_or_equal_to: 0 }
+  validates :status, inclusion: { in: %w[active disabled expired] }, allow_nil: true
 
   before_validation :generate_code, on: :create
 

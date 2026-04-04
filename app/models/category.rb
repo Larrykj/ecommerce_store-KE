@@ -1,4 +1,8 @@
+# frozen_string_literal: true
+
 class Category < ApplicationRecord
+  include Discard::Model
+
   has_many :products, dependent: :nullify
   has_many :reviews, through: :products
   has_one_attached :image
@@ -10,7 +14,7 @@ class Category < ApplicationRecord
   # Scopes for search and filtering
   scope :search_by_name, ->(query) {
     return all if query.blank?
-    where("LOWER(name) LIKE :query OR LOWER(description) LIKE :query", query: "%#{query.downcase}%")
+    where("name ILIKE ?", "%#{query}%")
   }
 
   scope :with_products, -> { joins(:products).distinct }
@@ -21,7 +25,7 @@ class Category < ApplicationRecord
     when "name_desc"
       order(name: :desc)
     when "products_count"
-      left_joins(:products).group(:id).order("COUNT(products.id) DESC")
+      left_joins(:products).group(:id).order(Arel.sql("COUNT(products.id) DESC"))
     when "newest"
       order(created_at: :desc)
     else
@@ -41,7 +45,7 @@ class Category < ApplicationRecord
 
   # Combined search method
   def self.advanced_search(params)
-    results = all
+    results = kept
     results = results.search_by_name(params[:search])
     results = results.sorted_by(params[:sort])
     results

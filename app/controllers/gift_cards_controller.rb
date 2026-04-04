@@ -1,7 +1,23 @@
 # frozen_string_literal: true
 
 class GiftCardsController < ApplicationController
-  before_action :authenticate_user!, except: [ :check_balance ]
+  before_action :authenticate_user!, except: [ :check_balance, :apply, :remove ]
+
+  def apply
+    gift_card = GiftCard.find_by(code: params[:code].to_s.upcase.strip)
+
+    if gift_card&.active? && gift_card.balance > 0
+      @cart.update!(gift_card: gift_card)
+      redirect_back fallback_location: cart_path, notice: "Gift Card successfully applied!"
+    else
+      redirect_back fallback_location: cart_path, alert: "Invalid, expired, or empty gift card."
+    end
+  end
+
+  def remove
+    @cart.update!(gift_card: nil)
+    redirect_back fallback_location: cart_path, notice: "Gift Card removed."
+  end
 
   def index
     @gift_cards = GiftCard.where(purchased_by: current_user).or(GiftCard.where(redeemed_by: current_user)).order(created_at: :desc)
@@ -30,7 +46,7 @@ class GiftCardsController < ApplicationController
     else
       GiftCard.none
     end
-    render :index
+    render :index, status: :unprocessable_entity
   end
 
   private

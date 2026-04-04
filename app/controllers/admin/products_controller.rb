@@ -4,8 +4,8 @@ class Admin::ProductsController < Admin::BaseController
   before_action :set_product, only: [ :show, :edit, :update, :destroy, :restore ]
 
   def index
-    @products = Product.unscoped.order(created_at: :desc)
-    @products = @products.where("LOWER(name) LIKE ?", "%#{params[:search].downcase}%") if params[:search].present?
+    @products = Product.unscoped.includes(:category, :variants).order(created_at: :desc)
+    @products = @products.where("name ILIKE ?", "%#{params[:search]}%") if params[:search].present?
   end
 
   def show
@@ -58,3 +58,4 @@ class Admin::ProductsController < Admin::BaseController
                                     variants_attributes: [ :id, :sku, :name, :price, :quantity, :variant_image, :_destroy ])
   end
 end
+

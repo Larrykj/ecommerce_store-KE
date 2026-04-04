@@ -16,7 +16,7 @@
       <% end %>
       
       <% if current_user %>
-        <%= render partial: "shared/wishlist_button", locals: { product: product } %>
+        <%= render partial: "shared/wishlist_button", locals: { product: product, wishlisted: @wishlist_product_ids&.include?(product.id) } %>
       <% end %>
     </div>
   </div>
@@ -40,7 +40,7 @@
       <div class="product-price">
         <span class="amount"><%= format_price(product.price.to_i) %></span>
       </div>
-      <% first_variant = product.variants.where("quantity > 0").first %>
+      <% first_variant = defined?(@first_available_variant) ? @first_available_variant[product.id] : nil %>
       <% if first_variant %>
         <%= button_to cart_items_path(variant_id: first_variant.id), method: :post, class: "add-cart-btn", title: t("add_to_cart") do %>
           <i class="bi bi-cart-plus"></i>

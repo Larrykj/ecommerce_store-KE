@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CartItem < ApplicationRecord
   belongs_to :cart
   belongs_to :variant
@@ -15,3 +17,4 @@ class CartItem < ApplicationRecord
     "KSh #{subtotal.round(2)}"
   end
 end
+

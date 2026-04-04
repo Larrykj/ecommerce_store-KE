@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html data-theme="light">
   <head>
-    <title><%= t('app_name') %></title>
+    <title><%= content_for?(:title) ? yield(:title) : t('app_name', default: 'E-Commerce Store') %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="description" content="E-Commerce Store - Quality products, secure payments, and fast delivery.">
+    <meta name="description" content="<%= content_for?(:meta_description) ? yield(:meta_description) : 'E-Commerce Store - Quality products, secure payments, and fast delivery.' %>">
+    <meta property="og:title" content="<%= content_for?(:title) ? yield(:title) : t('app_name', default: 'E-Commerce Store') %>">
+    <meta property="og:description" content="<%= content_for?(:meta_description) ? yield(:meta_description) : 'E-Commerce Store - Quality products, secure payments, and fast delivery.' %>">
+    <meta property="og:type" content="website">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
@@ -727,5 +730,6 @@
       document.addEventListener('turbo:render', initAllFeatures);
     </script>
 
+    <%= render "shared/ai_chat" %>
   </body>
 </html>

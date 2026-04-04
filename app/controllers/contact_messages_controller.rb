@@ -3,6 +3,9 @@
 class ContactMessagesController < ApplicationController
   def new
     @contact_message = ContactMessage.new
+    @contact_message.subject = params[:subject] if params[:subject].present?
+    @contact_message.message = params[:message] if params[:message].present?
+
     if user_signed_in?
       @contact_message.name = current_user.name
       @contact_message.email = current_user.email

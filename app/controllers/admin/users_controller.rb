@@ -5,10 +5,11 @@ class Admin::UsersController < Admin::BaseController
 
   def index
     @users = User.kept.order(created_at: :desc)
+    @pagy, @users = pagy(@users, items: 25)
   end
 
   def show
-    @orders = @user.orders.order(created_at: :desc)
+    @orders = @user.orders.includes(:order_items, :user).order(created_at: :desc)
   end
 
   def toggle_admin

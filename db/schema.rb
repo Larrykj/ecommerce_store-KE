@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_07_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_03_140000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -66,23 +66,28 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_07_120000) do
     t.integer "quantity"
     t.datetime "updated_at", null: false
     t.bigint "variant_id", null: false
+    t.index ["cart_id", "variant_id"], name: "index_cart_items_on_cart_id_and_variant_id", unique: true
     t.index ["cart_id"], name: "index_cart_items_on_cart_id"
     t.index ["variant_id"], name: "index_cart_items_on_variant_id"
   end
 
   create_table "carts", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.bigint "gift_card_id"
     t.integer "promo_code_id"
     t.bigint "shipping_method_id"
     t.datetime "updated_at", null: false
+    t.index ["gift_card_id"], name: "index_carts_on_gift_card_id"
     t.index ["shipping_method_id"], name: "index_carts_on_shipping_method_id"
   end
 
   create_table "categories", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.text "description"
+    t.datetime "discarded_at"
     t.string "name"
     t.datetime "updated_at", null: false
+    t.index ["discarded_at"], name: "index_categories_on_discarded_at"
   end
 
   create_table "contact_messages", force: :cascade do |t|
@@ -135,6 +140,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_07_120000) do
     t.string "email"
     t.text "email_ciphertext"
     t.datetime "estimated_delivery_date"
+    t.decimal "gift_card_amount"
+    t.bigint "gift_card_id"
     t.string "name"
     t.text "name_ciphertext"
     t.text "notes"
@@ -154,8 +161,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_07_120000) do
     t.string "tracking_number"
     t.datetime "updated_at", null: false
     t.integer "user_id"
+    t.index ["created_at"], name: "index_orders_on_created_at"
+    t.index ["gift_card_id"], name: "index_orders_on_gift_card_id"
+    t.index ["payment_status"], name: "index_orders_on_payment_status"
     t.index ["promo_code_id"], name: "index_orders_on_promo_code_id"
     t.index ["shipping_method_id"], name: "index_orders_on_shipping_method_id"
+    t.index ["status"], name: "index_orders_on_status"
+    t.index ["stripe_checkout_session_id"], name: "index_orders_on_stripe_checkout_session_id", where: "(stripe_checkout_session_id IS NOT NULL)"
     t.index ["user_id"], name: "index_orders_on_user_id"
   end
 
@@ -167,6 +179,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_07_120000) do
     t.bigint "user_id"
     t.index ["product_id"], name: "index_product_comparisons_on_product_id"
     t.index ["session_id", "product_id"], name: "index_product_comparisons_on_session_id_and_product_id", unique: true
+    t.index ["session_id"], name: "index_product_comparisons_on_session_id"
     t.index ["user_id", "product_id"], name: "index_product_comparisons_on_user_id_and_product_id", unique: true
     t.index ["user_id"], name: "index_product_comparisons_on_user_id"
   end
@@ -176,22 +189,28 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_07_120000) do
     t.bigint "product_id", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
+    t.index ["created_at"], name: "index_product_views_on_created_at"
     t.index ["product_id"], name: "index_product_views_on_product_id"
     t.index ["user_id"], name: "index_product_views_on_user_id"
   end
 
   create_table "products", force: :cascade do |t|
+    t.decimal "average_rating", precision: 3, scale: 2, default: "0.0"
     t.integer "category_id"
     t.datetime "created_at", null: false
     t.text "description"
     t.datetime "discarded_at"
     t.string "name"
     t.decimal "price"
+    t.integer "reviews_count", default: 0
     t.datetime "updated_at", null: false
+    t.index ["average_rating"], name: "index_products_on_average_rating"
     t.index ["category_id"], name: "index_products_on_category_id"
+    t.index ["created_at"], name: "index_products_on_created_at"
     t.index ["discarded_at"], name: "index_products_on_discarded_at"
     t.index ["name"], name: "index_products_on_name"
     t.index ["price"], name: "index_products_on_price"
+    t.index ["reviews_count"], name: "index_products_on_reviews_count"
   end
 
   create_table "promo_codes", force: :cascade do |t|
@@ -206,6 +225,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_07_120000) do
     t.integer "max_uses"
     t.decimal "min_order_amount"
     t.datetime "updated_at", null: false
+    t.index ["active"], name: "index_promo_codes_on_active"
     t.index ["code"], name: "index_promo_codes_on_code", unique: true
     t.index ["current_uses"], name: "index_promo_codes_on_current_uses"
   end
@@ -234,6 +254,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_07_120000) do
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["created_at"], name: "index_reviews_on_created_at"
+    t.index ["product_id", "user_id"], name: "index_reviews_on_product_id_and_user_id", unique: true
     t.index ["product_id"], name: "index_reviews_on_product_id"
     t.index ["rating"], name: "index_reviews_on_rating"
     t.index ["user_id", "product_id"], name: "index_reviews_on_user_id_and_product_id", unique: true
@@ -256,6 +277,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_07_120000) do
     t.bigint "product_id", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id"
+    t.index ["email"], name: "index_stock_notifications_on_email"
     t.index ["product_id", "email"], name: "index_stock_notifications_on_product_id_and_email", unique: true
     t.index ["product_id"], name: "index_stock_notifications_on_product_id"
     t.index ["user_id"], name: "index_stock_notifications_on_user_id"
@@ -286,6 +308,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_07_120000) do
     t.string "stripe_payment_intent_id"
     t.datetime "updated_at", null: false
     t.index ["order_id"], name: "index_transactions_on_order_id"
+    t.index ["stripe_checkout_session_id"], name: "index_transactions_on_stripe_checkout_session_id", where: "(stripe_checkout_session_id IS NOT NULL)"
+    t.index ["stripe_payment_intent_id"], name: "index_transactions_on_stripe_payment_intent_id", where: "(stripe_payment_intent_id IS NOT NULL)"
   end
 
   create_table "users", force: :cascade do |t|
@@ -317,8 +341,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_07_120000) do
     t.integer "quantity"
     t.string "sku"
     t.datetime "updated_at", null: false
+    t.index ["product_id", "quantity"], name: "index_variants_on_product_id_and_quantity"
     t.index ["product_id"], name: "index_variants_on_product_id"
+    t.index ["quantity"], name: "index_variants_on_quantity"
     t.index ["sku"], name: "index_variants_on_sku", unique: true
+    t.index ["updated_at"], name: "index_variants_on_updated_at"
   end
 
   create_table "wishlist_items", force: :cascade do |t|
@@ -335,6 +362,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_07_120000) do
   add_foreign_key "addresses", "users"
   add_foreign_key "cart_items", "carts"
   add_foreign_key "cart_items", "variants"
+  add_foreign_key "carts", "gift_cards"
   add_foreign_key "carts", "shipping_methods"
   add_foreign_key "contact_messages", "users"
   add_foreign_key "gift_cards", "users", column: "purchased_by_id"
@@ -342,6 +370,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_07_120000) do
   add_foreign_key "order_items", "orders"
   add_foreign_key "order_items", "variants"
   add_foreign_key "orders", "addresses"
+  add_foreign_key "orders", "gift_cards"
   add_foreign_key "orders", "promo_codes"
   add_foreign_key "orders", "shipping_methods"
   add_foreign_key "orders", "users"

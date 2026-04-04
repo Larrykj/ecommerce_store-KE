@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class WishlistItemsController < ApplicationController
   before_action :authenticate_user!
 
@@ -52,3 +54,4 @@ class WishlistItemsController < ApplicationController
   end
 end
 # EOF
+

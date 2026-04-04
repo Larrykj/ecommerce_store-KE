@@ -1,6 +1,12 @@
+# frozen_string_literal: true
+
 class Review < ApplicationRecord
   belongs_to :user
   belongs_to :product
+
+  # Update product review cache after create/destroy
+  after_create :update_product_cache
+  after_destroy :update_product_cache
 
   # Validations
   # Validations
@@ -40,4 +46,13 @@ class Review < ApplicationRecord
     return false unless user
     self.user_id == user.id
   end
+
+  private
+
+  # Update the product's review cache when a review is created or destroyed
+  def update_product_cache
+    product.update_review_cache if product
+  end
+
 end
+

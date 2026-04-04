@@ -6,6 +6,7 @@ class Admin::OrdersController < Admin::BaseController
   def index
     @orders = Order.order(created_at: :desc).includes(:user)
     @orders = @orders.where(status: params[:status]) if params[:status].present?
+    @pagy, @orders = pagy(@orders, items: 25)
   end
 
   def show
@@ -14,6 +15,14 @@ class Admin::OrdersController < Admin::BaseController
 
   def update
     previous_status = @order.status
+    new_status = order_params[:status]
+
+    # Validate status transitions to prevent invalid state changes
+    if new_status.present? && !OrderService.valid_status_transition?(previous_status, new_status)
+      redirect_to admin_order_path(@order), alert: "Invalid status transition from '#{previous_status}' to '#{new_status}'."
+      return
+    end
+
     if @order.update(order_params)
       if previous_status != "shipped" && @order.status == "shipped"
         OrderMailer.with(order: @order).shipped.deliver_later
