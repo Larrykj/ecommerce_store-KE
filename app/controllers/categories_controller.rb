@@ -48,8 +48,11 @@ class CategoriesController < ApplicationController
   end
 
   def destroy
-    @category.destroy
-    redirect_to categories_url, notice: t("category_deleted_success", default: "Category was successfully deleted.")
+    if @category.discard
+      redirect_to categories_url, notice: t("category_deleted_success", default: "Category was successfully deleted.")
+    else
+      redirect_to categories_url, alert: t("category_deleted_error", default: "Category could not be deleted.")
+    end
   end
 
   private

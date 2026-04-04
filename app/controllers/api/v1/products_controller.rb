@@ -66,8 +66,7 @@ module Api
             variants: variants.map { |v|
               { id: v.id, name: v.name, sku: v.sku, price: v.price.to_f, quantity: v.quantity }
             },
-            reviews: (product.reviews.loaded? ? product.reviews.to_a : product.reviews.includes(:user).to_a)
-              .sort_by(&:created_at).reverse.take(10).map { |r|
+            reviews: product.reviews.includes(:user).order(created_at: :desc).limit(10).map { |r|
               { id: r.id, rating: r.rating, title: r.title, content: r.content, user: r.user&.name, created_at: r.created_at }
             }
           )
