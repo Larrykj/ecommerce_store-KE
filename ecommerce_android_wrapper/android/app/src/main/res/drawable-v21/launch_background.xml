@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Dark mode branded splash background — darker navy (#0A2E6E) -->
+    <item android:drawable="@color/splash_background_dark"/>
+
+    <!-- Center: app icon / logo -->
+    <item>
+        <bitmap
+            android:gravity="center"
+            android:src="@mipmap/ic_launcher"/>
+    </item>
+</layer-list>

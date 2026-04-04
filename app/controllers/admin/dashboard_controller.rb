@@ -2,36 +2,45 @@
 
 class Admin::DashboardController < Admin::BaseController
   def index
-    @total_revenue = Order.sum(:total_price)
+    # Core counts — lightweight queries with kept scope
+    @total_revenue = Order.where.not(payment_status: "unpaid").sum(:total_price)
     @total_orders = Order.count
     @total_users = User.kept.count
     @total_products = Product.kept.count
+
+    # Recent orders — limit and eager load
     @recent_orders = Order.order(created_at: :desc).limit(10).includes(:user)
+
+    # Low stock — indexed query
     @low_stock_variants = Variant.where("quantity <= 5").includes(:product).order(:quantity).limit(10)
+
+    # Top products — single SQL query
     @top_products = Product.kept
                            .joins(variants: :order_items)
-                           .group("products.id")
-                           .select("products.*, SUM(order_items.quantity) as total_sold")
-                           .order("total_sold DESC")
+                           .group(:id)
+                           .select(Arel.sql("products.*, SUM(order_items.quantity) as total_sold"))
+                           .order(Arel.sql("total_sold DESC"))
                            .limit(5)
 
-    # Monthly revenue for chart
+    # Monthly revenue — use SQL GROUP BY instead of Ruby grouping
     @monthly_revenue = Order.where("created_at >= ?", 6.months.ago)
-                            .group_by { |o| o.created_at.strftime("%b %Y") }
-                            .transform_values { |orders| orders.sum(&:total_price) }
+                            .group(Arel.sql("DATE_TRUNC('month', created_at)"))
+                            .order(Arel.sql("DATE_TRUNC('month', created_at)"))
+                            .pluck(Arel.sql("DATE_TRUNC('month', created_at)"), Arel.sql("SUM(total_price)"))
+                            .to_h { |month, total| [month.to_date.strftime("%b %Y"), total.to_f] }
 
-    # Order status breakdown
+    # Order status breakdown — single query
     @order_status_counts = Order.group(:status).count
 
-    # Top categories by revenue
+    # Top categories — single SQL query
     @top_categories = Category.joins(products: { variants: { order_items: :order } })
-                              .group("categories.id", "categories.name")
-                              .select("categories.name, SUM(order_items.price * order_items.quantity) as total_revenue")
-                              .order("total_revenue DESC")
+                              .group(:id, :name)
+                              .select(Arel.sql("categories.name, SUM(order_items.price * order_items.quantity) as total_revenue"))
+                              .order(Arel.sql("total_revenue DESC"))
                               .limit(5)
 
-    # Unread messages count
-    @unread_messages = ContactMessage.unread.count rescue 0
+    # Unread messages
+    @unread_messages = ContactMessage.unread.count
 
     # Paid orders revenue
     @paid_revenue = Order.where(payment_status: "paid").sum(:total_price)

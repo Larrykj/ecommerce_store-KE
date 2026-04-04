@@ -1,12 +1,18 @@
 Rails.application.routes.draw do
   devise_for :users, controllers: {
-    omniauth_callbacks: "users/omniauth_callbacks"
+    omniauth_callbacks: "users/omniauth_callbacks",
+    registrations: "users/registrations",
+    sessions: "users/sessions"
   }
 
   # Admin namespace
   namespace :admin do
     root "dashboard#index"
-    resources :categories, except: [ :show ]
+    resources :categories, except: [ :show ] do
+      member do
+        post :restore
+      end
+    end
     resources :products do
       member do
         patch :restore
@@ -47,7 +53,6 @@ Rails.application.routes.draw do
   end
 
   resources :wishlist_items, only: [ :index, :create, :destroy ]
-  resources :server_times, only: [ :index ]
 
   resources :products, only: [ :index, :show, :new, :create, :edit, :update, :destroy ] do
     resources :reviews, only: [ :create, :edit, :update, :destroy ] do
@@ -64,6 +69,8 @@ Rails.application.routes.draw do
   resource :cart, only: [ :show ] do
     post "apply_promo", to: "promo_codes#apply"
     delete "remove_promo", to: "promo_codes#remove"
+    post "apply_gift_card", to: "gift_cards#apply"
+    delete "remove_gift_card", to: "gift_cards#remove"
     patch "update_shipping", to: "carts#update_shipping"
   end
 
@@ -124,6 +131,15 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :products, only: [ :index, :show ]
       resources :orders, only: [ :index, :show ]
+      
+      # Native Stripe Integration
+      post "/payments/create_intent", to: "payments#create_intent"
+      
+      # AI Features
+      post "/ai/chat", to: "ai#chat"
+      post "/ai/recommendations", to: "ai#recommendations"
     end
   end
 end
+
+

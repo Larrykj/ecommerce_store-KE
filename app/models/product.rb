@@ -1,6 +1,7 @@
+# frozen_string_literal: true
+
 class Product < ApplicationRecord
   include Discard::Model
-
   include PgSearch::Model
 
   belongs_to :category, optional: true
@@ -21,9 +22,12 @@ class Product < ApplicationRecord
   validates :price, presence: true, numericality: { greater_than: 0 }
   validate :acceptable_image
 
+  # Bump API cache version when product data changes
+  after_save :bump_api_cache_version
+  after_destroy :bump_api_cache_version
+
   # ============ SEARCH SCOPES ============
 
-  # Full-text search using pg_search
   pg_search_scope :search_by_text,
                   against: [ :name, :description ],
                   associated_against: {
@@ -34,29 +38,23 @@ class Product < ApplicationRecord
                     tsearch: { prefix: true }
                   }
 
-  # Filter by category
   scope :by_category, ->(category_id) {
     return all if category_id.blank?
-
     where(category_id: category_id)
   }
 
-  # Filter by price range
   scope :by_min_price, ->(min_price) {
     return all if min_price.blank?
-
-    where("price >= ?", min_price.to_f)
+    where(arel_table[:price].gteq(min_price.to_f))
   }
 
   scope :by_max_price, ->(max_price) {
     return all if max_price.blank?
-
-    where("price <= ?", max_price.to_f)
+    where(arel_table[:price].lteq(max_price.to_f))
   }
 
-  # Filter by stock status
   scope :in_stock_only, -> { joins(:variants).where("variants.quantity > 0").distinct }
-  scope :out_of_stock_only, -> { left_outer_joins(:variants).group("products.id").having("SUM(COALESCE(variants.quantity, 0)) = 0") }
+  scope :out_of_stock_only, -> { left_outer_joins(:variants).group(:id).having(Arel.sql("SUM(COALESCE(variants.quantity, 0)) = 0")) }
 
   scope :by_stock_status, ->(status) {
     case status
@@ -69,13 +67,12 @@ class Product < ApplicationRecord
     end
   }
 
-  # Sorting scopes
   scope :sorted_by, ->(sort_option) {
     case sort_option
     when "price_asc"
-      order(price: :asc)
+      order(arel_table[:price].asc)
     when "price_desc"
-      order(price: :desc)
+      order(arel_table[:price].desc)
     when "name_asc"
       order(name: :asc)
     when "name_desc"
@@ -89,7 +86,6 @@ class Product < ApplicationRecord
     end
   }
 
-  # Combined search method - chains all filters together
   def self.advanced_search(params)
     results = kept
     results = results.search_by_text(params[:search]) if params[:search].present?
@@ -100,18 +96,18 @@ class Product < ApplicationRecord
     results.sorted_by(params[:sort])
   end
 
-  # Get price statistics for filter UI
   def self.price_stats
-    {
-      min: minimum(:price)&.to_f || 0,
-      max: maximum(:price)&.to_f || 0,
-      avg: average(:price)&.to_f&.round(2) || 0
-    }
+    Rails.cache.fetch("products/price_stats", expires_in: 1.hour) do
+      {
+        min: minimum(:price)&.to_f || 0,
+        max: maximum(:price)&.to_f || 0,
+        avg: average(:price)&.to_f&.round(2) || 0
+      }
+    end
   end
 
   # ============ INSTANCE METHODS ============
 
-  # Validate image size and type
   def acceptable_image
     return unless image.attached?
 
@@ -125,37 +121,74 @@ class Product < ApplicationRecord
     end
   end
 
-  # Total stock across all variants
+  # Total stock — uses in-memory sum if variants are already loaded
   def quantity
-    variants.sum(:quantity)
+    if variants.loaded?
+      variants.to_a.sum(&:quantity)
+    else
+      variants.sum(:quantity)
+    end
   end
 
-  # Check if product is in stock
+  # Stock check — uses in-memory if variants are loaded
   def in_stock?
-    total_qty = respond_to?(:variants) ? variants.sum(:quantity) : (self[:quantity] || 0)
-    total_qty > 0
+    if variants.loaded?
+      variants.any? { |v| v.quantity > 0 }
+    else
+      variants.exists?(["quantity > 0"])
+    end
   end
 
-  # Format price for display in KSH
+  # In-stock variants — avoids extra query if already loaded
+  def in_stock_variants
+    if variants.loaded?
+      variants.select { |v| v.quantity > 0 }
+    else
+      variants.where("quantity > 0")
+    end
+  end
+
+  # First available variant — avoids extra query if already loaded
+  def first_available_variant
+    in_stock_variants.first
+  end
+
+  # Reviews check — uses loaded association when available
+  def reviewed_by?(user)
+    return false unless user
+    if reviews.loaded?
+      reviews.any? { |r| r.user_id == user.id }
+    else
+      reviews.exists?(user_id: user.id)
+    end
+  end
+
+  def review_by(user)
+    return nil unless user
+    if reviews.loaded?
+      reviews.find { |r| r.user_id == user.id }
+    else
+      reviews.find_by(user_id: user.id)
+    end
+  end
+
   def formatted_price
     "KSh #{price.round(2)}"
   end
 
-  # Stock status label
   def stock_status_label
-    total_qty = respond_to?(:variants) ? variants.sum(:quantity) : (self[:quantity] || 0)
+    total_qty = quantity
     if total_qty.zero?
-      I18n.t("out_of_stock")
+      I18n.t("out_of_stock", default: "Out of Stock")
     elsif total_qty <= 5
-      I18n.t("low_stock", count: total_qty)
+      I18n.t("low_stock", count: total_qty, default: "Low Stock (#{total_qty})")
     else
-      I18n.t("in_stock_with_count", count: total_qty)
+      I18n.t("in_stock_with_count", count: total_qty, default: "In Stock (#{total_qty})")
     end
   end
 
-  # Stock status badge class for Bootstrap
   def stock_status_class
-    total_qty = respond_to?(:variants) ? variants.sum(:quantity) : (self[:quantity] || 0)
+    total_qty = quantity
     if total_qty.zero?
       "danger"
     elsif total_qty <= 5
@@ -167,39 +200,35 @@ class Product < ApplicationRecord
 
   # ============ RATING METHODS ============
 
-  # Get average rating for product
   def average_rating
-    reviews.average(:rating)&.round(1) || 0
+    self[:average_rating] || 0
   end
 
-  # Get review count
   def reviews_count
-    reviews.count
+    self[:reviews_count] || 0
   end
 
-  # Get rating percentage (for progress bars)
   def rating_percentage
     (average_rating / 5.0 * 100).round
   end
 
-  # Get rating distribution (count of each star level)
   def rating_distribution
     distribution = { 5 => 0, 4 => 0, 3 => 0, 2 => 0, 1 => 0 }
-    reviews.group(:rating).count.each do |rating, count|
-      distribution[rating] = count if distribution.key?(rating)
+    reviews.each do |r|
+      distribution[r.rating] += 1 if distribution.key?(r.rating)
     end
     distribution
   end
 
-  # Check if user has already reviewed this product
-  def reviewed_by?(user)
-    return false unless user
-    reviews.exists?(user_id: user.id)
+  def update_review_cache
+    self.reviews_count = reviews.count
+    self.average_rating = reviews.average(:rating)&.round(2) || 0
+    save(validate: false)
   end
 
-  # Get user's review for this product
-  def review_by(user)
-    return nil unless user
-    reviews.find_by(user_id: user.id)
+  private
+
+  def bump_api_cache_version
+    Rails.cache.write("api/v1/products/cache_version", SecureRandom.hex(4))
   end
 end

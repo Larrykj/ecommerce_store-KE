@@ -1,12 +1,14 @@
 # frozen_string_literal: true
 
+# Legacy/simplified checkout flow.
+# For the Stripe-integrated checkout, see CheckoutsController.
 class OrdersController < ApplicationController
   before_action :authenticate_user!
   before_action :set_order, only: [ :show, :cancel, :update_status ]
   before_action :authorize_admin_for_status_update!, only: [ :update_status ]
 
   def index
-    @orders = current_user.orders.order(created_at: :desc)
+    @orders = current_user.orders.includes(:order_items, :user).order(created_at: :desc)
   end
 
   def show
@@ -154,3 +156,4 @@ class OrdersController < ApplicationController
     OrderMailer.with(order: order).confirmation.deliver_later
   end
 end
+

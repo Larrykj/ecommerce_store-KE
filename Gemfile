@@ -59,6 +59,9 @@ group :development, :test do
 
   # Load environment variables from .env file
   gem "dotenv-rails"
+
+  # Detect N+1 queries and unused eager loading
+  gem "bullet", require: false
 end
 
 group :development do
@@ -79,7 +82,7 @@ gem "pagy", "~> 43.3"
 gem "pg_search", "~> 2.3"
 
 gem "stripe", "~> 18.4"
-
+gem "ruby-openai", "~> 7.3"
 gem "letter_opener", "~> 1.10", group: :development
 
 # PDF invoice generation

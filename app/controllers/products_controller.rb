@@ -8,19 +8,40 @@ class ProductsController < ApplicationController
 
   # GET /products
   def index
-    @categories = Category.all
+    @categories = Category.kept.order(:name)
     @price_stats = Product.price_stats
-    @pagy, @products = pagy(Product.advanced_search(search_params), items: 12)
+    base_query = Product.advanced_search(search_params).includes(:category, :variants).with_attached_image
+    @pagy, @products = pagy(base_query, items: 12)
     @active_filters_count = count_active_filters
     @search_params = search_params
 
+    # Preload first in-stock variant for each product (avoids N+1 in product_card partial)
+    product_ids = @products.map(&:id)
+    @first_available_variant = Variant.where(product_id: product_ids)
+                                       .where("quantity > 0")
+                                       .select(Arel.sql("DISTINCT ON (product_id) product_id, id"))
+                                       .order(Arel.sql("product_id, id"))
+                                       .index_by(&:product_id)
+
     if current_user
-      @recommended_products = current_user.recommended_products
-      @wishlist_map = current_user.wishlist_items.index_by(&:product_id)
+      @user_view_count = current_user.product_views.count
+      @recommended_products = current_user.recommended_products(4).includes(:category, :variants).with_attached_image.to_a
+      @wishlist_product_ids = current_user.wishlist_items.where(product_id: product_ids).pluck(:product_id)
+      @wishlist_items_by_product = current_user.wishlist_items.where(product_id: product_ids).index_by(&:product_id)
+
+      # Preload recently viewed products (excluding current page products)
+      recent_ids = current_user.product_views.order(created_at: :desc).limit(20).pluck(:product_id).uniq.reject { |id| product_ids.include?(id) }.first(4)
+      @recently_viewed = recent_ids.present? ? Product.kept.where(id: recent_ids).includes(:category, :variants).with_attached_image.index_by(&:id).values_at(*recent_ids).compact : []
     else
-      @recommended_products = []
-      @wishlist_map = {}
+      @user_view_count = 0
+      @recommended_products = Product.kept.includes(:category, :variants).with_attached_image.order(created_at: :desc).limit(4).to_a
+      @wishlist_product_ids = []
+      @wishlist_items_by_product = {}
+      @recently_viewed = []
     end
+
+    # Preload category product counts in a single query (avoids N+1 in sidebar)
+    @category_product_counts = Category.kept.left_joins(:products).group(:id).pluck(:id, "COUNT(products.id)").to_h
   end
 
   # GET /products/:id
@@ -73,7 +94,7 @@ class ProductsController < ApplicationController
   end
 
   def set_product
-    @product = Product.find(params[:id])
+    @product = Product.with_attached_image.with_attached_gallery_images.includes(:category, :variants, reviews: :user).find(params[:id])
   end
 
   def product_params

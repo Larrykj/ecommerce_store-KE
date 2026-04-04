@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Variant < ApplicationRecord
   belongs_to :product
   has_many :cart_items, dependent: :restrict_with_error
@@ -17,3 +19,4 @@ class Variant < ApplicationRecord
     quantity > 0
   end
 end
+

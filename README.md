@@ -2,6 +2,12 @@
 
 Build your online store with confidence. A **production-ready e-commerce platform** tailored for the African market, built with modern Rails technology and designed for seamless scaling.
 
+## Operational Docs
+
+- `docs/LAUNCH_READINESS.md` - security, auth, throttling, and pre-launch checks
+- `docs/AI_AND_SUPPORT.md` - AI/chat and support flow refinements
+- `docs/MOBILE_WRAPPER_ANDROID.md` - Android wrapper build stabilization and packaging
+
 This is a complete, battle-tested e-commerce solution featuring customer storefronts, powerful admin dashboards, safe payment processing, and enterprise-grade security—ready to handle real business workflows from day one.
 
 ---

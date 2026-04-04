@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Order < ApplicationRecord
   belongs_to :user
   has_many :order_items, dependent: :destroy
@@ -6,6 +8,7 @@ class Order < ApplicationRecord
   has_one :return_request, dependent: :destroy
   belongs_to :promo_code, optional: true
   belongs_to :shipping_method, optional: true
+  belongs_to :gift_card, optional: true
 
   def paid?
     payment_status == "paid"
@@ -29,10 +32,15 @@ class Order < ApplicationRecord
   # Updated enum syntax for Rails 7+
   enum :status, { pending: "pending", paid: "paid", processing: "processing", shipped: "shipped", delivered: "delivered", cancelled: "cancelled" }, default: :pending
 
-  def total_price
+  # Raw sum of order items (before discounts, shipping, tax)
+  def items_total
     order_items.sum { |item| item.price * item.quantity }
   end
 
+  # Full calculated total including shipping + tax - discount - gift_card_amount
+  def calculated_total
+    items_total + (shipping_cost || 0) + (tax_amount || 0) - (discount_amount || 0) - (gift_card_amount || 0)
+  end
 
   # Broadcast changes to the order for real-time updates
   after_update_commit -> { broadcast_replace_to self, target: "order_tracking_section", partial: "orders/tracking_details", locals: { order: self } }

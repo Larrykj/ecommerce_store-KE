@@ -2,6 +2,8 @@ class ApplicationController < ActionController::Base
   require_relative "../services/exchange_rate_service"
   include Pagy::Method
 
+  SUPPORTED_CURRENCIES = %w[KES USD EUR GBP JPY CNY INR CAD AUD ZAR].freeze
+
   before_action :initialize_cart
 
   before_action :set_locale
@@ -21,11 +23,19 @@ class ApplicationController < ActionController::Base
       @cart = Cart.create
       session[:cart_id] = @cart.id
     end
+
+    # TODO: Merge session cart with user's existing cart after sign-in
   end
 
   def set_locale
-    # Forces English unless explicitly requested via URL (fixes stuck session issue)
-    I18n.locale = params[:locale] || I18n.default_locale
+    selected_locale = params[:locale].presence || session[:locale]
+
+    if selected_locale.present? && I18n.available_locales.map(&:to_s).include?(selected_locale.to_s)
+      session[:locale] = selected_locale
+      I18n.locale = selected_locale
+    else
+      I18n.locale = I18n.default_locale
+    end
   end
 
   def default_url_options
@@ -33,8 +43,10 @@ class ApplicationController < ActionController::Base
   end
 
   def set_currency
-    if params[:currency]
-      session[:currency] = params[:currency]
+    requested_currency = params[:currency].to_s.upcase
+
+    if requested_currency.present? && SUPPORTED_CURRENCIES.include?(requested_currency)
+      session[:currency] = requested_currency
     end
   end
 
@@ -42,7 +54,7 @@ class ApplicationController < ActionController::Base
     session[:currency] || "KES"
   end
 
-  # Expanded conversion with real-time rates via ExchangeRateService
+  # Format price with real-time exchange rates via ExchangeRateService
   def format_price(price_in_kes)
     return "0" unless price_in_kes
     currency = current_currency
@@ -64,11 +76,11 @@ class ApplicationController < ActionController::Base
     converted_price = price_in_kes * rate
     case currency
     when "USD" then "$#{'%.2f' % converted_price}"
-    when "EUR" then "€#{'%.2f' % converted_price}"
-    when "GBP" then "£#{'%.2f' % converted_price}"
-    when "JPY" then "¥#{'%.0f' % converted_price}"
-    when "CNY" then "¥#{'%.2f' % converted_price}"
-    when "INR" then "₹#{'%.2f' % converted_price}"
+    when "EUR" then "\u20AC#{'%.2f' % converted_price}"
+    when "GBP" then "\u00A3#{'%.2f' % converted_price}"
+    when "JPY" then "\u00A5#{'%.0f' % converted_price}"
+    when "CNY" then "\u00A5#{'%.2f' % converted_price}"
+    when "INR" then "\u20B9#{'%.2f' % converted_price}"
     when "CAD" then "C$#{'%.2f' % converted_price}"
     when "AUD" then "A$#{'%.2f' % converted_price}"
     when "ZAR" then "R#{'%.2f' % converted_price}"

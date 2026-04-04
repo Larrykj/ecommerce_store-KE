@@ -17,13 +17,28 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   def handle_auth(provider)
     auth = request.env["omniauth.auth"]
-    @user = User.where(provider: auth.provider, uid: auth.uid).first_or_initialize do |u|
-      u.email = auth.info.email
-      u.password = Devise.friendly_token[0, 20]
-      u.name = auth.info.name || auth.info.email.split("@").first
+    
+    email = auth.info.email
+    email = "#{auth.uid}@#{provider.downcase}.com" if email.blank?
+
+    # Standard fix for "Email has already been taken" when mixing social & normal logins
+    @user = User.find_by(email: email)
+    
+    if @user
+      # Link social account if not already linked
+      @user.update(provider: auth.provider, uid: auth.uid) if @user.provider.blank?
+    else
+      @user = User.new(
+        email: email,
+        password: Devise.friendly_token[0, 20],
+        name: auth.info.name || email.split("@").first,
+        provider: auth.provider,
+        uid: auth.uid
+      )
+      @user.save
     end
 
-    if @user.persisted? || @user.save
+    if @user.persisted?
       sign_in_and_redirect @user, event: :authentication
       set_flash_message(:notice, :success, kind: provider) if is_navigational_format?
     else

@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 class Admin::CategoriesController < Admin::BaseController
-  before_action :set_category, only: [ :edit, :update, :destroy ]
+  before_action :set_category, only: [ :edit, :update, :destroy, :restore ]
 
   def index
-    @categories = Category.all.order(name: :asc)
-    @categories = @categories.where("LOWER(name) LIKE ?", "%#{params[:search].downcase}%") if params[:search].present?
+    @categories = Category.unscoped.order(name: :asc)
+    @categories = @categories.where("name ILIKE ?", "%#{params[:search]}%") if params[:search].present?
   end
 
   def new
@@ -33,14 +33,19 @@ class Admin::CategoriesController < Admin::BaseController
   end
 
   def destroy
-    @category.destroy
-    redirect_to admin_categories_path, notice: "Category deleted successfully."
+    @category.discard
+    redirect_to admin_categories_path, notice: "Category archived successfully."
+  end
+
+  def restore
+    @category.undiscard
+    redirect_to admin_categories_path, notice: "Category restored successfully."
   end
 
   private
 
   def set_category
-    @category = Category.find(params[:id])
+    @category = Category.unscoped.find(params[:id])
   end
 
   def category_params

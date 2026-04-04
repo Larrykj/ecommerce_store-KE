@@ -56,7 +56,8 @@
             <div class="small text-muted mb-1"><%= order.shipping_carrier || "Carrier" %></div>
             <div class="fw-bold font-monospace fs-5"><%= order.tracking_number %></div>
           </div>
-          <%= link_to "#", class: "btn btn-outline-primary btn-sm" do %>
+          <% tracking_query = [order.shipping_carrier.presence || "package tracking", order.tracking_number].join(" ") %>
+          <%= link_to "https://www.google.com/search?q=#{ERB::Util.url_encode(tracking_query)}", class: "btn btn-outline-primary btn-sm", target: "_blank", rel: "noopener noreferrer" do %>
             <i class="bi bi-box-arrow-up-right me-1"></i> <%= t('track_package') %>
           <% end %>
         </div>
@@ -105,7 +106,7 @@
           <p class="mb-0 small text-muted"><%= t('support_message') %></p>
         </div>
         <div class="ms-auto">
-          <a href="#" class="btn btn-sm btn-primary"><%= t('contact_support') %></a>
+          <%= link_to t('contact_support'), new_contact_message_path(subject: "Order Issue", message: "Hello support, I need help with Order ##{order.id}."), class: "btn btn-sm btn-primary" %>
         </div>
       </div>
     </div>

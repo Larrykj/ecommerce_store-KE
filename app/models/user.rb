@@ -1,5 +1,9 @@
+# frozen_string_literal: true
+
 class User < ApplicationRecord
   include Discard::Model
+
+  API_TOKEN_TTL = 30.days
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
@@ -23,7 +27,6 @@ class User < ApplicationRecord
   has_many :product_comparisons, dependent: :destroy
 
   validates :name, presence: true
-  validates :password, length: { minimum: 12 }, if: -> { new_record? || password.present? }
 
   # Override Devise destroy to soft delete
   def destroy
@@ -45,16 +48,25 @@ class User < ApplicationRecord
     recent_category_ids = recent_views.map { |pv| pv.product.category_id }.uniq.compact
 
     if recent_category_ids.any?
-      # Recommend products from same categories, excluding ones recently viewed if desired,
-      # but for now simple category match is good.
-      Product.where(category_id: recent_category_ids)
-             .where.not(id: viewed_products.select(:id))
-             .order("RANDOM()")
-             .limit(limit)
+      # First, scope down to relevant categories (indexed query), then randomize in-memory
+      candidate_ids = Product.where(category_id: recent_category_ids)
+                             .where.not(id: viewed_products.select(:id))
+                             .limit(limit * 3)
+                             .pluck(:id)
+      Product.where(id: candidate_ids.sample(limit))
     else
       # Fallback: Recently added products
       Product.order(created_at: :desc).limit(limit)
     end
+  end
+
+  # Signed API token for mobile/API usage.
+  def api_token
+    self.class.api_token_verifier.generate({ user_id: id }, purpose: "api_auth", expires_in: API_TOKEN_TTL)
+  end
+
+  def self.api_token_verifier
+    Rails.application.message_verifier("api-auth-v1")
   end
 
   # ============ ADMIN AUTHORIZATION ============
