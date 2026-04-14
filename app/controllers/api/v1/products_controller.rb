@@ -9,20 +9,26 @@ module Api
       PRODUCTS_CACHE_VERSION_KEY = "api/v1/products/cache_version".freeze
 
       def index
+        pagination = pagination_params
+        limit = pagination[:limit]
+        offset = pagination[:offset]
         cache_version = Rails.cache.fetch(PRODUCTS_CACHE_VERSION_KEY) { "v1" }
-        cache_key = "api/v1/products/index/#{params[:category_id]}-#{params[:search]}-#{params[:limit]}-#{params[:offset]}-#{cache_version}"
+        cache_key = "api/v1/products/index/#{params[:category_id]}-#{params[:search]}-#{limit}-#{offset}-#{cache_version}"
 
         json_data = Rails.cache.fetch(cache_key, expires_in: 12.hours) do
-          products = Product.kept
-          products = products.where(category_id: params[:category_id]) if params[:category_id].present?
-          products = products.search_by_text(params[:search]) if params[:search].present?
-          products = products.includes(:variants, :category).with_attached_image.order(created_at: :desc)
-                             .limit([ (params[:limit] || 20).to_i, 50 ].min)
-                             .offset([ (params[:offset] || 0).to_i, 0 ].max)
+          scoped_products = Product.kept
+          scoped_products = scoped_products.where(category_id: params[:category_id]) if params[:category_id].present?
+          scoped_products = scoped_products.search_by_text(params[:search]) if params[:search].present?
+
+          products = scoped_products.includes(:variants, :category).with_attached_image.order(created_at: :desc)
+                                   .limit(limit)
+                                   .offset(offset)
+          total = scoped_products.count
 
           {
             products: products.map { |p| serialize_product(p) },
-            total: Product.kept.count
+            total: total,
+            meta: pagination_meta(total: total, limit: limit, offset: offset)
           }
         end
 
@@ -34,13 +40,17 @@ module Api
         cache_key = "api/v1/products/show/#{params[:id]}-#{cache_version}"
 
         json_data = Rails.cache.fetch(cache_key, expires_in: 12.hours) do
-          product = Product.kept.includes(variants: [], category: []).with_attached_image.find(params[:id])
+          product = Product.kept.includes(variants: [], category: [], reviews: :user).with_attached_image.find(params[:id])
           { product: serialize_product(product, full: true) }
         end
 
         render json: json_data
       rescue ActiveRecord::RecordNotFound
-        render json: { error: "Product not found" }, status: :not_found
+        render_api_error(
+          code: "product_not_found",
+          message: "Product not found",
+          status: :not_found
+        )
       end
 
       private
@@ -59,14 +69,12 @@ module Api
         }
 
         if full
-          variants = product.variants.loaded? ? product.variants.to_a : product.variants.to_a
-
           data.merge!(
             description: product.description,
-            variants: variants.map { |v|
+            variants: product.variants.map { |v|
               { id: v.id, name: v.name, sku: v.sku, price: v.price.to_f, quantity: v.quantity }
             },
-            reviews: product.reviews.includes(:user).order(created_at: :desc).limit(10).map { |r|
+            reviews: product.reviews.sort_by(&:created_at).reverse.first(10).map { |r|
               { id: r.id, rating: r.rating, title: r.title, content: r.content, user: r.user&.name, created_at: r.created_at }
             }
           )

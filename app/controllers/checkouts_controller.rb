@@ -69,15 +69,21 @@ class CheckoutsController < ApplicationController
   # GET /checkout/success
   def success
     @order = current_user.orders.find(params[:order_id])
+    flash_type = :notice
+    flash_message = t("order_placed_success", default: "Order placed successfully! Payment confirmed.")
 
     @order.with_lock do
       if @order.payment_status == "unpaid" || @order.status == "pending"
         begin
+          if @order.stripe_checkout_session_id.blank?
+            flash_type = :alert
+            flash_message = t("checkout_missing_session", default: "We could not verify this payment session. Please contact support.")
+            break
+          end
+
           session = Stripe::Checkout::Session.retrieve(@order.stripe_checkout_session_id)
 
           if session.payment_status == "paid"
-            @order.update!(payment_status: "paid", status: "processing")
-
             transaction = @order.transactions.find_by(stripe_checkout_session_id: session.id)
             transaction&.update!(
               stripe_payment_intent_id: session.payment_intent,
@@ -85,19 +91,35 @@ class CheckoutsController < ApplicationController
               payment_method: "card"
             )
 
-            deduct_inventory
+            begin
+              Variant.transaction(requires_new: true) do
+                deduct_inventory
+              end
+              @order.update!(payment_status: "paid", status: "processing")
+              flash_message = t("order_placed_success", default: "Order placed successfully! Payment confirmed.")
+            rescue StandardError => e
+              Rails.logger.warn "Inventory race condition caught for order #{@order.id}: #{e.message}"
+              @order.update!(payment_status: "paid", status: "backordered")
+              flash_message = t("order_backordered_notice", default: "Payment was successful, but one or more items are currently out of stock. Your order is marked as backordered and our team will contact you.")
+            end
+
             @order.gift_card&.apply!(@order.gift_card_amount)
             @order.promo_code&.increment_usage!
             clear_cart
             OrderMailer.with(order: @order).confirmation.deliver_later
+          else
+            flash_type = :alert
+            flash_message = t("checkout_payment_not_confirmed", default: "Your payment is not confirmed yet. Please wait a moment and refresh your order page.")
           end
         rescue Stripe::StripeError => e
           Rails.logger.error "Stripe verification error: #{e.message}"
+          flash_type = :alert
+          flash_message = t("checkout_verification_error", default: "We could not verify your payment right now. Please check your order shortly or contact support.")
         end
       end
     end
 
-    redirect_to order_path(@order), notice: t("order_placed_success", default: "Order placed successfully! Payment confirmed.")
+    redirect_to order_path(@order), flash_type => flash_message
   end
 
   # GET /checkout/cancel
@@ -122,12 +144,21 @@ class CheckoutsController < ApplicationController
     params.require(:order).permit(:name, :email, :address, :phone)
   end
 
-  # Shared method for non-Stripe payment methods (COD, M-Pesa, Bank Transfer, Gift Card)
   def complete_order_locally(order, payment_method, txn_status, notice_msg)
-    order_status = txn_status == "succeeded" ? "processing" : "pending"
-    @order.update!(payment_status: txn_status, status: order_status)
     @order.transactions.create!(payment_method: payment_method, amount: @order.total_price, currency: STRIPE_CURRENCY, status: txn_status)
-    deduct_inventory
+
+    begin
+      Variant.transaction(requires_new: true) do
+        deduct_inventory
+      end
+      order_status = txn_status == "succeeded" ? "processing" : "pending"
+      @order.update!(payment_status: txn_status, status: order_status)
+    rescue StandardError => e
+      Rails.logger.warn "Inventory race condition caught for order #{@order.id}: #{e.message}"
+      @order.update!(payment_status: txn_status, status: "backordered")
+      notice_msg = t("order_backordered_notice", default: "Your order was received, but one or more items are currently out of stock. We will contact you with fulfillment options.")
+    end
+
     @order.gift_card&.apply!(@order.gift_card_amount)
     @order.promo_code&.increment_usage!
     clear_cart

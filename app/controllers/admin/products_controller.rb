@@ -4,8 +4,8 @@ class Admin::ProductsController < Admin::BaseController
   before_action :set_product, only: [ :show, :edit, :update, :destroy, :restore ]
 
   def index
-    @products = Product.unscoped.includes(:category, :variants).order(created_at: :desc)
-    @products = @products.where("name ILIKE ?", "%#{params[:search]}%") if params[:search].present?
+    @products = Product.unscoped.includes(:category, :variants).with_attached_image.order(created_at: :desc)
+    @products = @products.search_by_text(params[:search]) if params[:search].present?
   end
 
   def show

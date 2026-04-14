@@ -17,6 +17,7 @@
       .admin-sidebar {
         width: 260px; background: var(--admin-sidebar); color: white;
         padding: 0; position: fixed; top: 0; bottom: 0; overflow-y: auto; z-index: 100;
+        transition: transform 0.25s ease;
       }
       .sidebar-brand { padding: 24px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
       .sidebar-brand h4 { margin: 0; font-weight: 800; color: white; }
@@ -31,10 +32,11 @@
       .nav-link-admin:hover { background: rgba(255,255,255,0.08); color: white; }
       .nav-link-admin.active { background: rgba(79,70,229,0.2); color: #a5b4fc; border-left-color: #818cf8; }
       .nav-link-admin i { font-size: 1.1rem; width: 20px; text-align: center; }
-      .admin-content { margin-left: 260px; flex: 1; padding: 30px; }
+      .admin-content { margin-left: 260px; flex: 1; padding: 30px; min-width: 0; }
       .admin-topbar {
         display: flex; justify-content: space-between; align-items: center;
         margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #e2e8f0;
+        gap: 12px; flex-wrap: wrap;
       }
       .admin-topbar h1 { font-size: 1.6rem; font-weight: 800; color: #1e293b; margin: 0; }
       .topbar-actions { display: flex; gap: 12px; align-items: center; }
@@ -67,11 +69,60 @@
       .badge-delivered { background: #d1fae5; color: #065f46; }
       .btn-admin-danger { background: #fee2e2; color: #991b1b; border: none; }
       .btn-admin-danger:hover { background: #ef4444; color: white; }
+      .admin-mobile-header {
+        display: none;
+        align-items: center;
+        justify-content: space-between;
+        background: #ffffff;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 12px 16px;
+        margin: -30px -30px 20px -30px;
+        position: sticky;
+        top: 0;
+        z-index: 30;
+      }
+      .admin-menu-btn {
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        background: #fff;
+        color: #1e293b;
+        width: 38px;
+        height: 38px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .admin-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.5);
+        z-index: 90;
+      }
+      .admin-alert {
+        border: none;
+        border-left: 4px solid transparent;
+        border-radius: 10px;
+      }
+      .admin-alert-success { border-left-color: #10b981; }
+      .admin-alert-danger { border-left-color: #ef4444; }
+      .table-responsive-admin {
+        width: 100%;
+        overflow-x: auto;
+      }
       @media (max-width: 991px) {
-        .admin-sidebar { width: 70px; }
+        .admin-sidebar { width: 260px; transform: translateX(-100%); }
+        .admin-sidebar.is-open { transform: translateX(0); }
         .admin-sidebar .sidebar-brand h4, .admin-sidebar .sidebar-brand small, .admin-sidebar .nav-section, .nav-link-admin span { display: none; }
         .nav-link-admin { justify-content: center; padding: 14px; }
-        .admin-content { margin-left: 70px; }
+        .admin-content { margin-left: 0; padding: 20px; }
+        .admin-mobile-header { display: flex; }
+        .admin-overlay.is-open { display: block; }
+        .admin-sidebar .sidebar-brand h4 { display: block; }
+        .admin-sidebar .sidebar-brand small { display: block; }
+        .admin-sidebar .nav-section { display: block; }
+        .admin-sidebar .nav-link-admin span { display: inline; }
+        .nav-link-admin { justify-content: flex-start; }
       }
     </style>
   </head>
@@ -130,6 +181,18 @@
           <% end %>
 
           <div class="nav-section">Store</div>
+          <%= link_to admin_loyalty_programs_path, class: "nav-link-admin #{'active' if controller_path == 'admin/loyalty_programs'}" do %>
+            <i class="bi bi-star-fill"></i><span>Loyalty Program</span>
+          <% end %>
+          <%= link_to admin_flash_sales_path, class: "nav-link-admin #{'active' if controller_path == 'admin/flash_sales'}" do %>
+            <i class="bi bi-lightning"></i><span>Flash Sales</span>
+          <% end %>
+          <%= link_to admin_product_bundles_path, class: "nav-link-admin #{'active' if controller_path == 'admin/product_bundles'}" do %>
+            <i class="bi bi-box-seam"></i><span>Product Bundles</span>
+          <% end %>
+          <%= link_to admin_blog_posts_path, class: "nav-link-admin #{'active' if controller_path == 'admin/blog_posts'}" do %>
+            <i class="bi bi-journal-text"></i><span>Blog Posts</span>
+          <% end %>
           <%= link_to root_path, class: "nav-link-admin" do %>
             <i class="bi bi-shop"></i><span>View Store</span>
           <% end %>
@@ -140,20 +203,51 @@
       </aside>
 
       <main class="admin-content">
+        <div class="admin-mobile-header">
+          <button type="button" class="admin-menu-btn" id="adminMenuBtn" aria-label="Open admin menu">
+            <i class="bi bi-list"></i>
+          </button>
+          <strong>Admin Panel</strong>
+          <%= link_to root_path, class: "btn btn-sm btn-outline-secondary" do %>
+            <i class="bi bi-shop"></i>
+          <% end %>
+        </div>
         <% if notice %>
-          <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <%= notice %>
+          <div class="alert alert-success admin-alert admin-alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-1"></i><%= notice %>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
           </div>
         <% end %>
         <% if alert %>
-          <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <%= alert %>
+          <div class="alert alert-danger admin-alert admin-alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle me-1"></i><%= alert %>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
           </div>
         <% end %>
         <%= yield %>
       </main>
     </div>
+    <div class="admin-overlay" id="adminOverlay"></div>
+    <script>
+      (function() {
+        var menuBtn = document.getElementById("adminMenuBtn");
+        var sidebar = document.querySelector(".admin-sidebar");
+        var overlay = document.getElementById("adminOverlay");
+        if (!menuBtn || !sidebar || !overlay) return;
+
+        function closeSidebar() {
+          sidebar.classList.remove("is-open");
+          overlay.classList.remove("is-open");
+        }
+
+        menuBtn.addEventListener("click", function() {
+          sidebar.classList.toggle("is-open");
+          overlay.classList.toggle("is-open");
+        });
+
+        overlay.addEventListener("click", closeSidebar);
+        document.addEventListener("turbo:before-render", closeSidebar);
+      })();
+    </script>
   </body>
 </html>

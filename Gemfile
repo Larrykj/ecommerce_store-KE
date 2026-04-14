@@ -29,6 +29,7 @@ gem "solid_queue"
 gem "solid_cable"
 gem "devise"
 gem "rack-attack"
+gem "rack-cors"
 gem "lockbox"
 gem "blind_index"
 

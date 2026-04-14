@@ -49,13 +49,19 @@ yarn-debug.log*
 
 # Ignore test output and runtime artifacts
 test_output.txt
+test_output.log
 test_run*.txt
 _locale_fix.txt
 
+# Ignore security scan output
+brakeman.json
+
+# Ignore dev/CI scripts and build logs
+run_qa.ps1
+build_log.txt
+build_output*.txt
+
 # Ignore SQLite cache
 /db/cache/
-
-# Ignore IDE-specific files
-**/.idea/
 
 # EOF

@@ -6,18 +6,30 @@ class Api::V1::AiController < Api::V1::BaseController
 
   def chat
     unless OpenAI.configuration.access_token.present?
-      render json: { error: "OpenAI API Key is missing. Please configure it in environment variables." }, status: :internal_server_error
+      render_api_error(
+        code: "ai_api_key_missing",
+        message: "OpenAI API Key is missing. Please configure it in environment variables.",
+        status: :internal_server_error
+      )
       return
     end
 
     message = params[:message].to_s.strip
     if message.blank?
-      render json: { error: "Message cannot be blank." }, status: :unprocessable_entity
+      render_api_error(
+        code: "message_blank",
+        message: "Message cannot be blank.",
+        status: :unprocessable_entity
+      )
       return
     end
 
     if message.length > 1000
-      render json: { error: "Message is too long. Maximum length is 1000 characters." }, status: :unprocessable_entity
+      render_api_error(
+        code: "message_too_long",
+        message: "Message is too long. Maximum length is 1000 characters.",
+        status: :unprocessable_entity
+      )
       return
     end
 
@@ -48,7 +60,11 @@ class Api::V1::AiController < Api::V1::BaseController
         Rails.cache.delete(cache_key)
         render json: { reply: error_msg }, status: :ok
       else
-        render json: { error: "Failed to communicate with AI service. Please try again." }, status: :bad_gateway
+        render_api_error(
+          code: "ai_service_unavailable",
+          message: "Failed to communicate with AI service. Please try again.",
+          status: :bad_gateway
+        )
       end
     end
   end

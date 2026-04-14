@@ -30,7 +30,15 @@ class Order < ApplicationRecord
   validates :phone, presence: true
 
   # Updated enum syntax for Rails 7+
-  enum :status, { pending: "pending", paid: "paid", processing: "processing", shipped: "shipped", delivered: "delivered", cancelled: "cancelled" }, default: :pending
+  enum :status, {
+    pending: "pending",
+    paid: "paid",
+    processing: "processing",
+    backordered: "backordered",
+    shipped: "shipped",
+    delivered: "delivered",
+    cancelled: "cancelled"
+  }, default: :pending
 
   # Raw sum of order items (before discounts, shipping, tax)
   def items_total

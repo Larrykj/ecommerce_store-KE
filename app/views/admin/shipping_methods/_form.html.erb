@@ -13,7 +13,7 @@
   <div class="admin-card-body">
     <%= form_with model: [:admin, @shipping_method], local: true do |f| %>
       <% if @shipping_method.errors.any? %>
-        <div class="alert alert-danger" style="border-radius: 12px;">
+        <div class="alert alert-danger admin-alert admin-alert-danger" style="border-radius: 12px;">
           <ul class="mb-0">
             <% @shipping_method.errors.full_messages.each do |msg| %>
               <li><%= msg %></li>
@@ -24,17 +24,26 @@
 
       <div class="mb-3">
         <%= f.label :name, class: "form-label fw-bold" %>
-        <%= f.text_field :name, class: "form-control", placeholder: "e.g. Standard Delivery" %>
+        <%= f.text_field :name, class: "form-control #{'is-invalid' if @shipping_method.errors[:name].any?}", placeholder: "e.g. Standard Delivery" %>
+        <% @shipping_method.errors[:name].each do |error| %>
+          <div class="invalid-feedback d-block"><%= error %></div>
+        <% end %>
       </div>
 
       <div class="mb-3">
         <%= f.label :base_rate, "Base Rate (KES)", class: "form-label fw-bold" %>
-        <%= f.number_field :base_rate, class: "form-control", step: 0.01, min: 0 %>
+        <%= f.number_field :base_rate, class: "form-control #{'is-invalid' if @shipping_method.errors[:base_rate].any?}", step: 0.01, min: 0 %>
+        <% @shipping_method.errors[:base_rate].each do |error| %>
+          <div class="invalid-feedback d-block"><%= error %></div>
+        <% end %>
       </div>
 
       <div class="mb-3">
         <%= f.label :estimated_days, "Estimated Delivery Days", class: "form-label fw-bold" %>
-        <%= f.number_field :estimated_days, class: "form-control", min: 1 %>
+        <%= f.number_field :estimated_days, class: "form-control #{'is-invalid' if @shipping_method.errors[:estimated_days].any?}", min: 1 %>
+        <% @shipping_method.errors[:estimated_days].each do |error| %>
+          <div class="invalid-feedback d-block"><%= error %></div>
+        <% end %>
       </div>
 
       <div class="mb-4">
@@ -44,7 +53,7 @@
         </div>
       </div>
 
-      <%= f.submit @shipping_method.new_record? ? "Create Shipping Method" : "Update Shipping Method", class: "btn-admin btn-admin-primary w-100" %>
+      <%= f.submit @shipping_method.new_record? ? "Create Shipping Method" : "Update Shipping Method", class: "btn-admin btn-admin-primary w-100", data: { disable_with: "Saving..." } %>
     <% end %>
   </div>
 </div>

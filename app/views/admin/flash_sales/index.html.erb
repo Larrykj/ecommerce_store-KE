@@ -1,0 +1,92 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1 class="h3 mb-0">Flash Sales Management</h1>
+  <%= link_to new_admin_flash_sale_path, class: 'btn btn-primary shadow-sm rounded-pill px-4' do %>
+    <i class="bi bi-plus-lg me-1"></i> Create Flash Sale
+  <% end %>
+</div>
+
+<div class="card shadow-sm border-0">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="bg-light text-muted">
+          <tr>
+            <th class="ps-4 fw-medium border-0 py-3">Event Name</th>
+            <th class="fw-medium border-0 py-3">Run Time</th>
+            <th class="fw-medium border-0 py-3">Status</th>
+            <th class="fw-medium border-0 py-3 text-center">Products Included</th>
+            <th class="pe-4 fw-medium border-0 py-3 text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="border-top-0">
+          <% if @sales.any? %>
+            <% @sales.each do |sale| %>
+              <tr>
+                <td class="ps-4 py-3">
+                  <div class="fw-bold text-dark"><%= sale.name %></div>
+                </td>
+                <td class="py-3">
+                  <div class="small text-muted mb-1">
+                    <i class="bi bi-play-circle me-1 text-success"></i>
+                    <%= sale.start_time.strftime('%b %d, %Y - %I:%M %p') %>
+                  </div>
+                  <div class="small text-muted">
+                    <i class="bi bi-stop-circle me-1 text-danger"></i>
+                    <%= sale.end_time.strftime('%b %d, %Y - %I:%M %p') %>
+                  </div>
+                </td>
+                <td class="py-3">
+                  <% if sale.active? %>
+                    <span class="badge bg-success bg-opacity-10 text-success border border-success rounded-pill px-3 py-2">Live Now</span>
+                  <% elsif sale.active && sale.start_time > Time.current %>
+                    <span class="badge bg-info bg-opacity-10 text-info border border-info rounded-pill px-3 py-2">Scheduled</span>
+                  <% else %>
+                    <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary rounded-pill px-3 py-2">Ended / Inactive</span>
+                  <% end %>
+                </td>
+                <td class="py-3 text-center">
+                  <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 fs-6">
+                    <%= sale.products.count %>
+                  </span>
+                </td>
+                <td class="pe-4 py-3 text-end">
+                  <div class="btn-group">
+                    <%= link_to edit_admin_flash_sale_path(sale), class: 'btn btn-sm btn-outline-primary', title: 'Edit Details' do %>
+                      <i class="bi bi-pencil"></i> Edit
+                    <% end %>
+                    
+                    <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                      <span class="visually-hidden">Toggle Dropdown</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end border-0 shadow">
+                      <li>
+                        <%= link_to admin_flash_sale_path(sale), method: :delete, data: { confirm: 'Are you sure you want to delete this flash sale? This action cannot be undone.' }, class: 'dropdown-item text-danger' do %>
+                          <i class="bi bi-trash me-2"></i> Delete Event
+                        <% end %>
+                      </li>
+                    </ul>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          <% else %>
+            <tr>
+              <td colspan="5" class="py-5 text-center text-muted">
+                <i class="bi bi-lightning text-light display-1 mb-3 d-block"></i>
+                <h5 class="fw-normal">No Flash Sales Created</h5>
+                <p>Start a flash sale to drive urgency and conversions.</p>
+                <%= link_to 'Create First Flash Sale', new_admin_flash_sale_path, class: 'btn btn-outline-primary mt-2' %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<% if @pagy && @pagy.pages > 1 %>
+  <div class="d-flex justify-content-center mt-4 pb-5">
+    <%== pagy_bootstrap_nav(@pagy) %>
+  </div>
+<% end %>

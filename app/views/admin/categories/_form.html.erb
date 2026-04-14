@@ -1,7 +1,7 @@
 <%= form_with(model: [:admin, category], local: true) do |form| %>
   <% if category.errors.any? %>
-    <div class="alert alert-danger">
-      <h4><%= pluralize(category.errors.count, "error") %> prohibited this category from being saved:</h4>
+    <div class="alert alert-danger admin-alert admin-alert-danger">
+      <h4 class="h6 mb-2"><%= pluralize(category.errors.count, "error") %> prohibited this category from being saved:</h4>
       <ul>
         <% category.errors.full_messages.each do |message| %>
           <li><%= message %></li>
@@ -12,12 +12,18 @@
 
   <div class="mb-3">
     <%= form.label :name, "Category Name", class: 'form-label' %>
-    <%= form.text_field :name, class: 'form-control', placeholder: "e.g., Electronics" %>
+    <%= form.text_field :name, class: "form-control #{'is-invalid' if category.errors[:name].any?}", placeholder: "e.g., Electronics" %>
+    <% category.errors[:name].each do |error| %>
+      <div class="invalid-feedback d-block"><%= error %></div>
+    <% end %>
   </div>
 
   <div class="mb-3">
     <%= form.label :description, "Description", class: 'form-label' %>
-    <%= form.text_area :description, class: 'form-control', rows: 4, placeholder: "Category description..." %>
+    <%= form.text_area :description, class: "form-control #{'is-invalid' if category.errors[:description].any?}", rows: 4, placeholder: "Category description..." %>
+    <% category.errors[:description].each do |error| %>
+      <div class="invalid-feedback d-block"><%= error %></div>
+    <% end %>
   </div>
 
   <div class="mb-3">
@@ -31,7 +37,7 @@
   </div>
 
   <div class="actions mt-4">
-    <%= form.submit "Save Category", class: 'btn btn-success px-4' %>
+    <%= form.submit "Save Category", class: 'btn btn-success px-4', data: { disable_with: "Saving..." } %>
     <%= link_to "Cancel", admin_categories_path, class: 'btn btn-secondary px-4 ms-2' %>
   </div>
 <% end %>

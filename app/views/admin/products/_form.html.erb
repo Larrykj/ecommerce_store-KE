@@ -1,7 +1,7 @@
 <%= form_with(model: [:admin, product], local: true) do |form| %>
   <% if product.errors.any? %>
-    <div class="alert alert-danger">
-      <h4><%= t('error_prohibited_save', count: product.errors.count, resource: t('product')) %>:</h4>
+    <div class="alert alert-danger admin-alert admin-alert-danger">
+      <h4 class="h6 mb-2"><%= t('error_prohibited_save', count: product.errors.count, resource: t('product')) %>:</h4>
       <ul>
         <% product.errors.full_messages.each do |message| %>
           <li><%= message %></li>
@@ -12,22 +12,34 @@
 
   <div class="mb-3">
     <%= form.label :name, t('name'), class: 'form-label' %>
-    <%= form.text_field :name, class: 'form-control', placeholder: t('enter_product_name') %>
+    <%= form.text_field :name, class: "form-control #{'is-invalid' if product.errors[:name].any?}", placeholder: t('enter_product_name') %>
+    <% product.errors[:name].each do |error| %>
+      <div class="invalid-feedback d-block"><%= error %></div>
+    <% end %>
   </div>
 
   <div class="mb-3">
     <%= form.label :description, t('description'), class: 'form-label' %>
-    <%= form.text_area :description, class: 'form-control', rows: 5, placeholder: t('enter_product_description') %>
+    <%= form.text_area :description, class: "form-control #{'is-invalid' if product.errors[:description].any?}", rows: 5, placeholder: t('enter_product_description') %>
+    <% product.errors[:description].each do |error| %>
+      <div class="invalid-feedback d-block"><%= error %></div>
+    <% end %>
   </div>
 
   <div class="mb-3">
     <%= form.label :price, t('price'), class: 'form-label' %>
-    <%= form.number_field :price, class: 'form-control', step: 0.01, placeholder: '0.00' %>
+    <%= form.number_field :price, class: "form-control #{'is-invalid' if product.errors[:price].any?}", step: 0.01, placeholder: '0.00' %>
+    <% product.errors[:price].each do |error| %>
+      <div class="invalid-feedback d-block"><%= error %></div>
+    <% end %>
   </div>
 
   <div class="mb-3">
     <%= form.label :category_id, t('category'), class: 'form-label' %>
-    <%= form.collection_select :category_id, Category.all, :id, :name, { prompt: "Select Category" }, class: 'form-control' %>
+    <%= form.collection_select :category_id, Category.all, :id, :name, { prompt: "Select Category" }, class: "form-control #{'is-invalid' if product.errors[:category].any? || product.errors[:category_id].any?}" %>
+    <% (product.errors[:category] + product.errors[:category_id]).each do |error| %>
+      <div class="invalid-feedback d-block"><%= error %></div>
+    <% end %>
   </div>
 
   <div class="mb-3">
@@ -103,7 +115,7 @@
   </div>
 
   <div class="actions">
-    <%= form.submit t('save_product'), class: 'btn btn-success' %>
+    <%= form.submit t('save_product'), class: 'btn btn-success', data: { disable_with: "#{t('save_product')}..." } %>
     <%= link_to t('cancel'), admin_products_path, class: 'btn btn-secondary' %>
   </div>
 <% end %>

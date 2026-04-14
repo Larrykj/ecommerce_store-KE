@@ -1,0 +1,86 @@
+<% content_for :title, "My Rewards" %>
+<div class="container py-5">
+  <h1 class="mb-4">My Rewards</h1>
+  
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="row text-center">
+        <div class="col">
+          <h2><%= @points %></h2>
+          <p class="text-muted">Available Points</p>
+        </div>
+        <div class="col">
+          <% if @tier %>
+            <span class="badge" style="background: <%= @tier.badge_color %>; font-size: 1.2rem;"><%= @tier.name %></span>
+            <p class="text-muted">Current Tier</p>
+          <% else %>
+            <h2>Bronze</h2>
+            <p class="text-muted">Start earning to unlock tiers!</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Available Rewards</h3>
+  <div class="row">
+    <% @rewards&.each do |reward| %>
+      <div class="col-md-4 mb-3">
+        <div class="card">
+          <div class="card-body">
+            <h5><%= reward.name %></h5>
+            <p><%= reward.description %></p>
+            <p><strong><%= reward.points_required %> points</strong></p>
+            <% if reward.discount_percent %>
+              <p class="text-success"><%= reward.discount_percent %>% off</p>
+            <% elsif reward.discount_amount %>
+              <p class="text-success">$<%= reward.discount_amount %> off</p>
+            <% end %>
+            <%= button_to 'Redeem', redeem_loyalty_path(reward_id: reward.id), method: :post, class: 'btn btn-primary', disabled: @points < reward.points_required %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <h3 class="mt-4">My Redeemed Rewards</h3>
+  <% if @my_rewards.any? %>
+    <div class="row">
+      <% @my_rewards.each do |ur| %>
+        <div class="col-md-4 mb-3">
+          <div class="card">
+            <div class="card-body">
+              <h5><%= ur.loyalty_reward.name %></h5>
+              <p class="text-muted">Use at checkout</p>
+              <span class="badge bg-success">Unused</span>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="text-muted">No redeemed rewards yet.</p>
+  <% end %>
+
+  <h3 class="mt-4">Points History</h3>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Points</th>
+        <th>Reason</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @history.each do |point| %>
+        <tr>
+          <td><%= point.created_at.strftime('%B %d, %Y') %></td>
+          <td class="<%= point.points.positive? ? 'text-success' : 'text-danger' %>">
+            <%= point.points.positive? ? '+' : '' %><%= point.points %>
+          </td>
+          <td><%= point.reason %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

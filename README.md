@@ -7,6 +7,13 @@ Build your online store with confidence. A **production-ready e-commerce platfor
 - `docs/LAUNCH_READINESS.md` - security, auth, throttling, and pre-launch checks
 - `docs/AI_AND_SUPPORT.md` - AI/chat and support flow refinements
 - `docs/MOBILE_WRAPPER_ANDROID.md` - Android wrapper build stabilization and packaging
+- `docs/API_CONTRACT.md` - API error envelope, pagination meta, and integration contract
+- `docs/DEPLOY_RUNBOOK.md` - production deploy, rollback, and smoke-check checklist
+- `docs/GO_NO_GO.md` - final launch gate status and go/no-go checklist
+- `docs/DEPLOY_ORDER_CHECKLIST.md` - release-day deploy sequence and rollback triggers
+- `docs/RELEASE_NOTES_2026-04-13.md` - release summary for stakeholders
+- `docs/COMMIT_PLAN.md` - recommended commit grouping and sequencing
+- `docs/LAUNCH_COMMANDS.md` - copy/paste preflight, deploy, and smoke-test commands
 
 This is a complete, battle-tested e-commerce solution featuring customer storefronts, powerful admin dashboards, safe payment processing, and enterprise-grade security—ready to handle real business workflows from day one.
 
