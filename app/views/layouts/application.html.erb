@@ -303,6 +303,32 @@
 
         </li>
 
+        <li class="nav-item">
+
+          <%= link_to "Blog", blog_posts_path, class: "nav-link" %>
+
+        </li>
+
+        <li class="nav-item">
+
+          <%= link_to "Bundles", product_bundles_path, class: "nav-link" %>
+
+        </li>
+
+        <li class="nav-item">
+
+          <%= link_to "Flash Sales", flash_sales_path, class: "nav-link" %>
+
+        </li>
+
+        <% if user_signed_in? %>
+        <li class="nav-item">
+
+          <%= link_to "Rewards", loyalty_path, class: "nav-link" %>
+
+        </li>
+        <% end %>
+
         
 
         <!-- Language Switcher -->
@@ -414,6 +440,7 @@
               <li><%= link_to wishlist_items_path, class: "dropdown-item" do %><i class="bi bi-heart me-2"></i><%= t("my_wishlist") %><% end %></li>
               <li><%= link_to comparison_path, class: "dropdown-item" do %><i class="bi bi-arrow-left-right me-2"></i>Compare<% end %></li>
               <li><%= link_to gift_cards_path, class: "dropdown-item" do %><i class="bi bi-gift me-2"></i>Gift Cards<% end %></li>
+              <li><%= link_to loyalty_path, class: "dropdown-item" do %><i class="bi bi-star me-2"></i>My Rewards<% end %></li>
               <li><%= link_to return_requests_path, class: "dropdown-item" do %><i class="bi bi-arrow-return-left me-2"></i>My Returns<% end %></li>
               <li><hr class="dropdown-divider"></li>
               <li><%= link_to edit_user_registration_path, class: "dropdown-item" do %><i class="bi bi-gear me-2"></i><%= t("edit_profile") %><% end %></li>
@@ -521,6 +548,9 @@
               <ul class="footer-links">
                 <li><%= link_to products_path do %><i class="bi bi-grid me-2"></i><%= t('products') %><% end %></li>
                 <li><%= link_to categories_path do %><i class="bi bi-collection me-2"></i><%= t('categories') %><% end %></li>
+                <li><%= link_to product_bundles_path do %><i class="bi bi-box-seam me-2"></i>Bundle Deals<% end %></li>
+                <li><%= link_to flash_sales_path do %><i class="bi bi-lightning me-2"></i>Flash Sales<% end %></li>
+                <li><%= link_to blog_posts_path do %><i class="bi bi-journal-text me-2"></i>Blog<% end %></li>
                 <li><%= link_to gift_cards_path do %><i class="bi bi-gift me-2"></i>Gift Cards<% end %></li>
                 <li><%= link_to comparison_path do %><i class="bi bi-arrow-left-right me-2"></i>Compare<% end %></li>
               </ul>
@@ -534,6 +564,7 @@
                   <li><%= link_to profile_path do %><i class="bi bi-person me-2"></i>Profile<% end %></li>
                   <li><%= link_to orders_path do %><i class="bi bi-receipt me-2"></i>Orders<% end %></li>
                   <li><%= link_to wishlist_items_path do %><i class="bi bi-heart me-2"></i>Wishlist<% end %></li>
+                  <li><%= link_to loyalty_path do %><i class="bi bi-star me-2"></i>My Rewards<% end %></li>
                   <li><%= link_to return_requests_path do %><i class="bi bi-arrow-return-left me-2"></i>Returns<% end %></li>
                 <% else %>
                   <li><%= link_to new_user_session_path do %><i class="bi bi-box-arrow-in-right me-2"></i>Login<% end %></li>

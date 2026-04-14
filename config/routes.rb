@@ -40,6 +40,26 @@ Rails.application.routes.draw do
     resources :return_requests, only: [ :index, :show, :update ]
     resources :gift_cards, only: [ :index, :new, :create, :destroy ]
     resources :subscribers, only: [ :index, :destroy ]
+    resources :loyalty_programs, only: [ :index, :create, :update ]
+    resources :loyalty_tiers, only: [ :create, :destroy ]
+    resources :loyalty_rewards, only: [ :create, :destroy ]
+    resources :blog_posts do
+      member do
+        patch :publish
+      end
+    end
+    resources :flash_sales do
+      member do
+        post :add_product
+        delete :remove_product
+      end
+    end
+    resources :product_bundles do
+      member do
+        post :add_product
+        delete :remove_product
+      end
+    end
   end
 
   root "products#index"
@@ -126,10 +146,36 @@ Rails.application.routes.draw do
   get "/return-policy",  to: "pages#return_policy",    as: :return_policy
   get "/shipping-info",  to: "pages#shipping_info",    as: :shipping_info
 
+  # Blog
+  resources :blog_posts, only: [ :index, :show ] do
+    resources :blog_comments, only: [ :create, :destroy ]
+  end
+  resources :blog_categories, only: [ :index, :show ]
+
+  # Loyalty
+  resource :loyalty, only: [ :show ], controller: "loyalty" do
+    get :rewards
+    post :redeem
+  end
+
+  # Sitemap
+  get "/sitemap.xml", to: "sitemaps#show"
+
+  # Product Bundles
+  resources :product_bundles, only: [ :index, :show ]
+
+  # Flash Sales
+  get "/flash-sales", to: "flash_sales#index", as: :flash_sales
+  get "/flash-sales/:id", to: "flash_sales#show", as: :flash_sale
+
   # API
   namespace :api do
     namespace :v1 do
+      # Browsing (public — no auth required)
       resources :products, only: [ :index, :show ]
+      resources :categories, only: [ :index, :show ]
+
+      # Orders (authenticated)
       resources :orders, only: [ :index, :show ]
 
       # Native Stripe Integration

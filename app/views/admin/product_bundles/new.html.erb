@@ -1,0 +1,54 @@
+<h1>New Product Bundle</h1>
+
+<%= form_with model: @bundle, url: admin_product_bundles_path, local: true, class: 'needs-validation' do |f| %>
+  <% if @bundle.errors.any? %>
+    <div class="alert alert-danger mb-3">
+      <h4><%= pluralize(@bundle.errors.count, "error") %> prohibited this bundle:</h4>
+      <ul>
+        <% @bundle.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="card mb-4">
+    <div class="card-header">Bundle Details</div>
+    <div class="card-body">
+      <div class="mb-3">
+        <%= f.label :name, class: 'form-label' %>
+        <%= f.text_field :name, class: 'form-control', required: true %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :description, class: 'form-label' %>
+        <%= f.text_area :description, class: 'form-control', rows: 4 %>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= f.label :price, 'Bundle Price ($)', class: 'form-label' %>
+            <%= f.number_field :price, step: 0.01, class: 'form-control', required: true %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= f.label :original_price, 'Original Price ($)', class: 'form-label' %>
+            <%= f.number_field :original_price, step: 0.01, class: 'form-control', placeholder: 'For showing savings' %>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <%= f.check_box :active %>
+        <%= f.label :active, 'Active' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-grid gap-2 d-sm-flex justify-content-sm-start">
+    <%= f.submit 'Create Bundle', class: 'btn btn-primary' %>
+    <%= link_to 'Cancel', admin_product_bundles_path, class: 'btn btn-secondary' %>
+  </div>
+<% end %>

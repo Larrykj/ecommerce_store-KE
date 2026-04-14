@@ -24,6 +24,14 @@ user.api_token
 Authorization: Bearer <token>
 ```
 
+## 2.1) API Response Contract
+
+- API v1 endpoints now follow a consistent error envelope:
+  - `{ "error": { "code": "...", "message": "...", "details": ... } }`
+- List endpoints provide pagination metadata under:
+  - `meta.pagination` with `total`, `limit`, `offset`, `current_page`, `total_pages`
+- Reference: `docs/API_CONTRACT.md`
+
 ## 3) Throttling and Abuse Protection
 
 - `Rack::Attack` includes rate limits for:
@@ -45,3 +53,11 @@ Authorization: Bearer <token>
 
 - You may still see a boot-time deprecation warning from a dependency (`ActiveSupport::Configurable`).
 - This is dependency-level and does not block app runtime; track and remove during dependency upgrade cycle.
+
+## 6) Deployment SOP
+
+- Use `docs/DEPLOY_RUNBOOK.md` as the source of truth for:
+  - required production env vars,
+  - deploy and migration sequence,
+  - rollback procedure,
+  - and post-deploy smoke checks.

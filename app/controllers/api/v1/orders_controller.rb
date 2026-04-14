@@ -4,8 +4,9 @@ module Api
   module V1
     class OrdersController < BaseController
       def index
-        limit = [ (params[:limit] || 20).to_i, 50 ].min
-        offset = [ (params[:offset] || 0).to_i, 0 ].max
+        pagination = pagination_params
+        limit = pagination[:limit]
+        offset = pagination[:offset]
 
         orders = current_api_user.orders
                                 .includes(order_items: { variant: :product }, shipping_method: [])
@@ -13,9 +14,11 @@ module Api
                                 .limit(limit)
                                 .offset(offset)
 
+        total = current_api_user.orders.count
         render json: {
           orders: orders.map { |o| serialize_order(o, full: true) },
-          total: current_api_user.orders.count
+          total: total,
+          meta: pagination_meta(total: total, limit: limit, offset: offset)
         }
       end
 
@@ -23,7 +26,11 @@ module Api
         order = current_api_user.orders.includes(order_items: { variant: :product }, shipping_method: [], gift_card: []).find(params[:id])
         render json: { order: serialize_order(order, full: true) }
       rescue ActiveRecord::RecordNotFound
-        render json: { error: "Order not found" }, status: :not_found
+        render_api_error(
+          code: "order_not_found",
+          message: "Order not found",
+          status: :not_found
+        )
       end
 
       private

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:ecommerce_android_wrapper/main.dart'; // import StoreWebView
 import 'native_home_screen.dart';
 import 'ai_chat_screen.dart';
-import 'stripe_checkout_demo.dart'; // Just for native presentation
 
 class HomeNavigationScreen extends StatefulWidget {
   const HomeNavigationScreen({super.key});

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_03_140000) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_11_125203) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -60,6 +60,64 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_03_140000) do
     t.index ["user_id"], name: "index_addresses_on_user_id"
   end
 
+  create_table "blog_categories", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "name"
+    t.integer "position", default: 0
+    t.string "slug"
+    t.datetime "updated_at", null: false
+    t.index ["slug"], name: "index_blog_categories_on_slug", unique: true
+  end
+
+  create_table "blog_comments", force: :cascade do |t|
+    t.boolean "approved", default: true
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.string "email"
+    t.string "name"
+    t.bigint "parent_id"
+    t.bigint "post_id", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.index ["approved"], name: "index_blog_comments_on_approved"
+    t.index ["parent_id"], name: "index_blog_comments_on_parent_id"
+    t.index ["post_id"], name: "index_blog_comments_on_post_id"
+    t.index ["user_id"], name: "index_blog_comments_on_user_id"
+  end
+
+  create_table "blog_posts", force: :cascade do |t|
+    t.bigint "category_id"
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.text "excerpt"
+    t.string "featured_image"
+    t.text "meta_description"
+    t.string "meta_title"
+    t.boolean "published", default: false
+    t.datetime "published_at"
+    t.string "slug"
+    t.string "title"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.integer "views_count", default: 0
+    t.index ["category_id"], name: "index_blog_posts_on_category_id"
+    t.index ["published"], name: "index_blog_posts_on_published"
+    t.index ["slug"], name: "index_blog_posts_on_slug", unique: true
+    t.index ["user_id"], name: "index_blog_posts_on_user_id"
+  end
+
+  create_table "bundle_items", force: :cascade do |t|
+    t.bigint "bundle_id", null: false
+    t.datetime "created_at", null: false
+    t.bigint "product_id", null: false
+    t.integer "quantity", default: 1
+    t.datetime "updated_at", null: false
+    t.index ["bundle_id", "product_id"], name: "index_bundle_items_on_bundle_id_and_product_id", unique: true
+    t.index ["bundle_id"], name: "index_bundle_items_on_bundle_id"
+    t.index ["product_id"], name: "index_bundle_items_on_product_id"
+  end
+
   create_table "cart_items", force: :cascade do |t|
     t.integer "cart_id", null: false
     t.datetime "created_at", null: false
@@ -78,6 +136,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_03_140000) do
     t.bigint "shipping_method_id"
     t.datetime "updated_at", null: false
     t.index ["gift_card_id"], name: "index_carts_on_gift_card_id"
+    t.index ["promo_code_id"], name: "index_carts_on_promo_code_id"
     t.index ["shipping_method_id"], name: "index_carts_on_shipping_method_id"
   end
 
@@ -85,6 +144,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_03_140000) do
     t.datetime "created_at", null: false
     t.text "description"
     t.datetime "discarded_at"
+    t.text "meta_description"
+    t.string "meta_title"
     t.string "name"
     t.datetime "updated_at", null: false
     t.index ["discarded_at"], name: "index_categories_on_discarded_at"
@@ -103,6 +164,65 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_03_140000) do
     t.index ["user_id"], name: "index_contact_messages_on_user_id"
   end
 
+  create_table "email_campaigns", force: :cascade do |t|
+    t.boolean "active", default: true
+    t.text "body"
+    t.string "campaign_type"
+    t.integer "clicked_count"
+    t.datetime "created_at", null: false
+    t.string "name"
+    t.integer "opened_count"
+    t.integer "recipients_count"
+    t.datetime "scheduled_at"
+    t.datetime "sent_at"
+    t.text "subject"
+    t.datetime "updated_at", null: false
+    t.index ["campaign_type"], name: "index_email_campaigns_on_campaign_type"
+  end
+
+  create_table "email_subscriptions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "email"
+    t.boolean "subscribed", default: true
+    t.string "subscribed_to"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.index ["email", "subscribed_to"], name: "index_email_subscriptions_on_email_and_subscribed_to", unique: true
+    t.index ["user_id"], name: "index_email_subscriptions_on_user_id"
+  end
+
+  create_table "email_triggers", force: :cascade do |t|
+    t.string "action"
+    t.boolean "active", default: true
+    t.datetime "created_at", null: false
+    t.integer "delay_days"
+    t.string "event_type"
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "flash_sale_products", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "flash_sale_id", null: false
+    t.integer "max_quantity"
+    t.bigint "product_id", null: false
+    t.integer "sold_count", default: 0
+    t.decimal "special_price"
+    t.datetime "updated_at", null: false
+    t.index ["flash_sale_id", "product_id"], name: "index_flash_sale_products_on_flash_sale_id_and_product_id", unique: true
+    t.index ["flash_sale_id"], name: "index_flash_sale_products_on_flash_sale_id"
+    t.index ["product_id"], name: "index_flash_sale_products_on_product_id"
+  end
+
+  create_table "flash_sales", force: :cascade do |t|
+    t.boolean "active", default: true
+    t.datetime "created_at", null: false
+    t.decimal "discount_percent"
+    t.datetime "end_time"
+    t.string "name"
+    t.datetime "start_time"
+    t.datetime "updated_at", null: false
+  end
+
   create_table "gift_cards", force: :cascade do |t|
     t.decimal "balance", precision: 10, scale: 2, null: false
     t.string "code", null: false
@@ -118,6 +238,54 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_03_140000) do
     t.index ["purchased_by_id"], name: "index_gift_cards_on_purchased_by_id"
     t.index ["redeemed_by_id"], name: "index_gift_cards_on_redeemed_by_id"
     t.index ["status"], name: "index_gift_cards_on_status"
+  end
+
+  create_table "loyalty_points", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "order_id"
+    t.integer "points"
+    t.string "reason"
+    t.boolean "redeemed", default: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["order_id"], name: "index_loyalty_points_on_order_id"
+    t.index ["user_id"], name: "index_loyalty_points_on_user_id"
+  end
+
+  create_table "loyalty_programs", force: :cascade do |t|
+    t.boolean "active", default: true
+    t.datetime "created_at", null: false
+    t.integer "minimum_redemption", default: 100
+    t.string "name"
+    t.decimal "points_per_dollar", default: "1.0"
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "loyalty_rewards", force: :cascade do |t|
+    t.boolean "active", default: true
+    t.datetime "created_at", null: false
+    t.string "description"
+    t.decimal "discount_amount"
+    t.decimal "discount_percent"
+    t.bigint "loyalty_program_id", null: false
+    t.integer "max_redemptions"
+    t.string "name"
+    t.integer "points_required"
+    t.integer "redemption_count", default: 0
+    t.datetime "updated_at", null: false
+    t.index ["loyalty_program_id"], name: "index_loyalty_rewards_on_loyalty_program_id"
+  end
+
+  create_table "loyalty_tiers", force: :cascade do |t|
+    t.string "badge_color"
+    t.datetime "created_at", null: false
+    t.decimal "discount_percent", default: "0.0"
+    t.bigint "loyalty_program_id", null: false
+    t.integer "min_points"
+    t.string "name"
+    t.decimal "points_multiplier", default: "1.0"
+    t.datetime "updated_at", null: false
+    t.index ["loyalty_program_id"], name: "index_loyalty_tiers_on_loyalty_program_id"
   end
 
   create_table "order_items", force: :cascade do |t|
@@ -171,6 +339,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_03_140000) do
     t.index ["user_id"], name: "index_orders_on_user_id"
   end
 
+  create_table "product_bundles", force: :cascade do |t|
+    t.boolean "active", default: true
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.decimal "discount_percent"
+    t.integer "max_quantity"
+    t.string "name"
+    t.decimal "original_price"
+    t.decimal "price"
+    t.string "slug"
+    t.datetime "updated_at", null: false
+    t.index ["slug"], name: "index_product_bundles_on_slug", unique: true
+  end
+
   create_table "product_comparisons", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.bigint "product_id", null: false
@@ -200,6 +382,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_03_140000) do
     t.datetime "created_at", null: false
     t.text "description"
     t.datetime "discarded_at"
+    t.text "meta_description"
+    t.string "meta_title"
     t.string "name"
     t.decimal "price"
     t.integer "reviews_count", default: 0
@@ -261,6 +445,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_03_140000) do
     t.index ["user_id"], name: "index_reviews_on_user_id"
   end
 
+  create_table "seo_settings", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "extra_tags"
+    t.text "meta_description"
+    t.string "meta_title"
+    t.string "page_type"
+    t.datetime "updated_at", null: false
+    t.index ["page_type"], name: "index_seo_settings_on_page_type", unique: true
+  end
+
   create_table "shipping_methods", force: :cascade do |t|
     t.boolean "active"
     t.decimal "base_rate"
@@ -312,9 +506,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_03_140000) do
     t.index ["stripe_payment_intent_id"], name: "index_transactions_on_stripe_payment_intent_id", where: "(stripe_payment_intent_id IS NOT NULL)"
   end
 
+  create_table "user_rewards", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "loyalty_reward_id", null: false
+    t.bigint "order_id"
+    t.datetime "updated_at", null: false
+    t.boolean "used", default: false
+    t.bigint "user_id", null: false
+    t.index ["loyalty_reward_id"], name: "index_user_rewards_on_loyalty_reward_id"
+    t.index ["order_id"], name: "index_user_rewards_on_order_id"
+    t.index ["user_id"], name: "index_user_rewards_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.boolean "admin", default: false, null: false
     t.datetime "created_at", null: false
+    t.integer "current_tier_id"
     t.datetime "discarded_at"
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -326,6 +533,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_03_140000) do
     t.string "reset_password_token"
     t.string "uid"
     t.datetime "updated_at", null: false
+    t.index ["current_tier_id"], name: "index_users_on_current_tier_id"
     t.index ["discarded_at"], name: "index_users_on_discarded_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["provider", "uid"], name: "index_users_on_provider_and_uid", unique: true
@@ -360,13 +568,27 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_03_140000) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "addresses", "users"
+  add_foreign_key "blog_comments", "blog_comments", column: "parent_id"
+  add_foreign_key "blog_comments", "blog_posts", column: "post_id"
+  add_foreign_key "blog_comments", "users"
+  add_foreign_key "blog_posts", "blog_categories", column: "category_id"
+  add_foreign_key "blog_posts", "users"
+  add_foreign_key "bundle_items", "product_bundles", column: "bundle_id"
+  add_foreign_key "bundle_items", "products"
   add_foreign_key "cart_items", "carts"
   add_foreign_key "cart_items", "variants"
   add_foreign_key "carts", "gift_cards"
   add_foreign_key "carts", "shipping_methods"
   add_foreign_key "contact_messages", "users"
+  add_foreign_key "email_subscriptions", "users"
+  add_foreign_key "flash_sale_products", "flash_sales"
+  add_foreign_key "flash_sale_products", "products"
   add_foreign_key "gift_cards", "users", column: "purchased_by_id"
   add_foreign_key "gift_cards", "users", column: "redeemed_by_id"
+  add_foreign_key "loyalty_points", "orders"
+  add_foreign_key "loyalty_points", "users"
+  add_foreign_key "loyalty_rewards", "loyalty_programs"
+  add_foreign_key "loyalty_tiers", "loyalty_programs"
   add_foreign_key "order_items", "orders"
   add_foreign_key "order_items", "variants"
   add_foreign_key "orders", "addresses"
@@ -386,6 +608,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_03_140000) do
   add_foreign_key "stock_notifications", "products"
   add_foreign_key "stock_notifications", "users"
   add_foreign_key "transactions", "orders"
+  add_foreign_key "user_rewards", "loyalty_rewards"
+  add_foreign_key "user_rewards", "orders"
+  add_foreign_key "user_rewards", "users"
   add_foreign_key "variants", "products"
   add_foreign_key "wishlist_items", "products"
   add_foreign_key "wishlist_items", "users"

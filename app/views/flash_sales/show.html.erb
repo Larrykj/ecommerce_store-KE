@@ -1,0 +1,53 @@
+<% content_for :title, @flash_sale.name %>
+<div class="container py-5">
+  <h1><%= @flash_sale.name %></h1>
+
+  <% if @flash_sale.discount_percent.present? %>
+    <p class="lead"><span class="badge bg-danger fs-5"><%= @flash_sale.discount_percent %>% OFF</span> on selected products</p>
+  <% end %>
+
+  <% if @flash_sale.active? %>
+    <div class="alert alert-danger">
+      <strong>⏱ Limited Time Offer!</strong>
+      This sale ends <%= @flash_sale.end_time.strftime('%B %d at %l:%M %p') %>
+    </div>
+  <% end %>
+
+  <h3 class="mt-4 mb-3">Products in This Sale (<%= @flash_sale.products.count %>)</h3>
+  <div class="row">
+    <% @flash_sale.flash_sale_products.includes(:product).each do |fsp| %>
+      <% product = fsp.product %>
+      <div class="col-md-4 mb-4">
+        <div class="card h-100">
+          <% if product.image.attached? %>
+            <%= image_tag product.image, class: 'card-img-top', style: 'max-height: 300px; object-fit: cover;' %>
+          <% end %>
+          <div class="card-body">
+            <h5 class="card-title"><%= product.name %></h5>
+            <p class="card-text"><%= product.description&.truncate(100) %></p>
+            
+            <% if fsp.special_price %>
+              <div class="mb-2">
+                <span class="text-muted"><s>KSh <%= number_with_precision(product.price, precision: 2) %></s></span>
+                <span class="h5 text-danger ms-2">KSh <%= number_with_precision(fsp.special_price, precision: 2) %></span>
+              </div>
+            <% else %>
+              <span class="h5">KSh <%= number_with_precision(product.price, precision: 2) %></span>
+            <% end %>
+
+            <div class="d-flex justify-content-between align-items-center mt-2">
+              <% if fsp.max_quantity %>
+                <small class="text-muted"><%= [fsp.max_quantity - fsp.sold_count, 0].max %> left</small>
+              <% end %>
+              <%= link_to 'View', product_path(product), class: 'btn btn-outline-primary btn-sm' %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mt-5">
+    <%= link_to 'Back to Flash Sales', flash_sales_path, class: 'btn btn-outline-secondary' %>
+  </div>
+</div>

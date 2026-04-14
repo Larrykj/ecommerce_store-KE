@@ -22,9 +22,12 @@ class User < ApplicationRecord
   has_many :wishlist_products, through: :wishlist_items, source: :product
   has_many :addresses, dependent: :destroy
   has_many :contact_messages, dependent: :nullify
+  has_many :blog_posts, dependent: :destroy
   has_many :return_requests, dependent: :destroy
   has_many :stock_notifications, dependent: :destroy
   has_many :product_comparisons, dependent: :destroy
+  has_many :loyalty_points, dependent: :destroy
+  has_many :user_rewards, dependent: :destroy
 
   validates :name, presence: true
 

@@ -12,14 +12,32 @@ class Api::V1::PaymentsController < Api::V1::BaseController
         currency: currency,
         automatic_payment_methods: { enabled: true }
       })
+      publishable_key = ENV["STRIPE_PUBLISHABLE_KEY"] || Rails.application.credentials.dig(:stripe, :publishable_key)
+      if publishable_key.blank?
+        render_api_error(
+          code: "stripe_publishable_key_missing",
+          message: "Stripe publishable key is missing.",
+          status: :internal_server_error
+        )
+        return
+      end
+
       render json: {
         paymentIntent: intent.client_secret,
-        publishableKey: ENV["STRIPE_PUBLISHABLE_KEY"] || Rails.application.credentials.dig(:stripe, :publishable_key)
+        publishableKey: publishable_key
       }
     rescue ActionController::ParameterMissing, ArgumentError => e
-      render json: { error: e.message }, status: :unprocessable_entity
+      render_api_error(
+        code: "invalid_payment_request",
+        message: e.message,
+        status: :unprocessable_entity
+      )
     rescue Stripe::StripeError => e
-      render json: { error: e.message }, status: :unprocessable_entity
+      render_api_error(
+        code: "stripe_error",
+        message: e.message,
+        status: :unprocessable_entity
+      )
     end
   end
 

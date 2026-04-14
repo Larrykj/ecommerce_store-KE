@@ -1,0 +1,44 @@
+<h1>Product Bundles</h1>
+<%= link_to 'New Bundle', new_admin_product_bundle_path, class: 'btn btn-primary mb-3' %>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Price</th>
+      <th>Original Price</th>
+      <th>Savings</th>
+      <th>Products</th>
+      <th>Status</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @bundles.each do |bundle| %>
+      <tr>
+        <td><strong><%= bundle.name %></strong></td>
+        <td>$<%= number_with_precision(bundle.price, precision: 2) %></td>
+        <td><% if bundle.original_price %>$<%= number_with_precision(bundle.original_price, precision: 2) %><% end %></td>
+        <td><% if bundle.original_price %><span class="badge bg-success">Save $<%= number_with_precision(bundle.savings, precision: 2) %></span><% end %></td>
+        <td><%= bundle.products.count %></td>
+        <td>
+          <% if bundle.active %>
+            <span class="badge bg-success">Active</span>
+          <% else %>
+            <span class="badge bg-secondary">Inactive</span>
+          <% end %>
+        </td>
+        <td>
+          <%= link_to 'Edit', edit_admin_product_bundle_path(bundle), class: 'btn btn-sm btn-secondary' %>
+          <%= link_to 'Delete', admin_product_bundle_path(bundle), method: :delete, data: { confirm: 'Delete?' }, class: 'btn btn-sm btn-danger' %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<% if @pagy.pages > 1 %>
+  <div class="mt-3">
+    <%== @pagy.series_nav(:bootstrap) %>
+  </div>
+<% end %>

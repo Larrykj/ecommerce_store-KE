@@ -1,0 +1,31 @@
+<% content_for :title, "Blog Categories" %>
+<div class="container py-5">
+  <h1 class="mb-4">Blog Categories</h1>
+
+  <% if @categories.any? %>
+    <div class="row">
+      <% @categories.each do |category| %>
+        <div class="col-md-4 mb-4">
+          <div class="card h-100 shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title"><%= category.name %></h5>
+              <% if category.description.present? %>
+                <p class="card-text text-muted"><%= truncate(category.description, length: 150) %></p>
+              <% end %>
+              <p class="text-muted small">
+                <%= category.posts.count %> post<%= category.posts.count == 1 ? '' : 's' %>
+              </p>
+              <%= link_to "View Posts", blog_category_path(category.slug), class: "btn btn-outline-primary" %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="text-center py-5">
+      <h4 class="text-muted">No blog categories yet</h4>
+      <p class="text-muted">Check back soon for new content!</p>
+      <%= link_to "View All Posts", blog_posts_path, class: "btn btn-primary" %>
+    </div>
+  <% end %>
+</div>

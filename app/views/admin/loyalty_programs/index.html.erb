@@ -1,0 +1,178 @@
+<h1>Loyalty Program</h1>
+
+<%= form_with model: @program, url: (@program.persisted? ? admin_loyalty_program_path(@program) : admin_loyalty_programs_path), local: true do |f| %>
+  <div class="card mb-4">
+    <div class="card-header">Settings</div>
+    <div class="card-body">
+      <div class="mb-3">
+        <%= f.label :name, class: 'form-label' %>
+        <%= f.text_field :name, class: 'form-control' %>
+      </div>
+      <div class="mb-3">
+        <%= f.label :points_per_dollar, 'Points per $1 spent' %>
+        <%= f.number_field :points_per_dollar, step: 0.1, class: 'form-control' %>
+      </div>
+      <div class="mb-3">
+        <%= f.label :minimum_redemption, 'Minimum points for redemption' %>
+        <%= f.number_field :minimum_redemption, class: 'form-control' %>
+      </div>
+      <div class="mb-3">
+        <%= f.check_box :active %>
+        <%= f.label :active, 'Active' %>
+      </div>
+      <%= f.submit 'Save', class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Tiers</h5>
+        <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#newTierModal">Add Tier</button>
+      </div>
+      <div class="card-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Min Points</th>
+              <th>Multiplier</th>
+              <th>Discount</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @tiers.each do |tier| %>
+              <tr>
+                <td><span class="badge" style="background: <%= tier.badge_color %>"><%= tier.name %></span></td>
+                <td><%= tier.min_points %></td>
+                <td><%= tier.points_multiplier %>x</td>
+                <td><%= tier.discount_percent %>%</td>
+                <td><%= button_to 'Delete', admin_loyalty_tier_path(tier), method: :delete, class: 'btn btn-sm btn-danger' %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Rewards</h5>
+        <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#newRewardModal">Add Reward</button>
+      </div>
+      <div class="card-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Points</th>
+              <th>Discount</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @rewards.each do |reward| %>
+              <tr>
+                <td><%= reward.name %></td>
+                <td><%= reward.points_required %></td>
+                <td><%= reward.discount_percent || reward.discount_amount %></td>
+                <td><%= button_to 'Delete', admin_loyalty_reward_path(reward), method: :delete, class: 'btn btn-sm btn-danger' %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="newTierModal" tabindex="-1">
+  <div class="modal-dialog">
+    <%= form_with url: admin_loyalty_tiers_path, local: true do |f| %>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">New Tier</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <%= f.label :name, class: 'form-label' %>
+            <%= f.text_field :name, class: 'form-control', required: true %>
+          </div>
+          <div class="mb-3">
+            <%= f.label :min_points, 'Minimum Points', class: 'form-label' %>
+            <%= f.number_field :min_points, class: 'form-control', required: true %>
+          </div>
+          <div class="mb-3">
+            <%= f.label :points_multiplier, class: 'form-label' %>
+            <%= f.number_field :points_multiplier, step: 0.1, value: 1.0, class: 'form-control' %>
+          </div>
+          <div class="mb-3">
+            <%= f.label :discount_percent, class: 'form-label' %>
+            <%= f.number_field :discount_percent, step: 0.1, class: 'form-control' %>
+          </div>
+          <div class="mb-3">
+            <%= f.label :badge_color, 'Badge Color', class: 'form-label' %>
+            <%= f.color_field :badge_color, value: '#007bff', class: 'form-control' %>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <%= f.submit 'Create', class: 'btn btn-primary' %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="modal fade" id="newRewardModal" tabindex="-1">
+  <div class="modal-dialog">
+    <%= form_with url: admin_loyalty_rewards_path, local: true do |f| %>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">New Reward</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <%= f.label :name, class: 'form-label' %>
+            <%= f.text_field :name, class: 'form-control', required: true %>
+          </div>
+          <div class="mb-3">
+            <%= f.label :description, class: 'form-label' %>
+            <%= f.text_area :description, class: 'form-control' %>
+          </div>
+          <div class="mb-3">
+            <%= f.label :points_required, class: 'form-label' %>
+            <%= f.number_field :points_required, class: 'form-control', required: true %>
+          </div>
+          <div class="mb-3">
+            <%= f.label :discount_percent, 'Discount %', class: 'form-label' %>
+            <%= f.number_field :discount_percent, step: 0.1, class: 'form-control' %>
+          </div>
+          <div class="mb-3">
+            <%= f.label :discount_amount, 'Fixed Discount $', class: 'form-label' %>
+            <%= f.number_field :discount_amount, step: 0.01, class: 'form-control' %>
+          </div>
+          <div class="mb-3">
+            <%= f.label :max_redemptions, 'Max Redemptions (leave empty for unlimited)', class: 'form-label' %>
+            <%= f.number_field :max_redemptions, class: 'form-control' %>
+          </div>
+          <div class="mb-3">
+            <%= f.check_box :active %>
+            <%= f.label :active, 'Active' %>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <%= f.submit 'Create', class: 'btn btn-primary' %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

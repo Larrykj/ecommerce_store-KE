@@ -1,9 +1,22 @@
 <div class="container">
   <%= turbo_stream_from @order %>
   
-  <div class="alert alert-success">
-    <h4>✅ <%= t('order_placed_title') %></h4>
-    <p><%= t('order_processing_message', id: @order.id) %></p>
+  <% status_alert_class = @order.status == "backordered" ? "alert-warning" : "alert-success" %>
+  <div class="alert <%= status_alert_class %>">
+    <h4>
+      <% if @order.status == "backordered" %>
+        <i class="bi bi-exclamation-circle me-1"></i><%= t("order_backordered_title", default: "Order Received - Backorder Notice") %>
+      <% else %>
+        ✅ <%= t("order_placed_title") %>
+      <% end %>
+    </h4>
+    <p>
+      <% if @order.status == "backordered" %>
+        <%= t("order_backordered_message", default: "We received your payment, but at least one item is temporarily out of stock. Our team will contact you with fulfillment options.") %>
+      <% else %>
+        <%= t("order_processing_message", id: @order.id) %>
+      <% end %>
+    </p>
   </div>
 
   <div class="row">

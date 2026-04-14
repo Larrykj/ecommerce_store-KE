@@ -1,0 +1,60 @@
+<% content_for :title, "Flash Sales" %>
+<div class="container py-5">
+  <h1 class="mb-4">Flash Sales</h1>
+  
+  <% if @sales.any? %>
+    <div class="row">
+      <% @sales.each do |sale| %>
+        <div class="col-md-6 mb-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title"><%= sale.name %></h5>
+              <% if sale.discount_percent.present? %>
+                <p class="card-text"><span class="badge bg-danger fs-6"><%= sale.discount_percent %>% OFF</span></p>
+              <% end %>
+              
+              <% if sale.active? %>
+                <div class="alert alert-danger alert-sm mb-3">
+                  <strong>⏱ Limited Time!</strong>
+                  Ends <%= sale.end_time.strftime('%b %d at %l:%M %p') %>
+                </div>
+              <% elsif sale.upcoming? %>
+                <div class="alert alert-info alert-sm mb-3">
+                  <strong>📅 Coming Soon</strong>
+                  Starts <%= sale.start_time.strftime('%b %d at %l:%M %p') %>
+                </div>
+              <% end %>
+              
+              <h6>Products in Sale (<%= sale.products.count %>)</h6>
+              <ul class="list-unstyled">
+                <% sale.flash_sale_products.includes(:product).limit(5).each do |fsp| %>
+                  <li>
+                    <%= link_to fsp.product.name, product_path(fsp.product) %>
+                    <% if fsp.special_price %>
+                      <span class="badge bg-success">KSh <%= number_with_precision(fsp.special_price, precision: 2) %></span>
+                    <% end %>
+                  </li>
+                <% end %>
+                <% if sale.products.count > 5 %>
+                  <li><em>... and <%= sale.products.count - 5 %> more</em></li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <% if @pagy && @pagy.pages > 1 %>
+      <div class="mt-4">
+        <%== pagy_nav(@pagy) %>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="text-center py-5">
+      <h4 class="text-muted">No flash sales right now</h4>
+      <p class="text-muted">Check back soon for amazing deals!</p>
+      <%= link_to "Browse Products", products_path, class: "btn btn-primary" %>
+    </div>
+  <% end %>
+</div>

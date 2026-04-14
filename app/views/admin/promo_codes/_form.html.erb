@@ -1,7 +1,7 @@
 <%= form_with model: [:admin, @promo_code], local: true do |form| %>
   <% if @promo_code.errors.any? %>
-    <div class="alert alert-danger">
-      <h5><%= pluralize(@promo_code.errors.count, "error") %> prohibited this promo code from being saved:</h5>
+    <div class="alert alert-danger admin-alert admin-alert-danger">
+      <h5 class="h6 mb-2"><%= pluralize(@promo_code.errors.count, "error") %> prohibited this promo code from being saved:</h5>
       <ul>
         <% @promo_code.errors.full_messages.each do |msg| %>
           <li><%= msg %></li>
@@ -13,7 +13,10 @@
   <div class="row g-3">
     <div class="col-md-6">
       <%= form.label :code, class: "form-label fw-bold" %>
-      <%= form.text_field :code, class: "form-control", style: "text-transform: uppercase;", required: true %>
+      <%= form.text_field :code, class: "form-control #{'is-invalid' if @promo_code.errors[:code].any?}", style: "text-transform: uppercase;", required: true %>
+      <% @promo_code.errors[:code].each do |error| %>
+        <div class="invalid-feedback d-block"><%= error %></div>
+      <% end %>
       <small class="text-muted">e.g. SUMMER2026</small>
     </div>
     <div class="col-md-6">
@@ -27,7 +30,10 @@
     </div>
     <div class="col-md-4">
       <%= form.label :discount_value, class: "form-label fw-bold" %>
-      <%= form.number_field :discount_value, step: "0.01", class: "form-control", required: true %>
+      <%= form.number_field :discount_value, step: "0.01", class: "form-control #{'is-invalid' if @promo_code.errors[:discount_value].any?}", required: true %>
+      <% @promo_code.errors[:discount_value].each do |error| %>
+        <div class="invalid-feedback d-block"><%= error %></div>
+      <% end %>
     </div>
     <div class="col-md-4">
       <%= form.label :min_order_amount, "Min Order Amount (Optional)", class: "form-label fw-bold" %>
@@ -52,7 +58,7 @@
   </div>
 
   <div class="mt-4 pt-3 border-top d-flex gap-2">
-    <%= form.submit class: "btn btn-primary" %>
+    <%= form.submit class: "btn btn-primary", data: { disable_with: "Saving..." } %>
     <%= link_to "Cancel", admin_promo_codes_path, class: "btn btn-outline-secondary" %>
   </div>
 <% end %>
