@@ -90,7 +90,7 @@
                         <strong>Bank Transfer</strong>
                         <p class="text-muted mb-0" style="font-size: 0.85rem;">Manual payment confirmation</p>
                       </div>
-                      <i class="bi bi-bank" style="font-size: 1.5rem; color: var(--text-main);"></i>
+                      <i class="bi bi-bank" style="font-size: 1.5rem; color: var(--text-primary);"></i>
                     </label>
                   </div>
                 </div>
@@ -168,35 +168,34 @@
 </div>
 
 <style>
-<style>
-.checkout-page { background: var(--bg-color); min-height: 100vh; }
-.checkout-title { font-size: 2rem; font-weight: 800; color: var(--text-main); }
-.checkout-card { background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); overflow: hidden; color: var(--text-main); }
+.checkout-page { background: var(--bg-primary); min-height: 100vh; }
+.checkout-title { font-size: 2rem; font-weight: 800; color: var(--text-primary); }
+.checkout-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); overflow: hidden; color: var(--text-primary); }
 .checkout-card-header { padding: 20px 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
-.checkout-card-header h5 { margin: 0; font-weight: 700; color: var(--text-main); }
-.item-count { background: var(--border-color); color: var(--text-main); padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+.checkout-card-header h5 { margin: 0; font-weight: 700; color: var(--text-primary); }
+.item-count { background: var(--border-color); color: var(--text-primary); padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
 .checkout-card-body { padding: 24px; }
 .checkout-label { display: block; font-size: 0.9rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; }
-.checkout-input { width: 100%; padding: 12px 16px; background: var(--bg-color); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 10px; font-size: 0.95rem; transition: border-color 0.2s; }
-.checkout-input:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 0 3px rgba(0,0,0,0.1); }
-.payment-section { padding: 20px; background: var(--bg-color); border-radius: 12px; border: 1px solid var(--border-color); }
+.checkout-input { width: 100%; padding: 12px 16px; background: var(--bg-primary); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 10px; font-size: 0.95rem; transition: border-color 0.2s; }
+.checkout-input:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(0,0,0,0.1); }
+.payment-section { padding: 20px; background: var(--bg-primary); border-radius: 12px; border: 1px solid var(--border-color); }
 .payment-methods { display: flex; flex-direction: column; gap: 12px; }
-.payment-method-option { padding: 16px; background: var(--surface-color); border-radius: 10px; border: 1px solid var(--border-color); transition: all 0.2s; color: var(--text-main); }
-.payment-method-option:hover { border-color: var(--accent-color); }
-.payment-method-option:has(input:checked) { border-color: var(--accent-color); background: var(--border-color); }
+.payment-method-option { padding: 16px; background: var(--bg-card); border-radius: 10px; border: 1px solid var(--border-color); transition: all 0.2s; color: var(--text-primary); }
+.payment-method-option:hover { border-color: #667eea; }
+.payment-method-option:has(input:checked) { border-color: #667eea; background: var(--border-color); }
 .cursor-pointer { cursor: pointer; }
-.btn-checkout { display: block; width: 100%; padding: 16px; background: var(--accent-color); color: white; border: none; border-radius: 12px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: all 0.3s; }
-.btn-checkout:hover { transform: translateY(-2px); background: var(--accent-hover); color: white; }
+.btn-checkout { display: block; width: 100%; padding: 16px; background: #667eea; color: white; border: none; border-radius: 12px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: all 0.3s; }
+.btn-checkout:hover { transform: translateY(-2px); background: #5a6fd6; color: white; }
 .btn-back { display: block; width: 100%; text-align: center; padding: 14px; color: var(--text-muted); text-decoration: none; margin-top: 12px; border: 1px solid var(--border-color); border-radius: 12px; font-weight: 600; transition: all 0.2s; }
-.btn-back:hover { border-color: var(--text-main); color: var(--text-main); }
+.btn-back:hover { border-color: var(--text-primary); color: var(--text-primary); }
 .summary-item { padding: 14px 0; border-bottom: 1px solid var(--border-color); }
 .summary-item:last-of-type { border-bottom: none; }
 .summary-img { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; }
-.summary-img-placeholder { width: 50px; height: 50px; border-radius: 8px; background: var(--bg-color); display: flex; align-items: center; justify-content: center; color: var(--border-color); }
+.summary-img-placeholder { width: 50px; height: 50px; border-radius: 8px; background: var(--bg-primary); display: flex; align-items: center; justify-content: center; color: var(--border-color); }
 .summary-divider { height: 1px; background: var(--border-color); margin: 16px 0; }
 .summary-row { display: flex; justify-content: space-between; padding: 8px 0; color: var(--text-muted); }
-.total-row { font-size: 1.2rem; color: var(--text-main); padding-top: 12px; }
-.total-amount { color: var(--accent-color); }
-.secure-badge { text-align: center; padding: 12px; color: var(--text-muted); font-size: 0.85rem; background: var(--surface-color); border-radius: 10px; border: 1px solid var(--border-color); }
-.summary-card { position: sticky; top: 20px; }
+.total-row { font-size: 1.2rem; color: var(--text-primary); padding-top: 12px; }
+.total-amount { color: #667eea; }
+.secure-badge { text-align: center; padding: 12px; color: var(--text-muted); font-size: 0.85rem; background: var(--bg-card); border-radius: 10px; border: 1px solid var(--border-color); }
+.summary-card { position: sticky; top: 20px; z-index: 1; }
 </style>

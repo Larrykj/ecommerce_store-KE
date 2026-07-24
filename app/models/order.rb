@@ -72,4 +72,28 @@ class Order < ApplicationRecord
     total = ORDER_STEPS.size - 1
     (index.to_f / total * 100).to_i
   end
+  # Refund helpers
+  def total_refund_amount
+    transactions.sum(:refund_amount)
+  end
+
+  def refunded?
+    total_refund_amount > 0 && transactions.exists?(status: 'refunded')
+  end
+
+  def partially_refunded?
+    total_refund_amount > 0 && !refunded?
+  end
+
+  def refund_or_cancel_label
+    if refunded?
+      'Refunded'
+    elsif partially_refunded?
+      'Partially Refunded'
+    elsif cancelled?
+      'Cancelled'
+    else
+      status.titleize
+    end
+  end
 end

@@ -18,6 +18,13 @@
       <% end %>
     </p>
   </div>
+  
+  <% if @order.refunded? || @order.partially_refunded? %>
+    <div class="alert alert-info">
+      <h4><i class="bi bi-arrow-counterclockwise me-1"></i> Refund Processed</h4>
+      <p>A refund of <strong><%= format_price(@order.total_refund_amount) %></strong> has been issued to your original payment method.</p>
+    </div>
+  <% end %>
 
   <div class="row">
     <div class="col-md-8">
@@ -73,6 +80,16 @@
                 <td colspan="3" class="text-end"><strong><%= t('total') %></strong></td>
                 <td><strong><%= format_price(@order.total_price) %></strong></td>
               </tr>
+              <% if @order.total_refund_amount > 0 %>
+                <tr class="text-info">
+                  <td colspan="3" class="text-end"><strong><i class="bi bi-arrow-counterclockwise me-1"></i>Refund Issued</strong></td>
+                  <td><strong>-<%= format_price(@order.total_refund_amount) %></strong></td>
+                </tr>
+                <tr>
+                  <td colspan="3" class="text-end"><strong>Net Amount</strong></td>
+                  <td><strong><%= format_price(@order.total_price - @order.total_refund_amount) %></strong></td>
+                </tr>
+              <% end %>
             </tfoot>
           </table>
         </div>
