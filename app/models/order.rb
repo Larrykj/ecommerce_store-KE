@@ -78,7 +78,7 @@ class Order < ApplicationRecord
   end
 
   def refunded?
-    total_refund_amount > 0 && transactions.exists?(status: 'refunded')
+    total_refund_amount > 0 && transactions.exists?(status: "refunded")
   end
 
   def partially_refunded?
@@ -87,11 +87,11 @@ class Order < ApplicationRecord
 
   def refund_or_cancel_label
     if refunded?
-      'Refunded'
+      "Refunded"
     elsif partially_refunded?
-      'Partially Refunded'
+      "Partially Refunded"
     elsif cancelled?
-      'Cancelled'
+      "Cancelled"
     else
       status.titleize
     end

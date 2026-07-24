@@ -20,8 +20,8 @@ class ApplicationController < ActionController::Base
 
   def record_not_found
     respond_to do |format|
-      format.html { render file: Rails.public_path.join('404.html'), status: :not_found, layout: false }
-      format.json { render json: { error: 'Not Found' }, status: :not_found }
+      format.html { render file: Rails.public_path.join("404.html"), status: :not_found, layout: false }
+      format.json { render json: { error: "Not Found" }, status: :not_found }
     end
   end
 

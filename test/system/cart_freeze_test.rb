@@ -11,15 +11,15 @@ class CartFreezeTest < ApplicationSystemTestCase
     visit products_path
     assert_selector ".add-cart-btn"
     click_button class: "add-cart-btn", match: :first
-    
+
     # After click, it should show a toast
     assert_selector ".toast-notification.success", text: "Product added to cart successfully.", wait: 5
-    
+
     # The button should NOT be disabled
     assert_selector ".add-cart-btn"
     button = first(".add-cart-btn")
     assert_not button.disabled?
-    
+
     # We should be able to click it again
     click_button class: "add-cart-btn", match: :first
     assert_selector ".toast-notification.success", text: "Product quantity updated in cart.", wait: 5
