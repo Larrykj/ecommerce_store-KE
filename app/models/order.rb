@@ -78,7 +78,15 @@ class Order < ApplicationRecord
   end
 
   def refunded?
+<<<<<<< HEAD
+<<<<<<< HEAD
     total_refund_amount > 0 && transactions.exists?(status: "refunded")
+=======
+    total_refund_amount > 0 && transactions.exists?(status: 'refunded')
+>>>>>>> fba2b73 (fix: resolve refund display on customer side, UI/UX on checkout, and dark mode on product page)
+=======
+    total_refund_amount > 0 && transactions.exists?(status: "refunded")
+>>>>>>> 427648f (style: autocorrect rubocop linting violations)
   end
 
   def partially_refunded?
@@ -87,11 +95,27 @@ class Order < ApplicationRecord
 
   def refund_or_cancel_label
     if refunded?
+<<<<<<< HEAD
+<<<<<<< HEAD
       "Refunded"
     elsif partially_refunded?
       "Partially Refunded"
     elsif cancelled?
       "Cancelled"
+=======
+      'Refunded'
+=======
+      "Refunded"
+>>>>>>> 427648f (style: autocorrect rubocop linting violations)
+    elsif partially_refunded?
+      "Partially Refunded"
+    elsif cancelled?
+<<<<<<< HEAD
+      'Cancelled'
+>>>>>>> fba2b73 (fix: resolve refund display on customer side, UI/UX on checkout, and dark mode on product page)
+=======
+      "Cancelled"
+>>>>>>> 427648f (style: autocorrect rubocop linting violations)
     else
       status.titleize
     end
