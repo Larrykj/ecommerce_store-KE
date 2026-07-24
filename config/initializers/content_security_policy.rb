@@ -16,8 +16,9 @@ Rails.application.configure do
     policy.form_action :self, "https://checkout.stripe.com"
   end
 
-  # Generate session nonces for permitted importmap, inline scripts, and inline styles.
-  config.content_security_policy_nonce_generator = ->(request) { request.session.id.to_s }
+  # Generate random per-request nonces for permitted importmap, inline scripts, and inline styles.
+  # Using SecureRandom ensures the nonce is unpredictable (session ID was static per session).
+  config.content_security_policy_nonce_generator = ->(request) { SecureRandom.base64(16) }
   config.content_security_policy_nonce_directives = %w[script-src]
 
   # Report violations without enforcing in development — enforce in production.

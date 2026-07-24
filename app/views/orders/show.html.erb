@@ -63,7 +63,7 @@
               <% end %>
               <tr>
                 <td colspan="3" class="text-end"><strong>Shipping (<%= @order.shipping_method&.name || 'Standard' %>)</strong></td>
-                <td><strong><%= @order.shipping_cost.to_d > 0 ? format_price(@order.shipping_cost) : '<span class="text-success">Free</span>'.html_safe %></strong></td>
+                <td><strong><% if @order.shipping_cost.to_d > 0 %><%= format_price(@order.shipping_cost) %><% else %><span class="text-success">Free</span><% end %></strong></td>
               </tr>
               <tr>
                 <td colspan="3" class="text-end"><strong>Tax (<%= (@order.tax_rate.to_f * 100).to_i %>% VAT)</strong></td>

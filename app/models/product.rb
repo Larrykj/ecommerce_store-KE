@@ -5,6 +5,7 @@ class Product < ApplicationRecord
   include PgSearch::Model
 
   belongs_to :category, optional: true
+  has_many :flash_sale_products, dependent: :destroy
   has_many :cart_items, dependent: :destroy
   has_many :reviews, dependent: :destroy
   has_many :product_views, dependent: :destroy
@@ -196,6 +197,18 @@ class Product < ApplicationRecord
     else
       "success"
     end
+  end
+
+  def active_flash_sale_product
+    flash_sale_products.joins(:flash_sale).merge(FlashSale.current).first
+  end
+
+  def flash_sale_price
+    active_flash_sale_product&.special_price || price
+  end
+
+  def on_flash_sale?
+    active_flash_sale_product.present?
   end
 
   # ============ RATING METHODS ============

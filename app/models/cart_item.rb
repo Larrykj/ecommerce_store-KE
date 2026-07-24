@@ -7,9 +7,13 @@ class CartItem < ApplicationRecord
 
   validates :quantity, presence: true, numericality: { greater_than: 0, only_integer: true }
 
+  def unit_price
+    variant&.effective_price || 0
+  end
+
   # Calculate subtotal for this item
   def subtotal
-    (variant&.price || 0) * quantity
+    unit_price * quantity
   end
 
   # Format subtotal in KSH

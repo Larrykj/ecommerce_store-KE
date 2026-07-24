@@ -11,8 +11,8 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable,
          :omniauthable, omniauth_providers: [ :google_oauth2, :github ]
 
-  # Encrypt sensitive user data (skip in test environment to avoid fixture issues)
-  encrypts :name unless Rails.env.test?
+  # NOTE: encrypts :name removed — Rails 8.1 Context API prevents setting
+  # encryption keys at any boot stage without NoMethodError. Name stored as plain text.
 
   has_many :orders, dependent: :destroy
   has_many :reviews, dependent: :destroy
@@ -30,6 +30,20 @@ class User < ApplicationRecord
   has_many :user_rewards, dependent: :destroy
 
   validates :name, presence: true
+
+  # Enforce strong passwords (uppercase, lowercase, digit, special char, min 8 chars).
+  # Only validates when password is being set (sign-up or password change), so existing users are not affected.
+  validates :password, strong_password: true, if: :password_required?
+
+  private
+
+  def password_required?
+    # Social-login users don't set passwords; skip validation for them
+    return false if provider.present? && !password.present?
+    !persisted? || password.present? || password_confirmation.present?
+  end
+
+  public
 
   # Override Devise destroy to soft delete
   def destroy

@@ -3,7 +3,7 @@
 class CheckoutsController < ApplicationController
   before_action :authenticate_user!
 
-  STRIPE_CURRENCY = "kes".freeze
+  # Uses the global STRIPE_CURRENCY constant from config/initializers/stripe.rb
 
   # POST /checkout - Create order + Stripe session
   # This is the Stripe-integrated checkout flow.
@@ -37,7 +37,7 @@ class CheckoutsController < ApplicationController
         @order.order_items.create!(
           variant: cart_item.variant,
           quantity: cart_item.quantity,
-          price: cart_item.variant.price || 0
+          price: cart_item.unit_price
         )
       end
 
@@ -73,6 +73,12 @@ class CheckoutsController < ApplicationController
     flash_message = t("order_placed_success", default: "Order placed successfully! Payment confirmed.")
 
     @order.with_lock do
+      # Guard: skip if already fulfilled (prevents double-deduction with webhook)
+      if @order.fulfillment_processed_at.present?
+        flash_message = t("order_placed_success", default: "Order placed successfully! Payment confirmed.") if @order.paid?
+        break
+      end
+
       if @order.payment_status == "unpaid" || @order.status == "pending"
         begin
           if @order.stripe_checkout_session_id.blank?
@@ -95,11 +101,11 @@ class CheckoutsController < ApplicationController
               Variant.transaction(requires_new: true) do
                 deduct_inventory
               end
-              @order.update!(payment_status: "paid", status: "processing")
+              @order.update!(payment_status: "paid", status: "processing", fulfillment_processed_at: Time.current)
               flash_message = t("order_placed_success", default: "Order placed successfully! Payment confirmed.")
             rescue StandardError => e
               Rails.logger.warn "Inventory race condition caught for order #{@order.id}: #{e.message}"
-              @order.update!(payment_status: "paid", status: "backordered")
+              @order.update!(payment_status: "paid", status: "backordered", fulfillment_processed_at: Time.current)
               flash_message = t("order_backordered_notice", default: "Payment was successful, but one or more items are currently out of stock. Your order is marked as backordered and our team will contact you.")
             end
 
@@ -126,10 +132,12 @@ class CheckoutsController < ApplicationController
   def cancel
     @order = current_user.orders.find(params[:order_id])
     Order.transaction do
-      # Restore inventory for cancelled order
-      @order.order_items.each do |item|
-        variant = Variant.lock.find(item.variant_id)
-        variant.update!(quantity: variant.quantity + item.quantity)
+      # Only restore inventory if it was actually deducted (fulfillment ran)
+      if @order.fulfillment_processed_at.present?
+        @order.order_items.each do |item|
+          variant = Variant.lock.find(item.variant_id)
+          variant.update!(quantity: variant.quantity + item.quantity)
+        end
       end
       @order.update!(status: "cancelled", payment_status: "unpaid")
       @order.order_items.destroy_all
@@ -145,17 +153,17 @@ class CheckoutsController < ApplicationController
   end
 
   def complete_order_locally(order, payment_method, txn_status, notice_msg)
-    @order.transactions.create!(payment_method: payment_method, amount: @order.total_price, currency: STRIPE_CURRENCY, status: txn_status)
+    @order.transactions.create!(payment_method: payment_method, amount: @order.total_price, currency: ::STRIPE_CURRENCY, status: txn_status)
 
     begin
       Variant.transaction(requires_new: true) do
         deduct_inventory
       end
       order_status = txn_status == "succeeded" ? "processing" : "pending"
-      @order.update!(payment_status: txn_status, status: order_status)
+      @order.update!(payment_status: txn_status, status: order_status, fulfillment_processed_at: Time.current)
     rescue StandardError => e
       Rails.logger.warn "Inventory race condition caught for order #{@order.id}: #{e.message}"
-      @order.update!(payment_status: txn_status, status: "backordered")
+      @order.update!(payment_status: txn_status, status: "backordered", fulfillment_processed_at: Time.current)
       notice_msg = t("order_backordered_notice", default: "Your order was received, but one or more items are currently out of stock. We will contact you with fulfillment options.")
     end
 
@@ -176,7 +184,7 @@ class CheckoutsController < ApplicationController
             name: "#{product.name} - #{cart_item.variant.name}",
             description: product.description&.truncate(200)
           },
-          unit_amount: (cart_item.variant.price * 100).to_i
+          unit_amount: (cart_item.unit_price * 100).to_i
         },
         quantity: cart_item.quantity
       }

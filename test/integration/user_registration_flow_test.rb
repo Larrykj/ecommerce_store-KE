@@ -9,14 +9,14 @@ class UserRegistrationFlowTest < ActionDispatch::IntegrationTest
       user: {
         name: "Test User",
         email: "test@example.com",
-        password: "password123",
-        password_confirmation: "password123"
+        password: "Password123!",
+        password_confirmation: "Password123!"
       }
     }
 
     assert_redirected_to root_path
     follow_redirect!
-    assert_select "div.alert"
+    assert_select "div[data-controller='toast']"
 
     user = User.find_by(email: "test@example.com")
     assert_not_nil user

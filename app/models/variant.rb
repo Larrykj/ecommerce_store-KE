@@ -18,4 +18,8 @@ class Variant < ApplicationRecord
   def in_stock?
     quantity > 0
   end
+
+  def effective_price
+    product.active_flash_sale_product&.special_price || price || 0
+  end
 end

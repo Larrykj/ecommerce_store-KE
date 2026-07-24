@@ -3,11 +3,14 @@
     <!-- Profile Header -->
     <div class="profile-header">
       <div class="profile-avatar">
-        <%= current_user.name.first.upcase %>
+        <%= (current_user.name.presence || current_user.email).first.upcase %>
       </div>
       <div class="profile-info">
-        <h1><%= current_user.name %></h1>
+        <h1><%= current_user.name.presence || current_user.email %></h1>
         <p class="text-muted"><%= current_user.email %></p>
+        <% if current_user.phone.present? %>
+          <p class="text-muted"><i class="bi bi-telephone me-1"></i><%= current_user.phone %></p>
+        <% end %>
         <p class="text-muted"><i class="bi bi-calendar3 me-1"></i>Member since <%= current_user.created_at.strftime("%B %Y") %></p>
       </div>
       <div class="profile-actions">

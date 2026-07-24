@@ -46,9 +46,10 @@ class WebhooksController < ApplicationController
     return unless order
 
     order.with_lock do
-      if order.payment_status == "unpaid" || order.status == "pending"
-        order.update!(payment_status: "paid", status: "processing")
+      # Guard: skip if already fulfilled (prevents double-deduction with success page)
+      next if order.fulfillment_processed_at.present?
 
+      if order.payment_status == "unpaid" || order.status == "pending"
         # Deduct inventory
         order.order_items.each do |item|
           variant = item.variant
@@ -58,6 +59,8 @@ class WebhooksController < ApplicationController
             end
           end
         end
+
+        order.update!(payment_status: "paid", status: "processing", fulfillment_processed_at: Time.current)
 
         # Apply gift card balance
         order.gift_card&.apply!(order.gift_card_amount)

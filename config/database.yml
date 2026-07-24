@@ -37,15 +37,15 @@ production:
   cache:
     <<: *default
     database: ecommerce_production_cache
-    url: <%= ENV["DATABASE_URL"] %>
+    url: <%= ENV["CACHE_DATABASE_URL"] || ENV["DATABASE_URL"] %>
     migrations_paths: db/cache_migrate
   queue:
     <<: *default
     database: ecommerce_production_queue
-    url: <%= ENV["DATABASE_URL"] %>
+    url: <%= ENV["QUEUE_DATABASE_URL"] || ENV["DATABASE_URL"] %>
     migrations_paths: db/queue_migrate
   cable:
     <<: *default
     database: ecommerce_production_cable
-    url: <%= ENV["DATABASE_URL"] %>
+    url: <%= ENV["CABLE_DATABASE_URL"] || ENV["DATABASE_URL"] %>
     migrations_paths: db/cable_migrate

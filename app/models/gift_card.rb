@@ -23,9 +23,11 @@ class GiftCard < ApplicationRecord
   end
 
   def apply!(amount)
-    deduction = [ amount, balance ].min
-    update!(balance: balance - deduction)
-    deduction
+    with_lock do
+      deduction = [ amount, balance ].min
+      update!(balance: balance - deduction)
+      deduction
+    end
   end
 
   def formatted_balance

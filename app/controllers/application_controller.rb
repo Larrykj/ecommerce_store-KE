@@ -14,17 +14,26 @@ class ApplicationController < ActionController::Base
 
   helper_method :current_currency, :format_price
 
+  rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
+
   private
+
+  def record_not_found
+    respond_to do |format|
+      format.html { render file: Rails.public_path.join('404.html'), status: :not_found, layout: false }
+      format.json { render json: { error: 'Not Found' }, status: :not_found }
+    end
+  end
 
   def initialize_cart
     @cart = Cart.find_by(id: session[:cart_id])
 
     if @cart.nil?
-      @cart = Cart.create
+      @cart = Cart.create(user: current_user)
       session[:cart_id] = @cart.id
+    elsif current_user && @cart.user_id.nil?
+      @cart.update(user: current_user)
     end
-
-    # TODO: Merge session cart with user's existing cart after sign-in
   end
 
   def set_locale
@@ -91,7 +100,7 @@ class ApplicationController < ActionController::Base
   protected
 
   def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:sign_up, keys: [ :name ])
-    devise_parameter_sanitizer.permit(:account_update, keys: [ :name ])
+    devise_parameter_sanitizer.permit(:sign_up, keys: [ :name, :phone ])
+    devise_parameter_sanitizer.permit(:account_update, keys: [ :name, :phone ])
   end
 end

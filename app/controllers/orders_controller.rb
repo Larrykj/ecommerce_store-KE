@@ -8,22 +8,20 @@ class OrdersController < ApplicationController
   before_action :authorize_admin_for_status_update!, only: [ :update_status ]
 
   def index
-    @orders = current_user.orders.includes(:order_items, :user).order(created_at: :desc)
+    @orders = current_user.orders.includes(:user, order_items: { variant: :product }).order(created_at: :desc)
   end
 
-  def show
-  end
+  def show; end
 
   def new
     if @cart.cart_items.empty?
       redirect_to cart_path, alert: t("cart_empty_error")
       return
     end
-
     @order = Order.new
     @order.name = current_user.name
     @order.email = current_user.email
-    @payment_methods = [ "sandbox_test_card", "cash_on_delivery", "manual_confirmation" ]
+    @payment_methods = [ "sandbox_test_card", "cash_on_delivery", "manual_confirmation", "mpesa" ]
   end
 
   def create
@@ -32,63 +30,42 @@ class OrdersController < ApplicationController
     @order.estimated_delivery_date = 5.days.from_now
     @order.payment_method = params[:order][:payment_method]
     @order.payment_status = "pending"
-
-    # Wrap entire checkout in transaction with locking
+    checkout_error = nil
     begin
       Order.transaction do
-        # Validate stock before creating order
         @cart.cart_items.each do |cart_item|
           variant = Variant.lock.find(cart_item.variant_id)
           if variant.quantity < cart_item.quantity
-            raise ActiveRecord::Rollback, t("insufficient_stock", default: "Insufficient stock for #{variant.name}")
+            checkout_error = t("insufficient_stock", default: "Insufficient stock for %{name}", name: variant.name)
+            raise ActiveRecord::Rollback
           end
         end
-
-        # Save the order
         unless @order.save
-          raise ActiveRecord::Rollback, @order.errors.full_messages.join(", ")
+          checkout_error = @order.errors.full_messages.join(", ")
+          raise ActiveRecord::Rollback
         end
-
-        # Calculate total and create order items with locked variants
         total = 0
         @cart.cart_items.each do |cart_item|
           variant = Variant.lock.find(cart_item.variant_id)
-
-          # Double-check stock with lock
           if variant.quantity < cart_item.quantity
-            raise ActiveRecord::Rollback, t("insufficient_stock", default: "Insufficient stock")
+            checkout_error = t("insufficient_stock", default: "Insufficient stock")
+            raise ActiveRecord::Rollback
           end
-
-          # Create order item
-          @order.order_items.create!(
-            variant: variant,
-            quantity: cart_item.quantity,
-            price: variant.price || cart_item.product.price
-          )
-
+          @order.order_items.create!(variant: variant, quantity: cart_item.quantity, price: cart_item.unit_price)
           total += cart_item.subtotal
-
-          # Reduce variant quantity atomically
           variant.update!(quantity: variant.quantity - cart_item.quantity)
         end
-
-        # Set order total
-        @order.update!(total_price: total)
-
-        # Process payment
+        @order.update!(total_price: total, fulfillment_processed_at: Time.current)
         process_payment(@order)
-
-        # Clear the cart
         @cart.cart_items.destroy_all
-
-        # Send confirmation email
         prepare_order_email(@order)
       end
-
-      redirect_to order_path(@order), notice: t("order_placed_success")
-    rescue ActiveRecord::Rollback => e
-      @order.errors.add(:base, e.message)
-      render :new, status: :unprocessable_entity
+      if checkout_error
+        @order.errors.add(:base, checkout_error)
+        render :new, status: :unprocessable_entity
+      else
+        redirect_to order_path(@order), notice: t("order_placed_success")
+      end
     rescue StandardError => e
       Rails.logger.error("Order creation error: #{e.message}")
       @order.errors.add(:base, t("order_creation_failed", default: "Failed to create order. Please try again."))
@@ -138,17 +115,27 @@ class OrdersController < ApplicationController
   end
 
   def order_params
-    params.require(:order).permit(:name, :email, :address_id, :phone, :notes)
+    params.require(:order).permit(:name, :email, :address_id, :phone, :notes, :payment_method)
   end
 
   def process_payment(order)
     case order.payment_method
+    when "mpesa"
+      mpesa_service = MpesaPaymentService.new(order)
+      if mpesa_service.initiate_payment
+        order.update!(payment_status: "pending", payment_provider: "mpesa", payment_reference: mpesa_service.transaction_id)
+      else
+        order.update!(payment_status: "failed")
+        raise ActiveRecord::Rollback, "MPesa payment initiation failed"
+      end
     when "sandbox_test_card"
       order.update!(payment_status: "completed")
     when "cash_on_delivery"
       order.update!(payment_status: "pending")
     when "manual_confirmation"
       order.update!(payment_status: "pending")
+    else
+      order.update!(payment_status: "unknown")
     end
   end
 

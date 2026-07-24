@@ -1,6 +1,6 @@
 class BlogPost < ApplicationRecord
   belongs_to :user
-  belongs_to :category, class_name: "BlogCategory", optional: true
+  belongs_to :category, class_name: "BlogCategory", foreign_key: :category_id, optional: true
   has_many :comments, class_name: "BlogComment", foreign_key: "post_id", dependent: :destroy
 
   validates :title, :slug, presence: true

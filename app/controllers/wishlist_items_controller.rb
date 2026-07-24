@@ -15,13 +15,13 @@ class WishlistItemsController < ApplicationController
       respond_to do |format|
         format.turbo_stream { render turbo_stream: [
           turbo_stream.replace("wishlist-btn-#{@product.id}", partial: "shared/wishlist_button", locals: { product: @product }),
-          turbo_stream.append("toastContainer", "<script>showToast('#{t("wishlist_added_success")}', 'success')</script>".html_safe)
+          turbo_stream.append("toastContainer", partial: "shared/toast", locals: { message: t("wishlist_added_success"), toast_type: "success" })
         ] }
         format.html { redirect_back fallback_location: products_path, notice: t("wishlist_added_success") }
       end
     else
       respond_to do |format|
-        format.turbo_stream { render turbo_stream: turbo_stream.append("toastContainer", "<script>showToast('#{t("wishlist_already_exists")}', 'warning')</script>".html_safe) }
+        format.turbo_stream { render turbo_stream: turbo_stream.append("toastContainer", partial: "shared/toast", locals: { message: t("wishlist_already_exists"), toast_type: "warning" }) }
         format.html { redirect_back fallback_location: products_path, alert: t("wishlist_already_exists") }
       end
     end
@@ -41,13 +41,13 @@ class WishlistItemsController < ApplicationController
       respond_to do |format|
         format.turbo_stream { render turbo_stream: [
           turbo_stream.replace("wishlist-btn-#{@product.id}", partial: "shared/wishlist_button", locals: { product: @product }),
-          turbo_stream.append("toastContainer", "<script>showToast('#{t("wishlist_removed_success")}', 'success')</script>".html_safe)
+          turbo_stream.append("toastContainer", partial: "shared/toast", locals: { message: t("wishlist_removed_success"), toast_type: "success" })
         ] }
         format.html { redirect_back fallback_location: products_path, notice: t("wishlist_removed_success") }
       end
     else
       respond_to do |format|
-        format.turbo_stream { render turbo_stream: turbo_stream.append("toastContainer", "<script>showToast('#{t("wishlist_item_not_found")}', 'error')</script>".html_safe) }
+        format.turbo_stream { render turbo_stream: turbo_stream.append("toastContainer", partial: "shared/toast", locals: { message: t("wishlist_item_not_found"), toast_type: "error" }) }
         format.html { redirect_back fallback_location: products_path, alert: t("wishlist_item_not_found") }
       end
     end

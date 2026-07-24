@@ -57,12 +57,21 @@
         <div class="text-muted"><%= @order.user&.email || @order.email %></div>
       </div>
       <hr>
-      <h6 class="mb-2">Update Status</h6>
+      <h6 class="mb-2">Update Order Details</h6>
       <%= form_with model: @order, url: admin_order_path(@order), method: :patch, local: true do |f| %>
-        <div class="d-flex gap-2">
-          <%= f.select :status, [["Pending", "pending"], ["Paid", "paid"], ["Processing", "processing"], ["Shipped", "shipped"], ["Delivered", "delivered"], ["Cancelled", "cancelled"]], { selected: @order.status || "pending" }, class: "form-select form-select-sm" %>
-          <%= f.submit "Update", class: "btn btn-sm btn-primary" %>
+        <div class="mb-3">
+          <small class="text-muted">Status</small>
+          <%= f.select :status, [["Pending", "pending"], ["Paid", "paid"], ["Processing", "processing"], ["Shipped", "shipped"], ["Delivered", "delivered"], ["Cancelled", "cancelled"]], { selected: @order.status || "pending" }, class: "form-select form-select-sm mb-2" %>
         </div>
+        <div class="mb-3">
+          <small class="text-muted">Tracking Number</small>
+          <%= f.text_field :tracking_number, class: "form-control form-control-sm mb-2", placeholder: "e.g. 1Z999999999" %>
+        </div>
+        <div class="mb-3">
+          <small class="text-muted">Shipping Carrier</small>
+          <%= f.text_field :shipping_carrier, class: "form-control form-control-sm mb-2", placeholder: "e.g. UPS, FedEx, DHL" %>
+        </div>
+        <%= f.submit "Update Order", class: "btn btn-sm btn-primary w-100" %>
       <% end %>
     </div>
 

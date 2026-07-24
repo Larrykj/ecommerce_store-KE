@@ -31,7 +31,9 @@ class PromoCode < ApplicationRecord
   end
 
   def increment_usage!
-    increment!(:current_uses)
+    with_lock do
+      increment!(:current_uses)
+    end
   end
 
   private

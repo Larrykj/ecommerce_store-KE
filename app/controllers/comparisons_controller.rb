@@ -11,6 +11,17 @@ class ComparisonsController < ApplicationController
   end
 
   def add
+    if user_signed_in?
+      current_count = current_user.product_comparisons.count
+    else
+      current_count = ProductComparison.where(session_id: session.id.to_s).count
+    end
+
+    if current_count >= 4
+      redirect_back fallback_location: root_path, alert: "You can only compare up to 4 products at a time."
+      return
+    end
+
     product = Product.find(params[:product_id])
     comparison = ProductComparison.new(
       product: product,

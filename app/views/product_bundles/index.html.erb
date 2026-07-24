@@ -17,15 +17,15 @@
               <div class="mt-auto">
                 <div class="mb-3">
                   <span class="h4 text-primary">KSh <%= number_with_precision(bundle.price, precision: 2) %></span>
-                  <% if bundle.original_price %>
+                  <% if bundle.computed_original_price > bundle.price %>
                     <br>
-                    <small class="text-muted"><s>KSh <%= number_with_precision(bundle.original_price, precision: 2) %></s></small>
+                    <small class="text-muted"><s>KSh <%= number_with_precision(bundle.computed_original_price, precision: 2) %></s></small>
                     <span class="badge bg-success ms-1">Save KSh <%= number_with_precision(bundle.savings, precision: 2) %></span>
                   <% end %>
                 </div>
 
                 <p class="text-muted small mb-2">
-                  <i class="bi bi-box"></i> <%= bundle.products.count %> product<%= bundle.products.count == 1 ? '' : 's' %> included
+                  <i class="bi bi-box"></i> <%= bundle.items.sum(:quantity) %> item<%= bundle.items.sum(:quantity) == 1 ? '' : 's' %> across <%= bundle.products.count %> product<%= bundle.products.count == 1 ? '' : 's' %>
                 </p>
 
                 <%= link_to "View Bundle", product_bundle_path(bundle), class: "btn btn-outline-primary w-100" %>

@@ -6,9 +6,9 @@
       
       <div class="mb-4">
         <div class="display-6 text-primary">KSh <%= number_with_precision(@bundle.price, precision: 2) %></div>
-        <% if @bundle.original_price %>
+        <% if @bundle.computed_original_price > @bundle.price %>
           <div>
-            <small class="text-muted"><s>KSh <%= number_with_precision(@bundle.original_price, precision: 2) %></s></small>
+            <small class="text-muted"><s>KSh <%= number_with_precision(@bundle.computed_original_price, precision: 2) %></s></small>
             <span class="badge bg-success">Save KSh <%= number_with_precision(@bundle.savings, precision: 2) %></span>
           </div>
         <% end %>
@@ -27,7 +27,7 @@
           <div class="col-md-6 mb-3">
             <div class="card">
               <% if product.image.attached? %>
-                <%= image_tag product.image, class: 'card-img-top', style: 'max-height: 200px; object-fit: cover;' %>
+                <%= image_tag product.image, alt: product.name, class: 'card-img-top', style: 'max-height: 200px; object-fit: cover;' %>
               <% end %>
               <div class="card-body">
                 <h6 class="card-title"><%= product.name %></h6>
@@ -55,9 +55,9 @@
           <hr>
           <div class="mb-2 d-flex justify-content-between">
             <span>Subtotal:</span>
-            <span>KSh <%= number_with_precision(@bundle.products.sum(&:price), precision: 2) %></span>
+            <span>KSh <%= number_with_precision(@bundle.computed_original_price, precision: 2) %></span>
           </div>
-          <% if @bundle.original_price %>
+          <% if @bundle.savings > 0 %>
             <div class="mb-2 d-flex justify-content-between text-success">
               <span>Savings:</span>
               <strong>-KSh <%= number_with_precision(@bundle.savings, precision: 2) %></strong>

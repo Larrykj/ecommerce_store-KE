@@ -29,6 +29,13 @@ class Admin::DashboardController < Admin::BaseController
                             .pluck(Arel.sql("DATE_TRUNC('month', created_at)"), Arel.sql("SUM(total_price)"))
                             .to_h { |month, total| [ month.to_date.strftime("%b %Y"), total.to_f ] }
 
+    # Daily revenue last 14 days
+    @daily_revenue = Order.where("created_at >= ?", 14.days.ago)
+                          .group(Arel.sql("DATE(created_at)"))
+                          .order(Arel.sql("DATE(created_at)"))
+                          .pluck(Arel.sql("DATE(created_at)"), Arel.sql("SUM(total_price)"))
+                          .to_h { |date, total| [ date.to_date.strftime("%b %d"), total.to_f ] }
+
     # Order status breakdown — single query
     @order_status_counts = Order.group(:status).count
 

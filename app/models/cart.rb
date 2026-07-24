@@ -2,7 +2,9 @@
 
 class Cart < ApplicationRecord
   has_many :cart_items, dependent: :destroy
-  has_many :products, through: :cart_items
+  has_many :variants, through: :cart_items
+  has_many :products, through: :variants
+  belongs_to :user, optional: true
   belongs_to :promo_code, optional: true
   belongs_to :shipping_method, optional: true
   belongs_to :gift_card, optional: true

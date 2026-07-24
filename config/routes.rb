@@ -43,6 +43,7 @@ Rails.application.routes.draw do
     resources :loyalty_programs, only: [ :index, :create, :update ]
     resources :loyalty_tiers, only: [ :create, :destroy ]
     resources :loyalty_rewards, only: [ :create, :destroy ]
+    resources :blog_categories
     resources :blog_posts do
       member do
         patch :publish
@@ -74,7 +75,7 @@ Rails.application.routes.draw do
 
   resources :wishlist_items, only: [ :index, :create, :destroy ]
 
-  resources :products, only: [ :index, :show, :new, :create, :edit, :update, :destroy ] do
+  resources :products, only: [ :index, :show ] do
     resources :reviews, only: [ :create, :edit, :update, :destroy ] do
       member do
         post :helpful
@@ -84,7 +85,7 @@ Rails.application.routes.draw do
     resources :stock_notifications, only: [ :create ]
   end
 
-  resources :categories, only: [ :index, :show, :new, :create, :edit, :update, :destroy ]
+  resources :categories, only: [ :index, :show ]
 
   resource :cart, only: [ :show ] do
     post "apply_promo", to: "promo_codes#apply"
@@ -186,4 +187,5 @@ Rails.application.routes.draw do
       post "/ai/recommendations", to: "ai#recommendations"
     end
   end
+post "/mpesa/callback", to: "mpesa_callbacks#create"
 end

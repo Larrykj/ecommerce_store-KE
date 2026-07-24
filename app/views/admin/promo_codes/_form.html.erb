@@ -49,10 +49,26 @@
       <%= form.datetime_field :expires_at, class: "form-control" %>
     </div>
 
+    <div class="col-12 mt-3 pt-3 border-top">
+      <h6 class="fw-bold mb-3"><i class="bi bi-megaphone me-2 text-primary"></i>Storefront Announcement</h6>
+    </div>
+    
+    <div class="col-md-12">
+      <%= form.label :promo_message, "Announcement Message (Displayed to Customers)", class: "form-label fw-bold" %>
+      <%= form.text_field :promo_message, class: "form-control", placeholder: "e.g. Use code SUMMER2026 for 5% off your next order!" %>
+    </div>
+
     <div class="col-12">
       <div class="form-check form-switch mt-2">
+        <%= form.check_box :display_on_storefront, class: "form-check-input", id: "displaySwitch" %>
+        <%= form.label :display_on_storefront, "Display Banner on Storefront", class: "form-check-label fw-bold", for: "displaySwitch" %>
+      </div>
+    </div>
+
+    <div class="col-12 mt-3 pt-3 border-top">
+      <div class="form-check form-switch mt-2">
         <%= form.check_box :active, class: "form-check-input", id: "activeSwitch" %>
-        <%= form.label :active, "Active", class: "form-check-label", for: "activeSwitch" %>
+        <%= form.label :active, "Active", class: "form-check-label fw-bold", for: "activeSwitch" %>
       </div>
     </div>
   </div>

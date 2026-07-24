@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class ShippingMethod < ApplicationRecord
-  has_many :orders
-  has_many :carts
+  has_many :orders, dependent: :nullify
+  has_many :carts, dependent: :nullify
 
   validates :name, presence: true, uniqueness: { case_sensitive: false }
   validates :base_rate, presence: true, numericality: { greater_than_or_equal_to: 0 }

@@ -5,6 +5,28 @@ module ApplicationHelper
     provide(:meta_description, description) if description.present?
   end
 
+  def blog_featured_image_source(featured_image)
+    return if featured_image.blank?
+
+    source = featured_image.to_s.strip
+    return if source.blank?
+
+    return source if source.match?(%r{
+      \A(?:https?://|data:image/)
+    }ix)
+
+    return source if source.start_with?("/")
+
+    nil
+  end
+
+  def blog_featured_image_tag(featured_image, **options)
+    source = blog_featured_image_source(featured_image)
+    return unless source
+
+    image_tag(source, **options)
+  end
+
   def structured_data(product)
     {
       "@context": "https://schema.org/",

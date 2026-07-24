@@ -95,6 +95,7 @@
               <th class="ps-3 border-0 py-3">Product Name</th>
               <th class="border-0 py-3 text-center">Unit Price</th>
               <th class="border-0 py-3 text-center">Quantity</th>
+              <th class="border-0 py-3 text-center">Subtotal</th>
               <th class="pe-3 border-0 py-3 text-end">Action</th>
             </tr>
           </thead>
@@ -104,6 +105,7 @@
                 <td class="ps-3 fw-bold"><%= item.product.name %></td>
                 <td class="text-center font-monospace text-muted">KSh <%= number_with_precision(item.product.price, precision: 2) %></td>
                 <td class="text-center fw-bold"><%= item.quantity || 1 %>x</td>
+                <td class="text-center font-monospace fw-bold">KSh <%= number_with_precision((item.product.price || 0) * (item.quantity || 1), precision: 2) %></td>
                 <td class="pe-3 text-end">
                   <%= link_to remove_product_admin_product_bundle_path(@bundle, product_id: item.product_id), method: :delete, data: { confirm: 'Remove product from bundle?' }, class: 'btn btn-sm btn-outline-danger' do %>
                     <i class="bi bi-x-circle"></i> Remove
@@ -112,6 +114,25 @@
               </tr>
             <% end %>
           </tbody>
+          <tfoot class="border-top">
+            <tr class="bg-light">
+              <td colspan="3" class="ps-3 fw-bold text-end">Original Value (sum of items):</td>
+              <td class="text-center font-monospace fw-bold text-muted">KSh <%= number_with_precision(@bundle.original_price || 0, precision: 2) %></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td colspan="3" class="ps-3 fw-bold text-end text-success">Bundle Selling Price:</td>
+              <td class="text-center font-monospace fw-bold text-success">KSh <%= number_with_precision(@bundle.price || 0, precision: 2) %></td>
+              <td></td>
+            </tr>
+            <% if @bundle.savings > 0 %>
+              <tr>
+                <td colspan="3" class="ps-3 fw-bold text-end text-danger">Customer Savings:</td>
+                <td class="text-center font-monospace fw-bold text-danger">KSh <%= number_with_precision(@bundle.savings, precision: 2) %></td>
+                <td></td>
+              </tr>
+            <% end %>
+          </tfoot>
         </table>
       </div>
     <% else %>

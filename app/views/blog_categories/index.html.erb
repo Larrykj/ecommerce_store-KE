@@ -15,7 +15,7 @@
               <p class="text-muted small">
                 <%= category.posts.count %> post<%= category.posts.count == 1 ? '' : 's' %>
               </p>
-              <%= link_to "View Posts", blog_category_path(category.slug), class: "btn btn-outline-primary" %>
+              <%= link_to "View Posts", blog_category_path(category), class: "btn btn-outline-primary" %>
             </div>
           </div>
         </div>

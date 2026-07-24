@@ -1,0 +1,36 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>Blog Categories</h1>
+  <%= link_to "Add Category", new_admin_blog_category_path, class: "btn btn-primary" %>
+</div>
+
+<% if @categories.any? %>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Posts</th>
+        <th>Position</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @categories.each do |category| %>
+        <tr>
+          <td><strong><%= category.name %></strong></td>
+          <td><%= truncate(category.description, length: 100) %></td>
+          <td><span class="badge bg-info"><%= category.posts.count %></span></td>
+          <td><%= category.position %></td>
+          <td>
+            <%= link_to "Edit", edit_admin_blog_category_path(category), class: "btn btn-sm btn-outline-primary" %>
+            <%= link_to "Delete", admin_blog_category_path(category), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-sm btn-outline-danger" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <div class="alert alert-info">
+    No blog categories yet. <%= link_to "Create one", new_admin_blog_category_path %>
+  </div>
+<% end %>

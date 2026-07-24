@@ -16,7 +16,6 @@ class Transaction < ApplicationRecord
   }, default: :pending
 
   scope :successful, -> { where(status: :succeeded) }
-  scope :failed, -> { where(status: :failed) }
   scope :refunded, -> { where(status: [ :refunded, :partially_refunded ]) }
 
   def refundable?

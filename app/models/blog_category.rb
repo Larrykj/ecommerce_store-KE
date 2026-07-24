@@ -1,5 +1,5 @@
 class BlogCategory < ApplicationRecord
-  has_many :posts, class_name: "BlogPost", dependent: :nullify
+  has_many :posts, class_name: "BlogPost", foreign_key: :category_id, dependent: :nullify
 
   validates :name, :slug, presence: true
   validates :slug, uniqueness: true
@@ -7,6 +7,10 @@ class BlogCategory < ApplicationRecord
   before_validation :set_slug
 
   scope :ordered, -> { order(:position) }
+
+  def to_param
+    slug
+  end
 
   private
 

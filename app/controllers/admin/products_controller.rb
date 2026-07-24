@@ -4,8 +4,9 @@ class Admin::ProductsController < Admin::BaseController
   before_action :set_product, only: [ :show, :edit, :update, :destroy, :restore ]
 
   def index
-    @products = Product.unscoped.includes(:category, :variants).with_attached_image.order(created_at: :desc)
-    @products = @products.search_by_text(params[:search]) if params[:search].present?
+    base_query = Product.unscoped.includes(:category, :variants).with_attached_image.order(created_at: :desc)
+    base_query = base_query.search_by_text(params[:search]) if params[:search].present?
+    @pagy, @products = pagy(base_query, items: 20)
   end
 
   def show

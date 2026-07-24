@@ -4,7 +4,7 @@ class BlogCategoriesController < ApplicationController
   end
 
   def show
-    @category = BlogCategory.find_by!(slug: params[:id])
+    @category = BlogCategory.find_by(slug: params[:id]) || BlogCategory.find(params[:id])
     @pagy, @posts = pagy(@category.posts.published.recent, items: 10)
   end
 end

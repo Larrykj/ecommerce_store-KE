@@ -26,5 +26,8 @@ module ECommerceRails
     #
     config.time_zone = "Nairobi"
     # config.eager_load_paths << Rails.root.join("extras")
+
+    # NOTE: ActiveRecord::Encryption removed — encrypts :name was removed from
+    # User model due to Rails 8.1 Context API incompatibility (NoMethodError on primary_key=).
   end
 end

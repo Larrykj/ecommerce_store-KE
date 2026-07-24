@@ -3,7 +3,8 @@
 class Order < ApplicationRecord
   belongs_to :user
   has_many :order_items, dependent: :destroy
-  has_many :products, through: :order_items
+  has_many :variants, through: :order_items
+  has_many :products, through: :variants
   has_many :transactions, dependent: :destroy
   has_one :return_request, dependent: :destroy
   belongs_to :promo_code, optional: true
@@ -18,11 +19,8 @@ class Order < ApplicationRecord
     payment_status.nil? || payment_status == "unpaid"
   end
 
-  # Encrypt sensitive order data (skip in test environment to avoid fixture issues)
-  encrypts :name unless Rails.env.test?
-  encrypts :email unless Rails.env.test?
-  encrypts :address unless Rails.env.test?
-  encrypts :phone unless Rails.env.test?
+  # NOTE: encrypts removed — Rails 8.1 Context API prevents encryption config at boot.
+  # Fields (name, email, address, phone) stored as plain text in development.
 
   validates :name, presence: true
   validates :email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }

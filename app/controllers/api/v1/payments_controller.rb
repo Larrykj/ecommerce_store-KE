@@ -2,9 +2,18 @@
 
 class Api::V1::PaymentsController < Api::V1::BaseController
   SUPPORTED_CURRENCIES = %w[kes].freeze
-  DEFAULT_PAYMENT_AMOUNT = 1000
+
   def create_intent
     amount = payment_amount_cents
+    if amount <= 0
+      render_api_error(
+        code: "empty_order",
+        message: "No pending order or cart found. Please add items before paying.",
+        status: :unprocessable_entity
+      )
+      return
+    end
+
     currency = validated_currency
     begin
       intent = Stripe::PaymentIntent.create({
@@ -44,9 +53,14 @@ class Api::V1::PaymentsController < Api::V1::BaseController
   private
 
   def payment_amount_cents
-    # Compute this from server-side cart/order data for the authenticated user.
-    # Do not trust client-provided amounts.
-    DEFAULT_PAYMENT_AMOUNT
+    # Compute from server-side order/cart data — never trust client-provided amounts.
+    # Priority: most recent pending order, then fall back to 0 (reject).
+    pending_order = current_api_user.orders.where(payment_status: [ "unpaid", "pending" ]).order(created_at: :desc).first
+    if pending_order
+      (pending_order.total_price.to_d * 100).to_i
+    else
+      0
+    end
   end
 
   def validated_currency

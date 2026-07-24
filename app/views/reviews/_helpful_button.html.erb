@@ -1,0 +1,5 @@
+<div id="review_helpful_container_<%= review.id %>" style="display:inline-block;">
+  <%= button_to helpful_product_review_path(product, review), class: "helpful-btn" do %>
+    <i class="bi bi-hand-thumbs-up"></i> <%= t("helpful") %> (<%= review.helpful_count %>)
+  <% end %>
+</div>

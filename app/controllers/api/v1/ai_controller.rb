@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class Api::V1::AiController < Api::V1::BaseController
-  skip_before_action :authenticate_api_user!, only: [ :chat, :recommendations ]
+  # Chat requires auth (calls paid OpenAI API); recommendations allow anonymous access
+  skip_before_action :authenticate_api_user!, only: [ :recommendations ]
   before_action :set_optional_api_user, only: [ :recommendations ]
 
   def chat

@@ -6,7 +6,7 @@
   <% @posts.each do |post| %>
     <article class="card mb-4">
       <% if post.featured_image %>
-        <%= image_tag post.featured_image, class: 'card-img-top', style: 'max-height: 300px; object-fit: cover;' %>
+        <%= blog_featured_image_tag post.featured_image, class: 'card-img-top', style: 'max-height: 300px; object-fit: cover;' %>
       <% end %>
       <div class="card-body">
         <h2 class="card-title"><%= link_to post.title, blog_post_path(post) %></h2>

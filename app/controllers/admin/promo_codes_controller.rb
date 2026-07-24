@@ -44,6 +44,6 @@ class Admin::PromoCodesController < Admin::BaseController
   end
 
   def promo_code_params
-    params.require(:promo_code).permit(:code, :discount_type, :discount_value, :min_order_amount, :max_uses, :expires_at, :active, :description)
+    params.require(:promo_code).permit(:code, :discount_type, :discount_value, :min_order_amount, :max_uses, :expires_at, :active, :description, :promo_message, :display_on_storefront)
   end
 end

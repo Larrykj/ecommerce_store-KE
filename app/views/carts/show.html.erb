@@ -25,7 +25,7 @@
                 <%= link_to item.product.name, product_path(item.product) %>
                 <br><small class="text-muted"><%= item.variant.name_with_sku %></small>
               </td>
-              <td><%= format_price(item.variant.price || item.product.price) %></td>
+              <td><%= format_price(item.unit_price) %></td>
               <td>
                 <%= form_with url: cart_item_path(item), method: :patch, class: 'd-flex align-items-center' do |f| %>
                   <%= f.number_field :quantity, value: item.quantity, min: 1, max: item.variant.quantity, class: 'form-control form-control-sm me-2', style: 'width: 80px;' %>
@@ -125,7 +125,6 @@
           <%= link_to t('continue_shopping'), products_path, class: 'btn btn-secondary' %>
           <%= link_to t('checkout'), new_order_path, class: 'btn btn-success' %>
         </div>
-      </div>
       </div>
     </div>
   <% end %>

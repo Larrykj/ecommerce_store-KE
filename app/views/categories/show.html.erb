@@ -118,7 +118,7 @@
                     <% if product.image.attached? %>
                       <%= image_tag product.image, class: "product-image", alt: product.name %>
                     <% else %>
-                      <div class="product-placeholder"><i class="bi bi-box-seam"></i></div>
+                      <%= render partial: "shared/product_placeholder", locals: { product: product, css_class: "product-placeholder", font_size: "3rem" } %>
                     <% end %>
                     <span class="stock-badge badge-<%= product.stock_status_class %>"><%= product.stock_status_label %></span>
                     <div class="product-overlay">

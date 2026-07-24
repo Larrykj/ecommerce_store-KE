@@ -1,0 +1,19 @@
+<% 
+  colors = [
+    ["#ff9a9e", "#fecfef"],
+    ["#a1c4fd", "#c2e9fb"],
+    ["#667eea", "#764ba2"],
+    ["#89f7fe", "#66a6ff"],
+    ["#fddb92", "#d1fdff"],
+    ["#96e6a1", "#d4fc79"],
+    ["#ff758c", "#ff7eb3"],
+    ["#84fab0", "#8fd3f4"]
+  ]
+  color_pair = colors[product.id % colors.size]
+  
+  # Default to a large font size if not provided
+  font_size = local_assigns[:font_size] || "3.5rem"
+%>
+<div class="<%= css_class %>" style="background: linear-gradient(135deg, <%= color_pair[0] %> 0%, <%= color_pair[1] %> 100%); display: flex; align-items: center; justify-content: center;">
+  <span style="font-size: <%= font_size %>; font-weight: 800; color: rgba(255,255,255,0.85); letter-spacing: -2px; text-shadow: 0 4px 10px rgba(0,0,0,0.1);"><%= product.name[0..1].upcase %></span>
+</div>

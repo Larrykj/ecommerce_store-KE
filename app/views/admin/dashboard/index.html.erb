@@ -1,7 +1,7 @@
 <div class="admin-topbar">
   <div>
     <h1><i class="bi bi-speedometer2 me-2"></i>Dashboard</h1>
-    <p class="text-muted mb-0">Welcome back, <%= current_user.name %>! Here's your store overview.</p>
+    <p class="text-muted mb-0">Welcome back, <%= current_user.name.presence || current_user.email %>! Here's your store overview.</p>
   </div>
   <div class="topbar-actions">
     <% if @unread_messages > 0 %>
@@ -65,6 +65,62 @@
   </div>
 </div>
 
+<!-- Revenue Chart -->
+<div class="row g-4 mb-4">
+  <div class="col-12">
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <h5><i class="bi bi-graph-up-arrow me-2"></i>Revenue Overview (Last 14 Days)</h5>
+      </div>
+      <div class="admin-card-body" style="padding: 24px;">
+        <canvas id="revenueChart" height="80"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { Chart, registerables } from "chart.js"
+  Chart.register(...registerables)
+
+  document.addEventListener("turbo:load", () => {
+    const ctx = document.getElementById('revenueChart');
+    if (!ctx) return;
+    
+    if (window.revenueChartInstance) {
+      window.revenueChartInstance.destroy();
+    }
+
+    const labels = <%= raw @daily_revenue.keys.to_json %>;
+    const data = <%= raw @daily_revenue.values.to_json %>;
+
+    window.revenueChartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Daily Revenue',
+          data: data,
+          borderColor: '#667eea',
+          backgroundColor: 'rgba(102, 126, 234, 0.1)',
+          borderWidth: 3,
+          fill: true,
+          tension: 0.4
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+  });
+</script>
+
 <!-- Order Status Breakdown -->
 <div class="row g-4 mb-4">
   <div class="col-lg-8">
@@ -93,20 +149,22 @@
         <h5><i class="bi bi-trophy me-2"></i>Top Categories</h5>
       </div>
       <div class="admin-card-body">
-        <table class="admin-table">
-          <thead><tr><th>Category</th><th>Revenue</th></tr></thead>
-          <tbody>
-            <% @top_categories.each do |cat| %>
-              <tr>
-                <td><strong><%= cat.name %></strong></td>
-                <td><%= format_price(cat.total_revenue) %></td>
-              </tr>
-            <% end %>
-            <% if @top_categories.empty? %>
-              <tr><td colspan="2" class="text-center text-muted py-3">No sales data yet</td></tr>
-            <% end %>
-          </tbody>
-        </table>
+        <div class="table-responsive-admin">
+          <table class="admin-table">
+            <thead><tr><th>Category</th><th>Revenue</th></tr></thead>
+            <tbody>
+              <% @top_categories.each do |cat| %>
+                <tr>
+                  <td><strong><%= cat.name %></strong></td>
+                  <td><%= format_price(cat.total_revenue) %></td>
+                </tr>
+              <% end %>
+              <% if @top_categories.empty? %>
+                <tr><td colspan="2" class="text-center text-muted py-3">No sales data yet</td></tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
@@ -121,31 +179,33 @@
         <%= link_to "View All", admin_orders_path, class: "btn-admin btn-admin-primary btn-sm" %>
       </div>
       <div class="admin-card-body">
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>Order #</th>
-              <th>Customer</th>
-              <th>Total</th>
-              <th>Status</th>
-              <th>Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% @recent_orders.each do |order| %>
+        <div class="table-responsive-admin">
+          <table class="admin-table">
+            <thead>
               <tr>
-                <td><%= link_to "##{order.id}", admin_order_path(order), style: "color: #4f46e5; font-weight: 600;" %></td>
-                <td><%= order.user&.name || order.name || "Guest" %></td>
-                <td><strong><%= format_price(order.total_price) %></strong></td>
-                <td><span class="badge-status badge-<%= order.status || 'pending' %>"><%= (order.status || 'pending').capitalize %></span></td>
-                <td class="text-muted"><%= order.created_at.strftime("%b %d, %Y") %></td>
+                <th>Order #</th>
+                <th>Customer</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Date</th>
               </tr>
-            <% end %>
-            <% if @recent_orders.empty? %>
-              <tr><td colspan="5" class="text-center text-muted py-4">No orders yet</td></tr>
-            <% end %>
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              <% @recent_orders.each do |order| %>
+                <tr>
+                  <td><%= link_to "##{order.id}", admin_order_path(order), style: "color: #4f46e5; font-weight: 600;" %></td>
+                  <td><%= (order.user&.name.presence || order.user&.email.presence || order.name.presence || order.email.presence || "Guest") %></td>
+                  <td><strong><%= format_price(order.total_price) %></strong></td>
+                  <td><span class="badge-status badge-<%= order.status || 'pending' %>"><%= (order.status || 'pending').capitalize %></span></td>
+                  <td class="text-muted"><%= order.created_at.strftime("%b %d, %Y") %></td>
+                </tr>
+              <% end %>
+              <% if @recent_orders.empty? %>
+                <tr><td colspan="5" class="text-center text-muted py-4">No orders yet</td></tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
@@ -157,29 +217,31 @@
         <h5><i class="bi bi-exclamation-triangle text-warning me-2"></i>Low Stock</h5>
       </div>
       <div class="admin-card-body">
-        <table class="admin-table">
-          <thead>
-            <tr><th>Product</th><th>Qty</th></tr>
-          </thead>
-          <tbody>
-            <% @low_stock_variants.each do |variant| %>
-              <tr>
-                <td>
-                  <strong><%= variant.product&.name %></strong>
-                  <br><small class="text-muted"><%= variant.name_with_sku %></small>
-                </td>
-                <td>
-                  <span class="badge-status <%= variant.quantity.zero? ? 'badge-cancelled' : 'badge-pending' %>">
-                    <%= variant.quantity %>
-                  </span>
-                </td>
-              </tr>
-            <% end %>
-            <% if @low_stock_variants.empty? %>
-              <tr><td colspan="2" class="text-center text-muted py-4">All stock levels healthy!</td></tr>
-            <% end %>
-          </tbody>
-        </table>
+        <div class="table-responsive-admin">
+          <table class="admin-table">
+            <thead>
+              <tr><th>Product</th><th>Qty</th></tr>
+            </thead>
+            <tbody>
+              <% @low_stock_variants.each do |variant| %>
+                <tr>
+                  <td>
+                    <strong><%= variant.product&.name %></strong>
+                    <br><small class="text-muted"><%= variant.name_with_sku %></small>
+                  </td>
+                  <td>
+                    <span class="badge-status <%= variant.quantity.zero? ? 'badge-cancelled' : 'badge-pending' %>">
+                      <%= variant.quantity %>
+                    </span>
+                  </td>
+                </tr>
+              <% end %>
+              <% if @low_stock_variants.empty? %>
+                <tr><td colspan="2" class="text-center text-muted py-4">All stock levels healthy!</td></tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
@@ -194,21 +256,23 @@
         <h5><i class="bi bi-graph-up me-2"></i>Top Selling Products</h5>
       </div>
       <div class="admin-card-body">
-        <table class="admin-table">
-          <thead>
-            <tr><th>#</th><th>Product</th><th>Units Sold</th><th>Price</th></tr>
-          </thead>
-          <tbody>
-            <% @top_products.each_with_index do |product, i| %>
-              <tr>
-                <td><span style="color: #667eea; font-weight: 700;"><%= i + 1 %></span></td>
-                <td><strong><%= product.name %></strong></td>
-                <td><span class="badge-status badge-completed"><%= product.total_sold %> sold</span></td>
-                <td><%= format_price(product.price) %></td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
+        <div class="table-responsive-admin">
+          <table class="admin-table">
+            <thead>
+              <tr><th>#</th><th>Product</th><th>Units Sold</th><th>Price</th></tr>
+            </thead>
+            <tbody>
+              <% @top_products.each_with_index do |product, i| %>
+                <tr>
+                  <td><span style="color: #667eea; font-weight: 700;"><%= i + 1 %></span></td>
+                  <td><strong><%= product.name %></strong></td>
+                  <td><span class="badge-status badge-completed"><%= product.total_sold %> sold</span></td>
+                  <td><%= format_price(product.price) %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>

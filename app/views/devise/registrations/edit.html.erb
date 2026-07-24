@@ -1,42 +1,269 @@
-<h2><%= t('edit_resource', resource: resource_name.to_s.humanize) %></h2>
+<% content_for :title, "Edit Profile — #{t('app_name')}" %>
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
+<div class="edit-profile-page">
+  <div class="container">
+    <div class="edit-profile-wrapper">
 
-  <div class="field">
-    <p><%= f.label :email, t('email') %></p>
-    <p><%= f.email_field :email, autofocus: true, autocomplete: "email" %></p>
+      <!-- Header -->
+      <div class="edit-profile-header">
+        <div class="edit-avatar">
+          <%= (current_user.name.presence || current_user.email).first.upcase %>
+        </div>
+        <div>
+          <h1 class="edit-profile-title">Edit Profile</h1>
+          <p class="edit-profile-sub">Update your personal details and password</p>
+        </div>
+      </div>
+
+      <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put, class: "edit-profile-form" }) do |f| %>
+        <%= render "devise/shared/error_messages", resource: resource %>
+
+        <!-- Personal Info Section -->
+        <div class="form-section">
+          <h2 class="form-section-title">
+            <i class="bi bi-person-circle me-2"></i>Personal Information
+          </h2>
+
+          <div class="form-row-2">
+            <div class="form-group-modern">
+              <label class="form-label-modern" for="user_name">
+                <i class="bi bi-person me-1"></i>Full Name <span class="required">*</span>
+              </label>
+              <%= f.text_field :name,
+                    id: "user_name",
+                    class: "form-input-modern",
+                    placeholder: "Your full name",
+                    autofocus: true,
+                    autocomplete: "name",
+                    required: true %>
+            </div>
+
+            <div class="form-group-modern">
+              <label class="form-label-modern" for="user_phone">
+                <i class="bi bi-telephone me-1"></i>Phone Number
+              </label>
+              <%= f.telephone_field :phone,
+                    id: "user_phone",
+                    class: "form-input-modern",
+                    placeholder: "+254 712 345 678",
+                    autocomplete: "tel" %>
+            </div>
+
+            <div class="form-group-modern">
+              <label class="form-label-modern" for="user_email">
+                <i class="bi bi-envelope me-1"></i>Email Address
+              </label>
+              <%= f.email_field :email,
+                    id: "user_email",
+                    class: "form-input-modern",
+                    placeholder: "your@email.com",
+                    autocomplete: "email" %>
+              <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+                <p class="form-hint warning">
+                  <i class="bi bi-exclamation-triangle me-1"></i>
+                  Waiting confirmation for: <strong><%= resource.unconfirmed_email %></strong>
+                </p>
+              <% end %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Password Section -->
+        <div class="form-section">
+          <h2 class="form-section-title">
+            <i class="bi bi-shield-lock me-2"></i>Change Password
+          </h2>
+          <p class="form-section-hint">Leave blank to keep your current password.</p>
+
+          <div class="form-row-2">
+            <div class="form-group-modern">
+              <label class="form-label-modern" for="user_password">
+                <i class="bi bi-lock me-1"></i>New Password
+              </label>
+              <div class="input-pw-wrap">
+                <%= f.password_field :password,
+                      id: "user_password",
+                      class: "form-input-modern",
+                      placeholder: "New password",
+                      autocomplete: "new-password" %>
+                <button type="button" class="pw-toggle-btn" onclick="togglePw('user_password', this)" tabindex="-1">
+                  <i class="bi bi-eye"></i>
+                </button>
+              </div>
+              <% if @minimum_password_length %>
+                <p class="form-hint"><i class="bi bi-info-circle me-1"></i>Minimum <%= @minimum_password_length %> characters, must include uppercase, lowercase, number & special character.</p>
+              <% end %>
+            </div>
+
+            <div class="form-group-modern">
+              <label class="form-label-modern" for="user_password_confirmation">
+                <i class="bi bi-lock-fill me-1"></i>Confirm New Password
+              </label>
+              <div class="input-pw-wrap">
+                <%= f.password_field :password_confirmation,
+                      id: "user_password_confirmation",
+                      class: "form-input-modern",
+                      placeholder: "Repeat new password",
+                      autocomplete: "new-password" %>
+                <button type="button" class="pw-toggle-btn" onclick="togglePw('user_password_confirmation', this)" tabindex="-1">
+                  <i class="bi bi-eye"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group-modern" style="max-width: 480px;">
+            <label class="form-label-modern" for="user_current_password">
+              <i class="bi bi-key me-1"></i>Current Password <span class="required">*</span>
+            </label>
+            <div class="input-pw-wrap">
+              <%= f.password_field :current_password,
+                    id: "user_current_password",
+                    class: "form-input-modern",
+                    placeholder: "Your current password",
+                    autocomplete: "current-password",
+                    required: true %>
+              <button type="button" class="pw-toggle-btn" onclick="togglePw('user_current_password', this)" tabindex="-1">
+                <i class="bi bi-eye"></i>
+              </button>
+            </div>
+            <p class="form-hint"><i class="bi bi-shield-check me-1"></i>Required to confirm any changes.</p>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="form-actions">
+          <%= f.submit "Save Changes", class: "btn-save" %>
+          <%= link_to profile_path, class: "btn-cancel-edit" do %>
+            <i class="bi bi-arrow-left me-1"></i>Back to Profile
+          <% end %>
+        </div>
+      <% end %>
+
+      <!-- Danger Zone -->
+      <div class="danger-zone">
+        <h3 class="danger-title"><i class="bi bi-exclamation-triangle me-2"></i>Danger Zone</h3>
+        <p class="danger-desc">Permanently delete your account and all associated data. This cannot be undone.</p>
+        <%= button_to registration_path(resource_name),
+              data: { confirm: t('are_you_sure'), turbo_confirm: t('are_you_sure') },
+              method: :delete,
+              class: "btn-delete-account" do %>
+          <i class="bi bi-trash me-2"></i><%= t('cancel_account') %>
+        <% end %>
+      </div>
+
+    </div>
   </div>
+</div>
 
-  <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
-    <div><%= t('waiting_confirmation_for') %>: <%= resource.unconfirmed_email %></div>
-  <% end %>
+<script>
+  function togglePw(fieldId, btn) {
+    var field = document.getElementById(fieldId);
+    var icon = btn.querySelector('i');
+    if (!field) return;
+    if (field.type === 'password') {
+      field.type = 'text';
+      icon.className = 'bi bi-eye-slash';
+    } else {
+      field.type = 'password';
+      icon.className = 'bi bi-eye';
+    }
+  }
+</script>
 
-  <div class="field">
-    <p><%= f.label :password, t('password') %> <i><%= t('leave_blank_password') %></i></p>
-    <p><%= f.password_field :password, autocomplete: "new-password" %></p>
-    <% if @minimum_password_length %>
-      <p><em><%= @minimum_password_length %> <%= t('min_password_char') %></em></p>
-    <% end %>
-  </div>
+<style>
+.edit-profile-page { padding: 40px 0 60px; min-height: 100vh; background: var(--bg-primary, #f8fafc); }
 
-  <div class="field">
-    <p><%= f.label :password_confirmation, t('password_confirmation') %></p>
-    <p><%= f.password_field :password_confirmation, autocomplete: "new-password" %></p>
-  </div>
+.edit-profile-wrapper { max-width: 760px; margin: 0 auto; }
 
-  <div class="field">
-    <p><%= f.label :current_password, t('current_password') %> <i><%= t('need_current_password') %></i></p>
-    <p><%= f.password_field :current_password, autocomplete: "current-password" %></p>
-  </div>
+.edit-profile-header {
+  display: flex; align-items: center; gap: 20px;
+  background: white; border-radius: 20px; padding: 28px 32px; margin-bottom: 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+}
+.edit-avatar {
+  width: 72px; height: 72px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white; display: flex; align-items: center; justify-content: center;
+  font-size: 1.8rem; font-weight: 800;
+}
+.edit-profile-title { margin: 0; font-size: 1.5rem; font-weight: 800; color: #1e293b; }
+.edit-profile-sub { margin: 4px 0 0; color: #64748b; font-size: 0.9rem; }
 
-  <div class="actions">
-    <%= f.submit t('update') %>
-  </div>
-<% end %>
+.form-section {
+  background: white; border-radius: 20px; padding: 28px 32px; margin-bottom: 20px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+}
+.form-section-title {
+  font-size: 1rem; font-weight: 700; color: #1e293b;
+  margin: 0 0 6px; padding-bottom: 16px; border-bottom: 2px solid #f1f5f9;
+}
+.form-section-hint { color: #64748b; font-size: 0.88rem; margin: -4px 0 20px; }
 
-<h3><%= t('cancel_account') %></h3>
+.form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 600px) { .form-row-2 { grid-template-columns: 1fr; } }
 
-<div><%= t('unhappy') %> <%= button_to t('cancel_account'), registration_path(resource_name), data: { confirm: t('are_you_sure'), turbo_confirm: t('are_you_sure') }, method: :delete %></div>
+.form-group-modern { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
+.form-group-modern:last-child { margin-bottom: 0; }
 
-<%= link_to t('back'), :back %>
+.form-label-modern {
+  font-size: 0.88rem; font-weight: 600; color: #374151;
+  display: flex; align-items: center;
+}
+.required { color: #ef4444; margin-left: 2px; }
+
+.form-input-modern {
+  width: 100%; padding: 11px 16px; font-size: 0.95rem;
+  border: 2px solid #e2e8f0; border-radius: 10px;
+  background: #f8fafc; color: #1e293b; outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s; box-sizing: border-box;
+}
+.form-input-modern:focus {
+  border-color: #667eea; background: white;
+  box-shadow: 0 0 0 3px rgba(102,126,234,0.15);
+}
+.form-input-modern::placeholder { color: #94a3b8; }
+
+.input-pw-wrap { position: relative; }
+.input-pw-wrap .form-input-modern { padding-right: 44px; }
+.pw-toggle-btn {
+  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; color: #94a3b8; cursor: pointer;
+  font-size: 1rem; padding: 4px; line-height: 1;
+}
+.pw-toggle-btn:hover { color: #667eea; }
+
+.form-hint { font-size: 0.8rem; color: #64748b; margin: 4px 0 0; }
+.form-hint.warning { color: #d97706; }
+
+.form-actions {
+  display: flex; align-items: center; gap: 16px;
+  background: white; border-radius: 20px; padding: 24px 32px; margin-bottom: 20px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+}
+.btn-save {
+  padding: 12px 32px; background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white; border: none; border-radius: 10px; font-weight: 700;
+  font-size: 0.95rem; cursor: pointer; transition: all 0.2s;
+}
+.btn-save:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(102,126,234,0.4); }
+.btn-cancel-edit {
+  padding: 12px 24px; color: #64748b; text-decoration: none;
+  border: 2px solid #e2e8f0; border-radius: 10px; font-weight: 600; font-size: 0.9rem;
+  transition: all 0.2s;
+}
+.btn-cancel-edit:hover { border-color: #667eea; color: #667eea; }
+
+.danger-zone {
+  border: 2px solid #fee2e2; border-radius: 20px; padding: 24px 32px;
+  background: #fff5f5;
+}
+.danger-title { font-size: 1rem; font-weight: 700; color: #dc2626; margin: 0 0 8px; }
+.danger-desc { color: #64748b; font-size: 0.88rem; margin: 0 0 16px; }
+.btn-delete-account {
+  padding: 10px 24px; background: #fee2e2; color: #dc2626;
+  border: 2px solid #fca5a5; border-radius: 10px; font-weight: 700;
+  font-size: 0.9rem; cursor: pointer; transition: all 0.2s; text-decoration: none;
+}
+.btn-delete-account:hover { background: #ef4444; color: white; border-color: #ef4444; }
+</style>

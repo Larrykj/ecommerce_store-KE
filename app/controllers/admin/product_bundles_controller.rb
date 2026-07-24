@@ -17,11 +17,11 @@ class Admin::ProductBundlesController < Admin::BaseController
   end
 
   def edit
-    @bundle = ProductBundle.find(params[:id])
+    @bundle = ProductBundle.find_by!(slug: params[:id])
   end
 
   def update
-    @bundle = ProductBundle.find(params[:id])
+    @bundle = ProductBundle.find_by!(slug: params[:id])
     if @bundle.update(bundle_params)
       redirect_to admin_product_bundles_path, notice: "Bundle updated!"
     else
@@ -30,22 +30,24 @@ class Admin::ProductBundlesController < Admin::BaseController
   end
 
   def destroy
-    ProductBundle.find(params[:id]).destroy
+    ProductBundle.find_by!(slug: params[:id]).destroy
     redirect_to admin_product_bundles_path
   end
 
   def add_product
-    @bundle = ProductBundle.find(params[:id])
+    @bundle = ProductBundle.find_by!(slug: params[:id])
     @bundle.items.create!(
       product_id: params[:product_id],
       quantity: params[:quantity] || 1
     )
+    @bundle.recalculate_prices!
     redirect_to edit_admin_product_bundle_path(@bundle), notice: "Product added to bundle."
   end
 
   def remove_product
-    @bundle = ProductBundle.find(params[:id])
+    @bundle = ProductBundle.find_by!(slug: params[:id])
     @bundle.items.find_by(product_id: params[:product_id])&.destroy
+    @bundle.recalculate_prices!
     redirect_to edit_admin_product_bundle_path(@bundle), notice: "Product removed."
   end
 

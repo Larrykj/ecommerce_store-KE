@@ -87,7 +87,11 @@ class ProductsController < ApplicationController
 
   def track_view
     if current_user
-      ProductView.create(user: current_user, product: @product)
+      # Throttle: only record once per user/product per hour to prevent unbounded growth
+      recent_view = ProductView.where(user: current_user, product: @product)
+                               .where("created_at > ?", 1.hour.ago)
+                               .exists?
+      ProductView.create(user: current_user, product: @product) unless recent_view
     end
   rescue => e
     Rails.logger.error("Failed to track view: #{e.message}")

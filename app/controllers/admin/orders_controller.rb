@@ -40,6 +40,6 @@ class Admin::OrdersController < Admin::BaseController
   end
 
   def order_params
-    params.require(:order).permit(:status)
+    params.require(:order).permit(:status, :tracking_number, :shipping_carrier)
   end
 end
