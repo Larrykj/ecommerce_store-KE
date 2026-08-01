@@ -79,7 +79,7 @@ end
 
 gem "discard", "~> 1.4"
 
-gem "pagy", "~> 43.3"
+gem "pagy", "~> 43.5.6"
 gem "pg_search", "~> 2.3"
 
 gem "stripe", "~> 18.4"
