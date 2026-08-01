@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_07_111909) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_01_103212) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -473,6 +473,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_07_111909) do
     t.integer "estimated_days"
     t.string "name"
     t.datetime "updated_at", null: false
+  end
+
+  create_table "solid_cache_entries", force: :cascade do |t|
+    t.binary "key", limit: 1024, null: false
+    t.binary "value", limit: 536870912, null: false
+    t.datetime "created_at", null: false
+    t.integer "key_hash", limit: 8, null: false
+    t.integer "byte_size", limit: 4, null: false
+    t.index ["byte_size"], name: "index_solid_cache_entries_on_byte_size"
+    t.index ["key_hash", "byte_size"], name: "index_solid_cache_entries_on_key_hash_and_byte_size"
+    t.index ["key_hash"], name: "index_solid_cache_entries_on_key_hash", unique: true
   end
 
   create_table "stock_notifications", force: :cascade do |t|
