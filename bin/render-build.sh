@@ -5,8 +5,8 @@ set -o errexit # exit on error
 
 bundle install
 
-# Run database migrations
-bundle exec rails db:migrate
+# Run database migrations and load schemas for solid_cache/queue/cable
+bundle exec rails db:prepare
 
 # Precompile assets (if using asset pipeline)
 bundle exec rails assets:precompile

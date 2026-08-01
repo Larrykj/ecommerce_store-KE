@@ -9,7 +9,7 @@ services:
     name: ecommerce-rails
     runtime: ruby
     plan: free
-    buildCommand: bundle config set --local without 'development test' && bundle install && bundle exec rails db:migrate && bundle exec rails assets:precompile
+    buildCommand: bundle config set --local without 'development test' && bundle install && bundle exec rails db:prepare && bundle exec rails assets:precompile
     startCommand: bundle exec rails server -b 0.0.0.0 -p $PORT
     envVars:
       - key: RAILS_ENV
