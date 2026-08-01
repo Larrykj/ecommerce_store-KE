@@ -9,8 +9,16 @@ admin_email = ENV.fetch("ADMIN_EMAIL", "admin@example.com")
 admin_password = ENV.fetch("ADMIN_PASSWORD", "Admin@12345")
 admin_name = ENV.fetch("ADMIN_NAME", "Store Admin")
 
-existing_admin = User.find_by(admin: true)
-unless existing_admin
+admin = User.find_by(admin: true)
+if admin
+  admin.update!(
+    email: admin_email,
+    name: admin_name,
+    password: admin_password,
+    password_confirmation: admin_password
+  )
+  puts "Updated existing admin to: #{admin.email}"
+else
   candidate = User.first
   if candidate
     candidate.update!(admin: true)
