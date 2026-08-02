@@ -4,8 +4,7 @@ A modern, mobile-friendly e-commerce platform built for businesses that want to 
 
 It combines a polished storefront, admin tools, secure checkout flows, product management, and deployment-ready infrastructure — making it a strong foundation for local businesses, developers, and agencies building real commerce solutions.
 
-Live Demo: https://ecommerce-rails-app.onrender.com
-
+Live Demo: https://ecommerce-store-ke-api.onrender.com
 
 
 ## Why This Project?
@@ -192,8 +191,8 @@ cd ecommerce_android_wrapper
 flutter pub get
 flutter run
 For release packaging, see:
-
 ecommerce_android_wrapper/SIGNING_INSTRUCTIONS.md
+
 **Project Structure**
 app/models — core business logic
 app/controllers — request handling
@@ -204,9 +203,9 @@ app/views — storefront and admin UI
 config/routes.rb — application routes
 db/migrations — database schema changes
 docs/ — launch and deployment documentation
+
 **Documentation**
 Useful operational docs included in this repository:
-
 docs/LAUNCH_READINESS.md
 docs/AI_AND_SUPPORT.md
 docs/MOBILE_WRAPPER_ANDROID.md
