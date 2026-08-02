@@ -119,7 +119,6 @@ A complete commerce foundation for real-world selling — built to help business
 - Android WebView shell
 - Play Store-ready packaging structure
 
----
 
 ## Quick Start
 
@@ -136,22 +135,22 @@ git clone https://github.com/Larrykj/ecommerce_store-ke.git
 cd ecommerce_store-ke
 bundle install
 
-**Environment Setup**
+# Environment Setup
 cp env.example .env
 Edit .env if needed for your local configuration
 
-#**Database Setup**
+# Database Setup
 rails db:create
 rails db:migrate
 rails db:seed
 
-**Run The App**
+# Run The App
 rails server
 
-**Admin Access**
+# Admin Access
 This app uses an admin flag on the User model.
 
-**Create an Admin User**
+# Create an Admin User
 rails console
 user = User.create!(
   email: 'admin@store.test',
@@ -160,40 +159,39 @@ user = User.create!(
 )
 
 Then sign in and visit:
-
 http://localhost:3000/admin
-**Admin Capabilities**
+
+# Admin Capabilities
 Manage products and categories
 Handle orders and order statuses
 Review customer messages
 Monitor inventory and low-stock alerts
 Access operational dashboards
-Payment Methods
 
-**The application supports multiple checkout flows, including:
-**
+# Payment Methods
+The application supports multiple checkout flows, including:
+
 Stripe test payments
 Cash on Delivery
 Manual confirmation workflows
 This gives flexibility for businesses operating in markets with different payment preferences.
 
-**Android Wrapper**
+## Android Wrapper
 The repository includes a Flutter-based Android wrapper for packaging the store as a mobile app.
-
 Wrapper Location
 ecommerce_android_wrapper/
-**Build Requirements**
+# Build Requirements
 Flutter 3.12+
 Android SDK API 21+
 Android SDK API 35 target
-**Quick Start**
+# Quick Start
 cd ecommerce_android_wrapper
 flutter pub get
 flutter run
 For release packaging, see:
 ecommerce_android_wrapper/SIGNING_INSTRUCTIONS.md
 
-**Project Structure**
+## Project Structure
 app/models — core business logic
 app/controllers — request handling
 app/services — application services
@@ -204,7 +202,7 @@ config/routes.rb — application routes
 db/migrations — database schema changes
 docs/ — launch and deployment documentation
 
-**Documentation**
+## Documentation
 Useful operational docs included in this repository:
 docs/LAUNCH_READINESS.md
 docs/AI_AND_SUPPORT.md
@@ -224,7 +222,7 @@ Transaction-safe order handling
 Row-level locking to reduce overselling risk
 Validation and security scanning support
 Soft deletes for safer data handling
-**Roadmap Ideas**
+# Roadmap Ideas
 Potential next improvements:
 
 Add more storefront screenshots
@@ -234,10 +232,10 @@ Add SEO landing page copy
 Add blog or updates section
 Add more payment integrations
 Add multilingual support
-**Contributing**
+# Contributing
 Contributions, ideas, and feedback are welcome.
 
 If you want to customize this platform for your business or client project, feel free to open an issue or reach out.
 
-**License**
+## License
 This project is open-source and available under the MIT License.
