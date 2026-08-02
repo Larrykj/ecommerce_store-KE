@@ -1,7 +1,6 @@
 # E-Commerce Store (Kenya Edition) 🇰🇪
 
-Build your online store with confidence. A **production-ready e-commerce platform** tailored for the African market, built with modern Rails technology and designed for seamless scaling.
-
+Modern, mobile-friendly e-commerce platform for launching online stores with secure checkout, admin tools, and an Android wrapper — built for African businesses and easy customization.
 ## Operational Docs
 
 - `docs/LAUNCH_READINESS.md` - security, auth, throttling, and pre-launch checks
