@@ -138,9 +138,9 @@ bundle install
 
 **Environment Setup**
 cp env.example .env
-# **Edit .env if needed for your local configuration**
+Edit .env if needed for your local configuration
 
-**Database Setup**
+#**Database Setup**
 rails db:create
 rails db:migrate
 rails db:seed
