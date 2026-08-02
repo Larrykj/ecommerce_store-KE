@@ -1,343 +1,244 @@
-# E-Commerce Store (Kenya Edition) 🇰🇪
+# E-Commerce Store KE 🇰🇪
 
-Modern, mobile-friendly e-commerce platform for launching online stores with secure checkout, admin tools, and an Android wrapper — built for African businesses and easy customization.
-## Operational Docs
+A modern, mobile-friendly e-commerce platform built for businesses that want to sell online with confidence.
 
-- `docs/LAUNCH_READINESS.md` - security, auth, throttling, and pre-launch checks
-- `docs/AI_AND_SUPPORT.md` - AI/chat and support flow refinements
-- `docs/MOBILE_WRAPPER_ANDROID.md` - Android wrapper build stabilization and packaging
-- `docs/API_CONTRACT.md` - API error envelope, pagination meta, and integration contract
-- `docs/DEPLOY_RUNBOOK.md` - production deploy, rollback, and smoke-check checklist
-- `docs/GO_NO_GO.md` - final launch gate status and go/no-go checklist
-- `docs/DEPLOY_ORDER_CHECKLIST.md` - release-day deploy sequence and rollback triggers
-- `docs/RELEASE_NOTES_2026-04-13.md` - release summary for stakeholders
-- `docs/COMMIT_PLAN.md` - recommended commit grouping and sequencing
-- `docs/LAUNCH_COMMANDS.md` - copy/paste preflight, deploy, and smoke-test commands
+It combines a polished storefront, admin tools, secure checkout flows, product management, and deployment-ready infrastructure — making it a strong foundation for local businesses, developers, and agencies building real commerce solutions.
 
-This is a complete, battle-tested e-commerce solution featuring customer storefronts, powerful admin dashboards, safe payment processing, and enterprise-grade security—ready to handle real business workflows from day one.
+Live Demo: https://ecommerce-rails-app.onrender.com
 
----
 
-## ✨ Why This Application?
 
-**🚀 Production Ready**: Complete CRUD operations, admin controls, and real-world features. Not a toy project.
+## Why This Project?
 
-**💰 Payment Solutions**: Multiple payment modes (Stripe, Cash on Delivery, manual confirmations) for diverse market needs.
-
-**🔒 Stock-Safe**: Concurrent checkout with database-level row locking prevents overselling—the #1 e-commerce failure.
-
-**📊 Admin Insights**: Real-time dashboards, revenue tracking, order management, and inventory control.
-
-**🌍 Africa-First**: Prices in Kenyan Shillings, easy localization for other markets, soft-delete safety for compliance.
-
-**⚡ Modern Stack**: Rails 8, Turbo Rails, PostgreSQL, Docker-ready, CI/CD integrated.
+- Built for real online selling, not just demos
+- Mobile-first storefront experience
+- Admin tools for products, orders, customers, and reporting
+- Flexible payment workflows for different business needs
+- Ready to customize, brand, and deploy
+- Includes an Android wrapper for mobile distribution
 
 ---
 
-## 🚀 Features
+## ✨ Features
 
-### Core Shopping Experience
+A complete commerce foundation for real-world selling — built to help businesses launch faster, manage orders easily, and deliver a polished shopping experience.
 
-- **🛒 Smart Product Discovery**: Full-text search, advanced filtering, price ranges, stock status visibility. Customers find what they need fast.
-- **🛍️ Frictionless Cart**: Real-time validation prevents checkout surprises. Persistent carts across sessions. Turbo-powered instant updates—no page reloads.
-- **💳 Safe Checkout Flow**:
-  - Multiple payment methods built-in (Stripe, COD, manual approvals).
-  - **Race-condition proof**: Database transactions with row locking—safe even under high traffic.
-  - PDF invoices generated instantly, email confirmations automatic.
-- **⭐ Social Proof**: Product reviews with ratings, helpful voting, customer feedback directly on listings.
-- **❤️ Smart Wishlist**: One-click saving, price drop notifications, easy bulk checkout.
-- **🔄 Product Comparison**: Side-by-side feature comparisons reduce refunds and returns.
+### Storefront
 
-### 👨‍💼 Admin & Management (Back-Office Power)
+- Product browsing with search and filtering
+- Product categories and product detail pages
+- Shopping cart with persistent session behavior
+- Wishlist, comparisons, and customer reviews
+- Responsive design for phones, tablets, and desktops
 
-- **📊 Intelligent Dashboard**:
-  - Revenue metrics, order trends, user growth in one glance.
-  - Unread customer messages, low-stock alerts, priority actions.
-  - Export-ready analytics for reporting.
-- **🎁 Product Ecosystem**:
-  - Variants (sizes, colors, SKUs) baked in—no workarounds.
-  - Soft deletes for safe corrections and audit trails.
-  - Bulk category management and reorganization.
-- **📦 Order Command Center**:
-  - Visual status pipeline: Pending → Paid → Processing → Shipped → Delivered.
-  - Automatic email alerts on each transition.
-  - Return & refund request management built-in.
-  - Instant PDF invoice downloads for accounting.
-- **🚀 Customer Relationship**:
-  - Gift card management and redemption tracking.
-  - Promo codes with expiration and usage limits.
-  - Contact message tracking (read/unread).
+### Checkout & Orders
 
-### 🔐 Built-In Security & Compliance
+- Secure checkout flow
+- Multiple payment options support
+- Order confirmations and status updates
+- PDF invoices for customers and admins
+- Customer order tracking
 
-- **Row-Level Locking**: Database-level stock protection—no overselling possible.
-- **Transaction Safety**: ACID compliance on all financial operations.
-- **Encryption at Rest**: Sensitive customer data (SSN, payment info) encrypted.
-- **CSRF Protection**: Every form protected against cross-site attacks.
-- **Audit Trails**: Soft deletes mean you never lose data—just mark it deleted.
-- **Password Security**: Bcrypt hashing, optional 2FA via Devise.
+### Admin Dashboard
 
-### 💎 Advanced Features
+- Product, category, and inventory management
+- Order management and status pipeline
+- Customer communication tools
+- Revenue and performance visibility
+- Low-stock alerts and operational insights
 
-- **🔍 Enterprise Search**: PostgreSQL full-text indexing. Find products in milliseconds, even with 100k+ SKUs.
-- **📄 Lightweight Pagination**: Pagy gem serves 10,000+ products without slowdown.
-- **💸 Revenue Optimization**: Promo codes, tiered shipping, gift card ecosystem.
-- **💌 Automated Notifications**:
-  - Order confirmation + tracking links
-  - Payment received alerts
-  - Shipment notifications with tracking
-  - Custom admin-to-customer messages
-- **🌍 Localization Ready**:
-  - Prices in Kenyan Shillings (KSh) with proper formatting.
-  - Easy multi-currency support for regional expansion.
-  - Inventory management per region/warehouse.
-- **📱 Mobile-First Design**: Bootstrap 5—looks perfect on phones, tablets, desktops.
-- **⚡ Real-Time Reactivity**: Turbo Rails updates cart/wishlist without page reloads. Subscribe to status changes live.
-- **🔗 Social Login**: Google, GitHub authentication options built-in.
+### Platform Capabilities
 
-## 🛠️ Prerequisites
+- Rails-based backend
+- PostgreSQL-powered data layer
+- Turbo-powered reactive interactions
+- Authentication and authorization support
+- Docker-ready development/deployment setup
+- Android WebView wrapper for mobile packaging
 
-Ensure you have the following installed:
+---
+
+## Who Is This For?
+
+- Small and medium businesses
+- Entrepreneurs launching an online store
+- Agencies building e-commerce projects for clients
+- Developers looking for a solid Rails commerce base
+- Anyone who wants a customizable store foundation
+
+---
+
+## Live Demo
+
+- Production site: https://ecommerce-rails-app.onrender.com
+- Android wrapper: `ecommerce_android_wrapper/`
+
+---
+
+## Screenshots
+
+- Homepage  <img width="1336" height="595" alt="Screenshot 2026-08-01 115510" src="https://github.com/user-attachments/assets/be3c4b34-8035-48b2-a032-d128bdff658c" />
+
+- Product listing page  <img width="1331" height="582" alt="Screenshot 2026-08-01 115712" src="https://github.com/user-attachments/assets/aec85625-dbdb-4449-8fe2-68014bc59b65" />
+
+- Product details page  <img width="521" height="585" alt="Screenshot 2026-08-01 115843" src="https://github.com/user-attachments/assets/a1deef3c-9f62-46f9-95b9-99fa6cb2c471" />
+
+- Cart and checkout  <img width="907" height="595" alt="Screenshot 2026-08-01 115954" src="https://github.com/user-attachments/assets/77e391a0-4699-49a0-a540-7038907ee76f" />
+
+- Admin dashboard  <img width="1365" height="602" alt="Screenshot 2026-08-01 120120" src="https://github.com/user-attachments/assets/827bbb4a-5d93-4dd2-9a00-286a8395bbc2" />
+
+- Mobile view  <img width="1362" height="601" alt="Screenshot 2026-08-01 120242" src="https://github.com/user-attachments/assets/ccfc78c9-d083-41d4-bf60-8411926672de" />
+
+
+
+
+## Tech Stack
+
+### Backend
+
+- Ruby on Rails
+- PostgreSQL
+- Devise for authentication
+- Pundit for authorization
+- Prawn for PDF invoices
+- Pagy for pagination
+- Discard for soft deletes
+- Stripe integration support
+
+### Frontend
+
+- HTML / ERB templates
+- CSS
+- JavaScript
+- Bootstrap 5
+- Turbo Rails
+- Stimulus JS
+
+### Mobile Wrapper
+
+- Flutter
+- Android WebView shell
+- Play Store-ready packaging structure
+
+---
+
+## Quick Start
+
+### Prerequisites
 
 - Ruby 3.3+
 - Rails 8.1.2+
-- PostgreSQL 14+ (or SQLite3 for development)
+- PostgreSQL 14+ or SQLite3 for development
 - Node.js 20+
 
-## 🔐 Admin Setup
+### Install
 
-This application uses role-based access control with an `admin` boolean flag on the User model.
-
-### Creating an Admin User
-
-1. **Via Rails Console**:
-
-```bash
-rails console
-user = User.find(1)  # Find an existing user
-user.update(admin: true)
-user.save!
-```
-
-2. **After User Registration**:
-   - Users register as regular customers
-   - Admin users can be created only by existing admins via the admin dashboard
-   - First admin must be set up via console
-
-### Admin Access
-
-- **Dashboard**: Navigate to [http://localhost:3000/admin](http://localhost:3000/admin)
-- **Protected Actions**: All admin-only routes are protected by `AdminAuthenticatable` concern
-- **Redirect**: Non-admin users accessing admin areas are redirected to home
-- **Authorization Helpers**: User model provides `can_manage_products?`, `can_manage_categories?`, `can_manage_orders?`, etc.
-
-## � Quick Start (5 Minutes)
-
-Get the store running locally in under 5 minutes:
-
-### Step 1: Prerequisites
-
-- **Ruby 3.3+**
-- **Rails 8.1.2+**
-- **PostgreSQL 14+** (or SQLite3 for quick demo)
-- **Node.js 20+**
-
-### Step 2: Clone & Install
-
-```bash
-git clone https://github.com/Larrykj/ecommerce_store-KE.git
-cd ecommerce_store-KE
+git clone https://github.com/Larrykj/ecommerce_store-ke.git
+cd ecommerce_store-ke
 bundle install
-```
 
-### Step 3: Configure Environment
-
-```bash
+**Environment Setup**
 cp env.example .env
-# Edit .env with your settings (optional for development)
-```
+# **Edit .env if needed for your local configuration**
 
-### Step 4: Database Setup
-
-```bash
+**Database Setup**
 rails db:create
 rails db:migrate
 rails db:seed
-```
 
-**Seeded with**: 5+ products, categories, test users (regular + admin), sample orders.
-
-### Step 5: Launch
-
-```bash
+**Run The App**
 rails server
-```
 
-Open [http://localhost:3000](http://localhost:3000) → **Store is live!**
+**Admin Access**
+This app uses an admin flag on the User model.
 
-### Step 6: Admin Access (First Time Only)
-
-```bash
+**Create an Admin User**
 rails console
 user = User.create!(
   email: 'admin@store.test',
   password: 'SecurePassword123!',
   admin: true
 )
-```
 
-Then sign in and visit [http://localhost:3000/admin](http://localhost:3000/admin)
+Then sign in and visit:
 
-## 💳 Payment Testing & Modes
+http://localhost:3000/admin
+**Admin Capabilities**
+Manage products and categories
+Handle orders and order statuses
+Review customer messages
+Monitor inventory and low-stock alerts
+Access operational dashboards
+Payment Methods
 
-### Three Payment Methods Built-In
+**The application supports multiple checkout flows, including:
+**
+Stripe test payments
+Cash on Delivery
+Manual confirmation workflows
+This gives flexibility for businesses operating in markets with different payment preferences.
 
-**1. Stripe Test Card** (Instant Processing)
+**Android Wrapper**
+The repository includes a Flutter-based Android wrapper for packaging the store as a mobile app.
 
-- Card: `4242 4242 4242 4242`
-- Expiry: Any future date (e.g., 12/25)
-- CVC: Any 3 digits
-- **Result**: Order marked "Paid" instantly. Receipt emailed.
+Wrapper Location
+ecommerce_android_wrapper/
+**Build Requirements**
+Flutter 3.12+
+Android SDK API 21+
+Android SDK API 35 target
+**Quick Start**
+cd ecommerce_android_wrapper
+flutter pub get
+flutter run
+For release packaging, see:
 
-**2. Cash on Delivery (COD)** (Common in Africa)
+ecommerce_android_wrapper/SIGNING_INSTRUCTIONS.md
+**Project Structure**
+app/models — core business logic
+app/controllers — request handling
+app/services — application services
+app/concerns — reusable controller behavior
+app/mailers — email notifications
+app/views — storefront and admin UI
+config/routes.rb — application routes
+db/migrations — database schema changes
+docs/ — launch and deployment documentation
+**Documentation**
+Useful operational docs included in this repository:
 
-- Customer places order → Status: "Pending"
-- Order summary visible in customer account
-- Admin receives notification
-- Admin confirms payment received → Status: "Paid"
-- Perfect for locations without digital payment infrastructure
+docs/LAUNCH_READINESS.md
+docs/AI_AND_SUPPORT.md
+docs/MOBILE_WRAPPER_ANDROID.md
+docs/API_CONTRACT.md
+docs/DEPLOY_RUNBOOK.md
+docs/GO_NO_GO.md
+docs/DEPLOY_ORDER_CHECKLIST.md
+docs/RELEASE_NOTES_2026-04-13.md
+docs/COMMIT_PLAN.md
+docs/LAUNCH_COMMANDS.md
+Security & Reliability
+Password encryption and authentication
+Authorization for admin actions
+CSRF protection
+Transaction-safe order handling
+Row-level locking to reduce overselling risk
+Validation and security scanning support
+Soft deletes for safer data handling
+**Roadmap Ideas**
+Potential next improvements:
 
-**3. Manual Confirmation** (Flexible)
+Add more storefront screenshots
+Add a hosted pricing page
+Add customer testimonials
+Add SEO landing page copy
+Add blog or updates section
+Add more payment integrations
+Add multilingual support
+**Contributing**
+Contributions, ideas, and feedback are welcome.
 
-- Order created → Status: "Pending"
-- Admin manually reviews & approves
-- Ideal for bank transfers, corporate orders, or custom arrangements
+If you want to customize this platform for your business or client project, feel free to open an issue or reach out.
 
-### Admin Payment Management
-
-- View all pending payments in dashboard
-- Batch status updates with bulk operations
-- Email customers automatically on payment received
-- Full audit trail of who updated payment when
-
-## 📊 Admin Dashboard Walkthrough
-
-Sign in at `/admin` to access:
-
-- **💰 Revenue Graph**: Daily/weekly revenue trends at a glance
-- **📈 Order Metrics**: Live counts (total, pending, paid, shipped, delivered)
-- **👥 Customer Insights**: New registrations, active users, repeat buyers
-- **📬 Message Center**: Unread customer inquiries with one-click response
-- **⚠️ Quick Alerts**: Low-stock warnings, pending payments, new reviews
-
-### Inventory Management
-
-- Real-time stock levels per variant (size/color/SKU)
-- Automatic low-stock warnings
-- Reorder recommendations based on sales velocity
-- Stock history log (who adjusted, when, why)
-
-### Order Command Center
-
-- Visual order status board (Kanban style)
-- Bulk actions (mark 10 orders as "Shipped" in seconds)
-- Change statuses with automatic customer notifications
-- Download invoices for accounting
-- Print packing slips
-
-### Customer Communication
-
-- Send promotional emails
-- Notify on order updates
-- Contact form message management
-- Customer feedback/review moderation
-
-### Reporting
-
-- Export orders to CSV/PDF
-- Revenue reports by period
-- Top products by sales
-- Customer acquisition cost tracking (basic)
-
-## 📧 Email & Invoices
-
-### Automated Notifications
-
-- **Order Confirmation**: Sent immediately with items, totals, tracking link
-- **Payment Alerts**: Notification when payment received
-- **Shipment Updates**: Track order progress from warehouse to doorstep
-- **Custom Messages**: Admins can send promotional/informational emails
-
-### PDF Invoices (Prawn)
-
-- **Auto-Generated**: Itemized, taxes, shipping, totals
-- **Customer Download**: Available in order page
-- **Professional Formatting**: Ready for accounting and audits
-- **Email Integration**: Attach to confirmation email (optional)
-
-**Dev Mode**: Preview all emails at [http://localhost:3000/letter_opener](http://localhost:3000/letter_opener)
-
-## � Tech Stack
-
-### Backend
-
-- **Rails 8.1.2**: Modern Ruby on Rails framework with Turbo Rails and Stimulus JS integrated
-- **PostgreSQL 14**: Relational database with row-level locking for concurrent checkout safety
-- **Devise**: User authentication and authorization
-- **Pundit**: Authorization policy framework (optional, can be enhanced)
-
-### Frontend
-
-- **Bootstrap 5**: Responsive CSS framework
-- **Bootstrap Icons**: Icon library for UI enhancements
-- **Turbo Rails**: Real-time UI updates without full page reloads
-- **Stimulus JS**: Lightweight JavaScript framework for interactivity
-- **ERB Templates**: Server-side templating
-
-### Key Gems
-
-- **Stripe 18.4**: Payment processing (sandbox mode)
-- **Prawn 2.5**: PDF generation for invoices
-- **Prawn-table 0.2.2**: PDF table formatting
-- **PgSearch 2.3**: Full-text search powered by PostgreSQL
-- **Discard 1.4**: Soft deletes for models
-- **Pagy 8.3**: Lightweight pagination
-- **Letter Opener 1.10**: Email preview in development
-- **Turbo Rails 2.x**: Reactive UI components
-- **Stimulus Rails 1.3**: JavaScript framework integration
-- **OmniAuth**: Social authentication (Google, GitHub)
-- **Brakeman**: Security vulnerability scanning
-- **RuboCop**: Code style enforcement
-
-### Database Features
-
-- **Row-Level Locking** (Variant.lock): Prevents stock race conditions during checkout
-- **Transactions**: ACID-compliant order processing with atomic operations
-- **Soft Deletes**: Models marked as discarded without permanent deletion
-- **Full-Text Search**: PostgreSQL-powered product search
-
-## 📂 Key Project Structure
-
-- **`app/models`**: Core business logic (User, Product, Order, Cart, etc.)
-- **`app/controllers`**: Request handlers with authorization (products, orders, admin)
-- **`app/services`**: Business logic services (OrderService, OrderInvoice)
-- **`app/concerns`**: Reusable controller concerns (AdminAuthenticatable)
-- **`app/mailers`**: Email notification templates (OrderMailer)
-- **`app/views`**: ERB templates with Bootstrap 5 styling
-- **`config/routes.rb`**: RESTful and admin namespace routes
-- **`db/migrations`**: Database schema changes (versioned)
-
-## 🔒 Security Features
-
-- **Authentication**: Devise with password encryption
-- **Authorization**: Role-based access control (admin flag on User)
-- **CSRF Protection**: Rails default CSRF tokens on all forms
-- **Data Encryption**: Sensitive fields encrypted at rest
-- **Transaction Safety**: Row locking prevents concurrent stock updates
-- **Input Validation**: Strong parameters and model validations
-- **Security Scanning**: Brakeman checks for vulnerabilities
-- **Dependency Auditing**: Bundler-audit for gem vulnerabilities
-
-## 📝 License
-
-This project is open-source and available under the standard MIT license.
+**License**
+This project is open-source and available under the MIT License.
