@@ -2,7 +2,7 @@
 
 A production-ready, mobile-friendly e-commerce platform for businesses that want to launch and scale online sales quickly.
 
-[Live Demo](https://ecommerce-rails-app.onrender.com) • [API Demo](https://ecommerce-store-ke-api.onrender.com)
+[Live Demo](https://ecommerce-store-ke-api.onrender.com)
 
 ---
 
